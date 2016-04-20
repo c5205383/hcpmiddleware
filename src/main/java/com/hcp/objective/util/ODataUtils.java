@@ -16,6 +16,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
@@ -47,6 +48,8 @@ public class ODataUtils {
 			odataBean = new ODataBean();
 			InitialContext ctx;
 			String userName="";
+			String sfUserName=null;
+			String sfPassword=null;
 			try {
 			    ctx = new InitialContext();
 			    UserProvider userProvider = (UserProvider) ctx.lookup("java:comp/env/user/Provider");
@@ -59,8 +62,13 @@ public class ODataUtils {
 			    // TODO Auto-generated catch block
 			    e.printStackTrace();
 			}
-			
-			odataBean.setAuthorization(env.getProperty("service.username."+userName)+":"+env.getProperty("service.password."+userName));
+			sfUserName=env.getProperty("service.username."+userName);
+			sfPassword=env.getProperty("service.password."+userName);
+			if(StringUtils.isEmpty(sfUserName)){
+				sfUserName = env.getProperty("service.username.default");
+				sfPassword = env.getProperty("service.password.default");
+			}
+			odataBean.setAuthorization(sfUserName+":"+sfPassword);
 			odataBean.setAuthorizationType(env.getProperty("service.authorizationType"));
 			odataBean.setProxyName(env.getProperty("service.proxy.hostname"));
 			odataBean.setProxyPort(Integer.parseInt(env.getProperty("service.proxy.port")));

@@ -16,6 +16,7 @@ import com.hcp.objective.SpringConfig;
 public class SpringWebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	private static final String SERVLET_MAPPING_PATTERN = "/hcp/*";
+	private static final String SERVLET_MAPPING_PATTERN_LOGIN = "/login/*";
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
@@ -47,6 +48,6 @@ public class SpringWebConfig extends AbstractAnnotationConfigDispatcherServletIn
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[] { SERVLET_MAPPING_PATTERN };
+		return new String[] { SERVLET_MAPPING_PATTERN,SERVLET_MAPPING_PATTERN_LOGIN };
 	}
 }

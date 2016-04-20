@@ -1,7 +1,72 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
-
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+	<display-name>hcpmiddleware</display-name>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<!--servlet>
+		<servlet-name>SimpleProxyServlet</servlet-name>
+		<servlet-class>com.sap.ui5.proxy.SimpleProxyServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SimpleProxyServlet</servlet-name>
+		<url-pattern>/proxy/*</url-pattern>
+	</servlet-mapping>
+	<context-param>
+		<param-name>com.sap.ui5.proxy.REMOTE_LOCATION</param-name>
+		<param-value>https://account.hanatrial.ondemand.com</param-value>
+	</context-param>
+	<servlet>
+		<display-name>ConnectivityProxy</display-name>
+		<servlet-name>ConnectivityProxy</servlet-name>
+		<servlet-class>com.sap.cloudlabs.connectivity.proxy.ProxyServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConnectivityProxy</servlet-name>
+		<url-pattern>/proxy/my309045/*</url-pattern>
+	</servlet-mapping>
+	<resource-ref>
+		<res-ref-name>sci</res-ref-name>
+		<res-type>com.sap.core.connectivity.api.http.HttpDestination</res-type>
+	</resource-ref>
+	<resource-ref>
+		<res-ref-name>connectivity/DestinationFactory</res-ref-name>
+		<res-type>com.sap.core.connectivity.api.DestinationFactory</res-type>
+	</resource-ref-->
+	
+	
+	<resource-ref id="ResourceRef_1461139615469">
+		<res-ref-name>user/Provider</res-ref-name>
+		<res-type>com.sap.security.um.user.UserProvider</res-type>
+	</resource-ref>
+	<login-config>
+		<auth-method>SAML2</auth-method>
+	</login-config>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Protected Area</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>Everyone</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-role id="SecurityRole_1461128827748">
+		<description>All Users</description>
+		<role-name>Everyone</role-name>
+	</security-role>
+	<session-config>
+		<session-timeout>15</session-timeout>
+	</session-config>
+	<servlet id="Servlet_1461128827669">
+		<description></description>
+		<display-name>GetLoginUser</display-name>
+		<servlet-name>GetLoginUser</servlet-name>
+		<servlet-class>com.hcp.objective.web.GetLoginUser</servlet-class>
+	</servlet>
+	<servlet-mapping id="ServletMapping_1461128827597">
+		<servlet-name>GetLoginUser</servlet-name>
+		<url-pattern>/GetLoginUser</url-pattern>
+	</servlet-mapping>
 </web-app>

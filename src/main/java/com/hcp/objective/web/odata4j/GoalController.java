@@ -24,15 +24,48 @@ public class GoalController {
 	@Autowired  
 	private  HttpServletRequest request;
 	
+	@RequestMapping(value = "/getGoalPlanTemplate4j")
+	public @ResponseBody String getGoalPlanTemplate() {
+		ODataBean bean = odataUtils.getInitializeBean(request);
+		String serviceUrl = bean.getUrl();
+		String user = bean.getQueryUser();
+		String pwd = bean.getQueryPwd();
+		String goalPlanTemplateUri = "GoalPlanTemplate";
+		
+		ODataConsumer.Builder builder = ODataConsumers.newBuilder(serviceUrl);
+		ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth(user, pwd)).build();
+		
+		StringBuffer sb=new StringBuffer();
+		sb.append("{\"list\":[");
+		for (OEntity e : consumer.getEntities(goalPlanTemplateUri).execute()) {
+			sb.append("{");
+			for (OProperty<?> p : e.getProperties()) {
+			      Object v = p.getValue();
+			      if (p.getType().equals(EdmSimpleType.BINARY) && v != null){
+			    	  v = org.odata4j.repack.org.apache.commons.codec.binary.Base64.encodeBase64String((byte[]) v).trim();
+			      } 
+			      sb.append(String.format("\"%s\":\"%s\",",p.getName(), v));
+			}
+			sb.deleteCharAt(sb.length()-1);
+			sb.append("},");
+		}
+		sb.deleteCharAt(sb.length()-1);
+		sb.append("]}");
+
+		return sb.toString();
+	}
+	
 	@RequestMapping(value = "/getGoalsByTemplateId4j")
 	public @ResponseBody String getGoalsByTemplate(String templateId) {
 		ODataBean bean = odataUtils.getInitializeBean(request);
 		String serviceUrl = bean.getUrl();
 		String user = bean.getQueryUser();
 		String pwd = bean.getQueryPwd();
+		String goalUri = "Goal" + "_" + templateId;
+		
 		ODataConsumer.Builder builder = ODataConsumers.newBuilder(serviceUrl);
 		ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth(user, pwd)).build();
-		String goalUri = "Goal" + "_" + templateId;
+		
 		StringBuffer sb=new StringBuffer();
 		sb.append("{\"goals\":[");
 		for (OEntity e : consumer.getEntities(goalUri).execute()) {

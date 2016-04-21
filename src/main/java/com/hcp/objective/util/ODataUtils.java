@@ -73,6 +73,8 @@ public class ODataUtils {
 			odataBean.setProxyName(env.getProperty("service.proxy.hostname"));
 			odataBean.setProxyPort(Integer.parseInt(env.getProperty("service.proxy.port")));
 			odataBean.setUrl(env.getProperty("service.url"));
+			odataBean.setQueryUser(env.getProperty("service.username.default"));
+			odataBean.setQueryPwd(env.getProperty("service.password.default"));
 		}
 		return odataBean;
 	}

@@ -6,6 +6,10 @@ public class ODataBean {
 	private String authorization;
 	private String proxyName;
 	private int proxyPort;
+	private String queryUser;
+	private String queryPwd;
+
+	
 	public String getUrl() {
 		return url;
 	}
@@ -37,4 +41,20 @@ public class ODataBean {
 		this.proxyPort = proxyPort;
 	}
 	
+	public String getQueryUser() {
+		return queryUser;
+	}
+	
+	public void setQueryUser(String queryUser) {
+		this.queryUser = queryUser;
+	}
+	
+	public String getQueryPwd() {
+		return queryPwd;
+	}
+	
+	public void setQueryPwd(String queryPwd) {
+		this.queryPwd = queryPwd;
+	}
+
 }

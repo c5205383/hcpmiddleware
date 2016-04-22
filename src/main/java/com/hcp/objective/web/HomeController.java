@@ -87,7 +87,7 @@ public class HomeController {
 	@Autowired  
 	private  HttpServletRequest request;
 	
-	@RequestMapping(value = "/getUserJson")
+	@RequestMapping(value = "/getUserJsonHome")
 	public @ResponseBody String getUserJson(String json) {
 		ODataBean bean = odataUtils.getInitializeBean(request);
 		String authType = bean.getAuthorizationType();

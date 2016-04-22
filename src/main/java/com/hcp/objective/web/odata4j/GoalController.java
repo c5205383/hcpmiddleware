@@ -67,7 +67,7 @@ public class GoalController {
 		ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth(user, pwd)).build();
 		
 		StringBuffer sb=new StringBuffer();
-		sb.append("{\"goals\":[");
+		sb.append("{\"list\":[");
 		for (OEntity e : consumer.getEntities(goalUri).execute()) {
 			sb.append("{");
 			for (OProperty<?> p : e.getProperties()) {

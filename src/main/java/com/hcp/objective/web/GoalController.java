@@ -51,10 +51,10 @@ public class GoalController {
 				Map<String,Object> propMap = dataEntry.getProperties();
 				for(Iterator iter = propMap.keySet().iterator();iter.hasNext();){
 					dataKey = iter.next().toString();
-					if(dataKey.equalsIgnoreCase("dueDate")||dataKey.equalsIgnoreCase("lastModified")||dataKey.equalsIgnoreCase("lastModifiedWithTZ")||dataKey.equalsIgnoreCase("startDate")){
+					/*if(dataKey.equalsIgnoreCase("dueDate")||dataKey.equalsIgnoreCase("lastModified")||dataKey.equalsIgnoreCase("lastModifiedWithTZ")||dataKey.equalsIgnoreCase("startDate")){
 						tempDate = (Calendar)propMap.get(dataKey);
 						propMap.put(dataKey, sdf.format(tempDate.getTime()));
-					}
+					}*/
 					
 				}
 				JSONObject jsonobj = new JSONObject(propMap);
@@ -89,10 +89,10 @@ public class GoalController {
 				Map<String,Object> propMap = dataEntry.getProperties();
 				for(Iterator iter = propMap.keySet().iterator();iter.hasNext();){
 					dataKey = iter.next().toString();
-					if(dataKey.equalsIgnoreCase("start")||dataKey.equalsIgnoreCase("lastModified")||dataKey.equalsIgnoreCase("due")){
+					/*if(dataKey.equalsIgnoreCase("start")||dataKey.equalsIgnoreCase("lastModified")||dataKey.equalsIgnoreCase("due")){
 						tempDate = (Calendar)propMap.get(dataKey);
 						propMap.put(dataKey, sdf.format(tempDate.getTime()));
-					}
+					}*/
 					
 				}
 				JSONObject jsonobj = new JSONObject(propMap);

@@ -94,8 +94,7 @@ public class HomeController {
 		String auth = bean.getAuthorization();
 		String serviceUrl = bean.getUrl();
 		ODataEntry dataEntry = null;
-		try{
-			
+		try{	
 		Edm edm = odataUtils.readEdmAndNotValidate(serviceUrl+"/User/$metadata", authType, auth);
 		//$filter=username%20eq%20%27msaban%27 $select=username,userId&
 		ODataFeed dataFeed = odataUtils.readFeed(edm, serviceUrl, "application/xml+atom", edm.getEntitySets().get(0).getName(), null,"$top=50");

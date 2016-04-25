@@ -35,9 +35,11 @@ public class GoalController {
 		ODataConsumer.Builder builder = ODataConsumers.newBuilder(serviceUrl);
 		ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth(user, pwd)).build();
 		
+		int hasData=0;
 		StringBuffer sb=new StringBuffer();
 		sb.append("{\"list\":[");
 		for (OEntity e : consumer.getEntities(goalPlanTemplateUri).execute()) {
+			hasData=1;
 			sb.append("{");
 			for (OProperty<?> p : e.getProperties()) {
 			      Object v = p.getValue();
@@ -48,6 +50,10 @@ public class GoalController {
 			}
 			sb.deleteCharAt(sb.length()-1);
 			sb.append("},");
+		}
+		
+		if(hasData!=0){
+			sb.deleteCharAt(sb.length()-1);
 		}
 		sb.deleteCharAt(sb.length()-1);
 		sb.append("]}");
@@ -68,7 +74,9 @@ public class GoalController {
 		
 		StringBuffer sb=new StringBuffer();
 		sb.append("{\"list\":[");
+		int hasData=0;
 		for (OEntity e : consumer.getEntities(goalUri).execute()) {
+			hasData=1;
 			sb.append("{");
 			for (OProperty<?> p : e.getProperties()) {
 			      Object v = p.getValue();
@@ -80,7 +88,10 @@ public class GoalController {
 			sb.deleteCharAt(sb.length()-1);
 			sb.append("},");
 		}
-		sb.deleteCharAt(sb.length()-1);
+		
+		if(hasData!=0){
+			sb.deleteCharAt(sb.length()-1);
+		}
 		sb.append("]}");
 
 		return sb.toString();

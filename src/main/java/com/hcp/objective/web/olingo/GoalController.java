@@ -1,4 +1,4 @@
-package com.hcp.objective.web;
+package com.hcp.objective.web.olingo;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,34 +13,39 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ODataBean;
-import com.hcp.objective.util.ODataUtils;
+import com.hcp.objective.util.ODataConstants;
+import com.hcp.objective.util.ODataExecutor;
 
 @RestController
 public class GoalController {
+	public static final Logger logger = LoggerFactory.getLogger(GoalController.class);
 	@Autowired
-	public ODataUtils odataUtils;
+	public ODataExecutor odataExecutor;
 	
 	@Autowired  
 	private  HttpServletRequest request;
 	
 	@RequestMapping(value = "/getGoalPlanTemplate")
 	public @ResponseBody String getGoalPlanTemplate() {
-		ODataBean bean = odataUtils.getInitializeBean(request);
-		String authType = bean.getAuthorizationType();
-		String auth = bean.getAuthorization();
-		String serviceUrl = bean.getUrl();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		long requestStartTime = System.currentTimeMillis();
+		SimpleDateFormat sdf = new SimpleDateFormat(ODataConstants.DATE_FROMAT);
 		ODataEntry dataEntry = null;
 		try{
-			Edm edm = odataUtils.readEdmAndNotValidate(serviceUrl+"/GoalPlanTemplate/$metadata", authType, auth);
+			ODataBean bean = odataExecutor.getInitializeBean(request);
+			String authType = bean.getAuthorizationType();
+			String auth = bean.getAuthorization();
+			String serviceUrl = bean.getUrl();
+			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl+"/GoalPlanTemplate/$metadata", authType, auth);
 			//$filter=username%20eq%20%27msaban%27 $select=username,userId&
-			ODataFeed dataFeed = odataUtils.readFeed(edm, serviceUrl, "application/xml+atom", edm.getEntitySets().get(0).getName(), null,"");
+			ODataFeed dataFeed = odataExecutor.readFeed(edm, serviceUrl, ODataConstants.APPLICATION_ATOM_XML, edm.getEntitySets().get(0).getName(), null,"");
 			List<ODataEntry> dataEntryList = dataFeed.getEntries();
 			String dataKey ="";
 			Calendar tempDate =null;
@@ -60,25 +65,28 @@ public class GoalController {
 				JSONObject jsonobj = new JSONObject(propMap);
 				jsonArr.put(jsonobj);
 			}
-		   templateJsonObj.put("list", jsonArr);
+		   templateJsonObj.put("dataObj", jsonArr);
+		   long requestEndTime = System.currentTimeMillis();
+		    logger.error("=========olingo=========="+(requestEndTime-requestStartTime)/1000);
 		   return templateJsonObj.toString();
 		}catch(Exception e){
-			return e.getMessage();
+			logger.error(e.getMessage(),e);
+			return "";
 		}
 	}
 	
 	@RequestMapping(value = "/getGoalsByTemplateId")
 	public @ResponseBody String getGoalsByTemplate(String templateId) {
-		ODataBean bean = odataUtils.getInitializeBean(request);
-		String authType = bean.getAuthorizationType();
-		String auth = bean.getAuthorization();
-		String serviceUrl = bean.getUrl();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat(ODataConstants.DATE_FROMAT);
 		ODataEntry dataEntry = null;
 		try{
-			Edm edm = odataUtils.readEdmAndNotValidate(serviceUrl+"/Goal_"+templateId+"/$metadata", authType, auth);
+			ODataBean bean = odataExecutor.getInitializeBean(request);
+			String authType = bean.getAuthorizationType();
+			String auth = bean.getAuthorization();
+			String serviceUrl = bean.getUrl();
+			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl+"/Goal_"+templateId+"/$metadata", authType, auth);
 			//$filter=username%20eq%20%27msaban%27 $select=username,userId&
-			ODataFeed dataFeed = odataUtils.readFeed(edm, serviceUrl, "application/xml+atom", edm.getEntitySets().get(0).getName(), null,"");
+			ODataFeed dataFeed = odataExecutor.readFeed(edm, serviceUrl, ODataConstants.APPLICATION_ATOM_XML, edm.getEntitySets().get(0).getName(), null,"");
 			List<ODataEntry> dataEntryList = dataFeed.getEntries();
 			String dataKey ="";
 			Calendar tempDate =null;
@@ -101,7 +109,8 @@ public class GoalController {
 		   templateJsonObj.put("list", jsonArr);
 		   return templateJsonObj.toString();
 		}catch(Exception e){
-			return e.getMessage();
+			logger.error(e.getMessage(),e);
+			return "";
 		}		
 	}
 

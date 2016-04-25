@@ -62,63 +62,25 @@ public class HomeController {
 
 package com.hcp.objective.web;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.olingo.odata2.api.edm.Edm;
-import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
-import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcp.objective.bean.ODataBean;
-import com.hcp.objective.util.ODataUtils;
+import com.hcp.objective.util.ODataExecutor;
 
 @RestController
 public class HomeController {
+	public static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	@Autowired
-	public ODataUtils odataUtils;
+	public ODataExecutor odataExecutor;
 	
 	@Autowired  
 	private  HttpServletRequest request;
 	
-	@RequestMapping(value = "/getUsersJsonHome")
-	public @ResponseBody String getUserJson(String json) {
-		ODataBean bean = odataUtils.getInitializeBean(request);
-		String authType = bean.getAuthorizationType();
-		String auth = bean.getAuthorization();
-		String serviceUrl = bean.getUrl();
-		ODataEntry dataEntry = null;
-		try{	
-		
-		Edm edm = odataUtils.readEdmAndNotValidate(serviceUrl+"/User/$metadata", authType, auth);
-		//$filter=username%20eq%20%27msaban%27 $select=username,userId&
-		ODataFeed dataFeed = odataUtils.readFeed(edm, serviceUrl, "application/xml+atom", edm.getEntitySets().get(0).getName(), null,"$top=50");
-		List<ODataEntry> dataEntryList = dataFeed.getEntries();
-		StringBuffer buf = new StringBuffer();
-		String dataKey ="";
-		///buf.append(dataEntry.getMetadata());
-		for(int i=0;i<dataEntryList.size();i++){
-			dataEntry = dataEntryList.get(i);
-			Map propMap = dataEntry.getProperties();
-			for(Iterator iter = propMap.keySet().iterator();iter.hasNext();){
-				dataKey = iter.next().toString();
-				buf.append(dataKey+"======"+dataEntry.getProperties().get(dataKey)+"<br/>");
-			}
-			
-			buf.append("<br/><br/><br/>");
-		}
-		   return json + "(" +  buf.toString() + ")";
-		}catch(Exception e){
-			return e.getMessage();
-		}
-		
-	}
+	
 	
 }
 

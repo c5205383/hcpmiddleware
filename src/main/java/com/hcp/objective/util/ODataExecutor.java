@@ -24,6 +24,8 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -33,17 +35,12 @@ import com.sap.security.um.UMException;
 import com.sap.security.um.user.User;
 import com.sap.security.um.user.UserProvider;
 @Component
-public class ODataUtils {
-	public static final String HTTP_METHOD_GET = "GET";
-	public static final String APPLICATION_ATOM_XML = "application/atom+xml";
-	public static final String SEPARATOR = "/";
-	
+public class ODataExecutor {
+	public static final Logger logger = LoggerFactory.getLogger(ODataExecutor.class);
 	@Autowired
 	public Environment env;
 	private ODataBean odataBean = null;
-
-	
-	public ODataBean getInitializeBean(HttpServletRequest request){
+	public ODataBean getInitializeBean(HttpServletRequest request)throws Exception{
 		if(odataBean==null){
 			odataBean = new ODataBean();
 			InitialContext ctx;
@@ -59,8 +56,8 @@ public class ODataUtils {
 				  userName = user.getName().toLowerCase();
 			    }
 			} catch (NamingException | UMException e) {
-			    // TODO Auto-generated catch block
-			    e.printStackTrace();
+			    logger.error(e.getMessage(),e);
+			    throw e;
 			}
 			sfUserName=env.getProperty("service.username."+userName);
 			sfPassword=env.getProperty("service.password."+userName);
@@ -83,7 +80,7 @@ public class ODataUtils {
 			String authorizationType, String authorizatoin) throws IOException,
 			ODataException {
 		InputStream content = execute(serviceUri,
-				APPLICATION_ATOM_XML, HTTP_METHOD_GET, authorizationType,
+				ODataConstants.APPLICATION_ATOM_XML, ODataConstants.HTTP_METHOD_GET, authorizationType,
 				authorizatoin);
 		 Edm edm = EntityProvider.readMetadata(content, false);
 		 return edm;
@@ -107,10 +104,7 @@ public class ODataUtils {
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		String absolutUri = createUri(serviceUri, entitySetName, null, expand,
 				queryString);
-
-		System.out.println(absolutUri);
-
-		InputStream content = execute(absolutUri, contentType, HTTP_METHOD_GET);
+		InputStream content = execute(absolutUri, contentType, ODataConstants.HTTP_METHOD_GET);
 		return EntityProvider.readFeed(contentType,
 				entityContainer.getEntitySet(entitySetName), content,
 				EntityProviderReadProperties.init().build());
@@ -119,13 +113,18 @@ public class ODataUtils {
 	private InputStream execute(String relativeUri, String contentType,
 			String httpMethod, String authorizationType, String authorization)
 			throws IOException {
-		HttpURLConnection connection = initializeConnectionWithoutProxy(relativeUri,
-				contentType, httpMethod, authorizationType, authorization);
+		Boolean isProxy=new Boolean(env.getProperty("service.isProxy"));
+		HttpURLConnection connection = null;
+		if(isProxy){
+			 connection = initializeConnectionWithProxy(relativeUri,
+						contentType, httpMethod, authorizationType, authorization);
+		}else{
+			 connection = initializeConnectionWithoutProxy(relativeUri,
+						contentType, httpMethod, authorizationType, authorization);
+		}
 		connection.connect();
 		checkStatus(connection);
-
 		InputStream content = connection.getInputStream();
-
 		return content;
 	}
 	
@@ -136,24 +135,6 @@ public class ODataUtils {
 		return execute(relativeUri, contentType, httpMethod, authorizationType,
 				authorization);
 	}
-	
-	/*private HttpURLConnection initializeConnection(String absolutUri,
-			String contentType, String httpMethod, String authorizationType,
-			String authorization) throws MalformedURLException, IOException {
-		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(
-				"proxy.sha.sap.corp", 8080));
-		Properties systemProperties = System.getProperties();
-		systemProperties.setProperty("http.proxyHost","proxy.sha.sap.corp");
-		systemProperties.setProperty("http.proxyPort","8080");
-		String authorizationHeader = authorizationType + " ";
-		authorizationHeader += new String(Base64.encodeBase64((authorization).getBytes()));
-		 HttpURLConnection connection = (HttpURLConnection) new URL(absolutUri).openConnection(proxy);
-		 connection.setRequestProperty("Authorization", authorizationHeader);
-		 connection.setRequestProperty("ContentType","text/xml;charset=utf-8");
-		 connection.setRequestMethod(httpMethod);
-		 
-		 return connection;
-    }*/
 	
 	private HttpURLConnection initializeConnectionWithProxy(String absolutUri,
 			String contentType, String httpMethod, String authorizationType,
@@ -207,7 +188,7 @@ public class ODataUtils {
 	private String createUri(String serviceUri, String entitySetName,
 			String id, String expand) {
 		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(
-				SEPARATOR).append(entitySetName);
+				ODataConstants.SEPARATOR).append(entitySetName);
 		if (id != null) {
 			absolutUri.append("(").append(id).append(")");
 			if (expand != null) {
@@ -224,7 +205,7 @@ public class ODataUtils {
 
 	private String createUri(String serviceUri, String entitySetName,
 			String id, String expand, String queryString) {
-		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(SEPARATOR).append(entitySetName);
+		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR).append(entitySetName);
 		if (id != null) {
 			absolutUri.append("(").append(id).append(")");
 			if (expand != null) {
@@ -251,7 +232,4 @@ public class ODataUtils {
 	public void setOdataBean(ODataBean odataBean) {
 		this.odataBean = odataBean;
 	}
-
-	public static  void apply(Map<String, Date> t){} 
-	
 }

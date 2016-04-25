@@ -2,44 +2,55 @@ package com.hcp.objective.web.odata4j;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.core4j.Enumerable;
 import org.odata4j.consumer.ODataConsumer;
 import org.odata4j.consumer.ODataConsumers;
 import org.odata4j.consumer.behaviors.OClientBehaviors;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmSimpleType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ODataBean;
-import com.hcp.objective.util.ODataUtils;
+import com.hcp.objective.util.ODataExecutor;
 
-@RestController("advancedGoalController")
-public class GoalController {
+@RestController("goalController4j")
+public class GoalController4j {
+	public static final Logger logger = LoggerFactory.getLogger(GoalController4j.class);
 	@Autowired
-	public ODataUtils odataUtils;
+	public ODataExecutor odataUtils;
 	
 	@Autowired  
 	private  HttpServletRequest request;
 	
 	@RequestMapping(value = "/getGoalPlanTemplate4j")
 	public @ResponseBody String getGoalPlanTemplate() {
-		ODataBean bean = odataUtils.getInitializeBean(request);
-		String serviceUrl = bean.getUrl();
-		String user = bean.getQueryUser();
-		String pwd = bean.getQueryPwd();
+		long requestStartTime = System.currentTimeMillis();
 		String goalPlanTemplateUri = "GoalPlanTemplate";
+		String serviceUrl = null;
+		String user = null;
+		String pwd = null;
+		try{
+			ODataBean bean = odataUtils.getInitializeBean(request);
+			serviceUrl = bean.getUrl();
+			user = bean.getQueryUser();
+			pwd = bean.getQueryPwd();
+		
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
 		
 		ODataConsumer.Builder builder = ODataConsumers.newBuilder(serviceUrl);
 		ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth(user, pwd)).build();
-		
-		int hasData=0;
+		Enumerable<OEntity> enumerable = consumer.getEntities(goalPlanTemplateUri).execute();
 		StringBuffer sb=new StringBuffer();
-		sb.append("{\"list\":[");
-		for (OEntity e : consumer.getEntities(goalPlanTemplateUri).execute()) {
-			hasData=1;
+		sb.append("{\"dataObj\":[");
+		for (OEntity e : enumerable) {
 			sb.append("{");
 			for (OProperty<?> p : e.getProperties()) {
 			      Object v = p.getValue();
@@ -51,32 +62,34 @@ public class GoalController {
 			sb.deleteCharAt(sb.length()-1);
 			sb.append("},");
 		}
-		
-		if(hasData!=0){
-			sb.deleteCharAt(sb.length()-1);
-		}
 		sb.deleteCharAt(sb.length()-1);
 		sb.append("]}");
-
+		long requestEndTime = System.currentTimeMillis();
+		logger.error("========4j==========="+(requestEndTime-requestStartTime)/1000);
 		return sb.toString();
 	}
 	
 	@RequestMapping(value = "/getGoalsByTemplateId4j")
 	public @ResponseBody String getGoalsByTemplate(String templateId) {
-		ODataBean bean = odataUtils.getInitializeBean(request);
-		String serviceUrl = bean.getUrl();
-		String user = bean.getQueryUser();
-		String pwd = bean.getQueryPwd();
 		String goalUri = "Goal" + "_" + templateId;
+		String serviceUrl = null;
+		String user = null;
+		String pwd = null;
+		try{
+			ODataBean bean = odataUtils.getInitializeBean(request);
+			serviceUrl = bean.getUrl();
+			user = bean.getQueryUser();
+			pwd = bean.getQueryPwd();
 		
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
 		ODataConsumer.Builder builder = ODataConsumers.newBuilder(serviceUrl);
 		ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth(user, pwd)).build();
 		
 		StringBuffer sb=new StringBuffer();
 		sb.append("{\"list\":[");
-		int hasData=0;
 		for (OEntity e : consumer.getEntities(goalUri).execute()) {
-			hasData=1;
 			sb.append("{");
 			for (OProperty<?> p : e.getProperties()) {
 			      Object v = p.getValue();
@@ -88,10 +101,7 @@ public class GoalController {
 			sb.deleteCharAt(sb.length()-1);
 			sb.append("},");
 		}
-		
-		if(hasData!=0){
-			sb.deleteCharAt(sb.length()-1);
-		}
+		sb.deleteCharAt(sb.length()-1);
 		sb.append("]}");
 
 		return sb.toString();

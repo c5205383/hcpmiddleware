@@ -1,4 +1,4 @@
-package com.hcp.objective.util;
+package com.hcp.objective;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,14 +10,12 @@ import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
@@ -27,15 +25,13 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
-import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.ODataEntityProviderPropertiesBuilder;
-import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 
-public class OlingoSampleOperation {
+public class OlingoOperationDemo {
 	public static final String HTTP_METHOD_PUT = "PUT";
 	public static final String HTTP_METHOD_POST = "POST";
 	public static final String HTTP_METHOD_GET = "GET";
@@ -79,10 +75,44 @@ public class OlingoSampleOperation {
 			String authorizationType, String authorizatoin) throws IOException,
 			ODataException {
 		InputStream content = execute(serviceUri,
-				APPLICATION_XML, HTTP_METHOD_GET, authorizationType,
+				APPLICATION_ATOM_XML, HTTP_METHOD_GET, authorizationType,
 				authorizatoin);
+		
+		
+		
+		
+		/*final StringBuilder sb = new StringBuilder();
+		BufferedReader reader = null;
+        try {
+
+            reader = new BufferedReader(new InputStreamReader(content, Charsets.UTF_8));
+            final String EOL = System.getProperty("line.separator");
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+                sb.append(EOL);
+            }
+            reader.close();
+            reader = null;
+        } catch (final IOException e) {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (final IOException ignore) {
+              
+            }
+            throw e;
+        }*/
+		
+		
+		
+		
 		//false of the second parameter indicate that no need for validation
-		return EntityProvider.readMetadata(content, false);
+        Edm edm = EntityProvider.readMetadata(content, false);
+		//ServiceDocument document = EntityProvider.readServiceDocument(content, APPLICATION_ATOM);
+		//List<EdmEntitySetInfo> entityList = document.getEntitySetsInfo();
+		return edm;
 	}
 
 	/**
@@ -97,7 +127,7 @@ public class OlingoSampleOperation {
 	public Edm readEdmAndValidate(String serviceUri, String authorizationType,
 			String authorizatoin) throws IOException, ODataException {
 		InputStream content = execute(serviceUri + SEPARATOR + METADATA,
-				APPLICATION_XML, HTTP_METHOD_GET, authorizationType,
+				APPLICATION_ATOM_XML, HTTP_METHOD_GET, authorizationType,
 				authorizatoin);
 		//true of the second parameter indicate that validation is need
 		return EntityProvider.readMetadata(content, true);
@@ -115,10 +145,9 @@ public class OlingoSampleOperation {
 	 * @throws ODataException
 	 */
 	public ODataEntry readEntry(Edm edm, String serviceUri, String contentType,
-			String entitySetName, String keyValue) throws IOException,
+			String entitySetName, String keyValue,String queryString) throws IOException,
 			ODataException {
-		return readEntry(edm, serviceUri, contentType, entitySetName, keyValue,
-				null);
+		return readEntry(edm, serviceUri, contentType, entitySetName, keyValue,null,queryString);
 	}
 
 	/**
@@ -134,14 +163,17 @@ public class OlingoSampleOperation {
 	 * @throws ODataException
 	 */
 	public ODataEntry readEntry(Edm edm, String serviceUri, String contentType,
-			String entitySetName, String keyValue, String expandRelationName)
+			String entitySetName, String keyValue, String expandRelationName,String queryString)
 			throws IOException, ODataException {
 		// get the default entity container
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		// create absolute uri based on service uri, entity set name with its
 		// key property value and optional expanded relation name
+		//default userId
+		//String absolutUri = createUri(serviceUri, entitySetName, keyValue,
+				//expandRelationName);
 		String absolutUri = createUri(serviceUri, entitySetName, keyValue,
-				expandRelationName);
+				expandRelationName,queryString);
 
 		System.out.println(absolutUri);
 
@@ -164,14 +196,13 @@ public class OlingoSampleOperation {
 	 */
 	public ODataFeed readFeed(Edm edm, String serviceUri, String contentType,
 			String entitySetName) throws IOException, ODataException {
-		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		String absolutUri = createUri(serviceUri, entitySetName, null);
-
 		System.out.println(absolutUri);
 
 		InputStream content = execute(absolutUri, contentType, HTTP_METHOD_GET);
 		return EntityProvider.readFeed(contentType,
-				entityContainer.getEntitySet(entitySetName), content,
+				edm.getEntitySets().get(0), content,
+				//edm.getServiceMetadata().getEntitySetInfos().get(0),
 				EntityProviderReadProperties.init().build());
 	}
 
@@ -476,8 +507,21 @@ public class OlingoSampleOperation {
 	private HttpURLConnection initializeConnection(String absolutUri,
 			String contentType, String httpMethod, String authorizationType,
 			String authorization) throws MalformedURLException, IOException {
-
-		URL url = new URL(absolutUri);
+		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(
+				"proxy.sha.sap.corp", 8080));
+		Properties systemProperties = System.getProperties();
+		systemProperties.setProperty("http.proxyHost","proxy.sha.sap.corp");
+		systemProperties.setProperty("http.proxyPort","8080");
+		//HttpURLConnection connection = (HttpURLConnection)server.
+		String authorizationHeader = authorizationType + " ";
+		authorizationHeader += new String(Base64.encodeBase64((authorization).getBytes()));
+		 HttpURLConnection connection = (HttpURLConnection) new URL(absolutUri).openConnection(proxy);
+		 connection.setRequestProperty("Authorization", authorizationHeader);
+		 connection.setRequestProperty("ContentType","text/xml;charset=utf-8");
+		 connection.setRequestMethod(httpMethod);
+		 
+		 return connection;
+		/*URL url = new URL(absolutUri);
 		HttpURLConnection connection;
 		if (getProxyName() != null && getProxyName().length() > 0
 				&& getProxyPort() > 0) {
@@ -497,18 +541,20 @@ public class OlingoSampleOperation {
 		}
 		
 		connection.setRequestProperty("Authorization", authorizationHeader);
-
 		connection.setRequestMethod(httpMethod);
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
 		connection.setRequestProperty(HTTP_HEADER_ACCEPT, contentType);
+		connection.setRequestProperty("ContentType","text/xml;charset=utf-8");
+		//connection.setRequestProperty("User-Agent", "Mozilla/4.0(compatible;MSIE5.5;Windows NT; DigExt)");
 
 		if (HTTP_METHOD_POST.equals(httpMethod)
 				|| HTTP_METHOD_PUT.equals(httpMethod)) {
 			connection.setDoOutput(true);
-			connection
-					.setRequestProperty(HTTP_HEADER_CONTENT_TYPE, contentType);
+			connection.setRequestProperty(HTTP_HEADER_CONTENT_TYPE, contentType);
 		}
 
-		return connection;
+		return connection;*/
 	}
 
 	private HttpURLConnection connect(String relativeUri, String contentType,
@@ -516,7 +562,7 @@ public class OlingoSampleOperation {
 			throws IOException {
 		HttpURLConnection connection = initializeConnection(relativeUri,
 				contentType, httpMethod, authorizationType, authorization);
-		connection.connect();
+		//connection.connect();
 		checkStatus(connection);
 		return connection;
 	}

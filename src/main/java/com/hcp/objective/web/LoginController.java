@@ -4,12 +4,12 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sap.security.um.UMException;
 import com.sap.security.um.user.UnsupportedUserAttributeException;
@@ -19,6 +19,7 @@ import com.sap.security.um.user.UserProvider;
 
 @RestController
 public class LoginController {
+	public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	@Autowired  
 	private  HttpServletRequest request;
 	
@@ -38,8 +39,7 @@ public class LoginController {
 			result = userProfile(user);
 		    }
 		} catch (NamingException | UMException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 		return result;
 		//return  jsonpName + "(" + "{'name':'kevin','score':123}" + ")";
@@ -54,8 +54,7 @@ public class LoginController {
 			    data.put("lastname", user.getAttribute("lastname"));
 			    data.put("email", user.getAttribute("email"));
 			} catch (UnsupportedUserAttributeException e) {
-			    // TODO Auto-generated catch block
-			    e.printStackTrace();
+				logger.error(e.getMessage(),e);
 			}
 			   return data.toString();
 		    }

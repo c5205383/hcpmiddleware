@@ -106,7 +106,7 @@ public class GoalController {
 				JSONObject jsonobj = new JSONObject(propMap);
 				jsonArr.put(jsonobj);
 			}
-		   templateJsonObj.put("list", jsonArr);
+		   templateJsonObj.put("dataObj", jsonArr);
 		   return templateJsonObj.toString();
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);

@@ -88,7 +88,7 @@ public class GoalController4j {
 		ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth(user, pwd)).build();
 		
 		StringBuffer sb=new StringBuffer();
-		sb.append("{\"list\":[");
+		sb.append("{\"dataObj\":[");
 		for (OEntity e : consumer.getEntities(goalUri).execute()) {
 			sb.append("{");
 			for (OProperty<?> p : e.getProperties()) {

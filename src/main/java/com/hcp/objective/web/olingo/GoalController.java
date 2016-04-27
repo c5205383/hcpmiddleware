@@ -98,10 +98,13 @@ public class GoalController {
 				for(Iterator iter = propMap.keySet().iterator();iter.hasNext();){
 					dataKey = iter.next().toString();
 					if(dataKey.equalsIgnoreCase("start")||dataKey.equalsIgnoreCase("lastModified")||dataKey.equalsIgnoreCase("due")){
-						tempDate = (Calendar)propMap.get(dataKey);
-						propMap.put(dataKey, sdf.format(tempDate.getTime()));
-					}
-					
+						if(propMap.get(dataKey)!=null){
+							tempDate = (Calendar)propMap.get(dataKey);
+							propMap.put(dataKey, sdf.format(tempDate.getTime()));
+						}else{
+							propMap.put(dataKey, "");
+						}						
+					}		
 				}
 				JSONObject jsonobj = new JSONObject(propMap);
 				jsonArr.put(jsonobj);

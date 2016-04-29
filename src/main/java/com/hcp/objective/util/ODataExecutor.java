@@ -22,6 +22,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.slf4j.Logger;
@@ -70,8 +71,8 @@ public class ODataExecutor {
 			odataBean.setProxyName(env.getProperty("service.proxy.hostname"));
 			odataBean.setProxyPort(Integer.parseInt(env.getProperty("service.proxy.port")));
 			odataBean.setUrl(env.getProperty("service.url"));
-			odataBean.setQueryUser(env.getProperty("service.username.default"));
-			odataBean.setQueryPwd(env.getProperty("service.password.default"));
+			odataBean.setQueryUser(sfUserName);
+			odataBean.setQueryPwd(sfPassword);
 		}
 		return odataBean;
 	}
@@ -109,6 +110,49 @@ public class ODataExecutor {
 				entityContainer.getEntitySet(entitySetName), content,
 				EntityProviderReadProperties.init().build());
 	}
+	
+	public ODataFeed readFeed(Edm edm, String serviceUri, String contentType,
+			String entitySetName, String id,String expand, String queryString)
+			throws IOException, ODataException {
+		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
+		String absolutUri = createUri(serviceUri, entitySetName, id, expand,
+				queryString);
+		InputStream content = execute(absolutUri, contentType, ODataConstants.HTTP_METHOD_GET);
+		return EntityProvider.readFeed(contentType,
+				entityContainer.getEntitySet(entitySetName), content,
+				EntityProviderReadProperties.init().build());
+	}
+	
+	public ODataEntry readEntry(Edm edm, String serviceUri, String contentType, String entitySetName, String keyValue)
+		      throws IOException, ODataException {
+		    // working with the default entity container
+		    EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
+		    // create absolute uri based on service uri, entity set name and key property value
+		    String absolutUri = createUri(serviceUri, entitySetName, keyValue);
+
+		    InputStream content = execute(absolutUri, contentType, ODataConstants.HTTP_METHOD_GET);
+
+		    return EntityProvider.readEntry(contentType,
+		        entityContainer.getEntitySet(entitySetName),
+		        content,
+		        EntityProviderReadProperties.init().build());
+	}
+	
+	  public ODataEntry readEntry(Edm edm, String serviceUri, String contentType, 
+		      String entitySetName, String keyValue, String expandRelationName)
+		      throws IOException, ODataException {
+		    // working with the default entity container
+		    EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
+		    // create absolute uri based on service uri, entity set name with its key property value and optional expanded relation name
+		    String absolutUri = createUri(serviceUri, entitySetName, keyValue, expandRelationName);
+
+		    InputStream content = execute(absolutUri, contentType, ODataConstants.HTTP_METHOD_GET);
+
+		    return EntityProvider.readEntry(contentType,
+		        entityContainer.getEntitySet(entitySetName),
+		        content,
+		        EntityProviderReadProperties.init().build());
+		  }
 	
 	private InputStream execute(String relativeUri, String contentType,
 			String httpMethod, String authorizationType, String authorization)

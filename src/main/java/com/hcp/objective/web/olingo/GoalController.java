@@ -1,10 +1,7 @@
 package com.hcp.objective.web.olingo;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +118,7 @@ public class GoalController {
 		}		
 	}
 	
-	@RequestMapping(value = "/createGoal")
+	/*@RequestMapping(value = "/createGoal")
 	public @ResponseBody String createGoal() {
 		
 		try{
@@ -177,6 +174,6 @@ public class GoalController {
 		}
 		
 		return null;
-	}
+	}*/
 
 }

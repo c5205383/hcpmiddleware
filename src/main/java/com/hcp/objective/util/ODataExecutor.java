@@ -138,7 +138,7 @@ public class ODataExecutor {
 		        EntityProviderReadProperties.init().build());
 	}
 	
-	  public ODataEntry readEntry(Edm edm, String serviceUri, String contentType, 
+	public ODataEntry readEntry(Edm edm, String serviceUri, String contentType, 
 		      String entitySetName, String keyValue, String expandRelationName)
 		      throws IOException, ODataException {
 		    // working with the default entity container
@@ -152,7 +152,7 @@ public class ODataExecutor {
 		        entityContainer.getEntitySet(entitySetName),
 		        content,
 		        EntityProviderReadProperties.init().build());
-		  }
+	}
 	
 	private InputStream execute(String relativeUri, String contentType,
 			String httpMethod, String authorizationType, String authorization)

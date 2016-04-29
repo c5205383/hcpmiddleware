@@ -66,7 +66,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/getUserDirectReports")
-	public @ResponseBody String getUserDirectReports(){
+	public @ResponseBody String getUserDirectReports(){ 
 		String authType = null;
 		String auth = null;
 		String serviceUrl = null;

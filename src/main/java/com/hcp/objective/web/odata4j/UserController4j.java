@@ -7,6 +7,8 @@ import org.odata4j.consumer.ODataConsumer;
 import org.odata4j.consumer.ODataConsumers;
 import org.odata4j.consumer.behaviors.OClientBehaviors;
 import org.odata4j.core.OEntity;
+import org.odata4j.core.OLinks;
+import org.odata4j.core.OProperties;
 import org.odata4j.core.OProperty;
 import org.odata4j.core.ORelatedEntitiesLink;
 import org.odata4j.core.ORelatedEntityLink;
@@ -24,7 +26,7 @@ import com.hcp.objective.util.ODataExecutor;
 @RestController("userController4j")
 public class UserController4j {
 	
-	public static final Logger logger = LoggerFactory.getLogger(GoalController4j.class);
+	public static final Logger logger = LoggerFactory.getLogger(UserController4j.class);
 	@Autowired
 	public ODataExecutor odataUtils;
 	
@@ -71,5 +73,40 @@ public class UserController4j {
 
 		return sb.toString();
 	}
+	
+	@RequestMapping(value = "/createUser4j")
+	public @ResponseBody String createUser4j() {
+		long requestStartTime = System.currentTimeMillis();
+		try{
+			ODataConsumer.Builder builder = ODataConsumers.newBuilder("https://sfapiqacand.sflab.ondemand.com/odata/v2");
+			ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth("cgrant@huayi", "123")).build();
+			//OEntity msaban1 = consumer.getEntity("User", "admin").execute();
+			OEntity admin = consumer.getEntity("User", "admin").execute();
+			OEntity newUser = consumer.createEntity("User")
+					.properties(OProperties.string("userId", "zero"))
+					.properties(OProperties.string("gender", "M"))
+					.properties(OProperties.string("username", "zero"))
+					.properties(OProperties.string("firstName", "zero"))
+					.properties(OProperties.string("lastName", "yu"))
+					.properties(OProperties.string("email", "zero.yu@sap.com"))
+					.properties(OProperties.string("timeZone", "EST"))
+					.properties(OProperties.string("jobCode", "HR-MGR"))
+					.properties(OProperties.string("location", "CD"))
+					.properties(OProperties.string("division", "Industries"))
+					.properties(OProperties.string("status", "t"))
+					.properties(OProperties.string("country", "China"))
+					.properties(OProperties.string("department", "Industries"))
+					.link("manager", admin)
+					.link("hr", admin)
+					.execute();
+			long requestEndTime = System.currentTimeMillis();
+			logger.error("========4j==========="+(requestEndTime-requestStartTime)/1000);
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
+		
+		return "create user doned";
+	}
+	
 	
 }

@@ -128,8 +128,8 @@ public class GoalController4j {
 			map.put("manager", subMap);
 			map.put("hr", subMap);
 			
-			ODataConsumer.Builder builder = ODataConsumers.newBuilder(serviceUrl);
-			ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth("admin@LMSUOCompany1", "pwd")).build();
+			ODataConsumer.Builder builder = ODataConsumers.newBuilder("http://localhost:8080/odata/v2");
+			ODataConsumer consumer = builder.setClientBehaviors(OClientBehaviors.basicAuth("admin@LMSUOCompany1", "pwdd")).build();
 			OEntity newProduct = consumer.createEntity("Goal_5")
 					.properties(OProperties.string("name", "goal103"))
 					.properties(OProperties.string("userId", "admin"))

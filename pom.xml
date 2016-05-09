@@ -13,7 +13,7 @@
 		<org.springframework.version>4.2.4.RELEASE</org.springframework.version>
 		<org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
 		<org.springframework.data.version>1.9.2.RELEASE</org.springframework.data.version>
-		<!--com.fasterxml.jackson.version>2.6.5</com.fasterxml.jackson.version-->
+		<!--com.fasterxml.jackson.version>2.6.5</com.fasterxml.jackson.version -->
 		<org.eclipse.persistence.jpa.version>2.6.2</org.eclipse.persistence.jpa.version>
 		<version.olingo>4.2.0</version.olingo>
 		<version.json>20151123</version.json>
@@ -58,22 +58,12 @@
 			<artifactId>json</artifactId>
 			<version>${version.json}</version>
 		</dependency>
-		<!--dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${com.fasterxml.jackson.version}</version>
-
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${com.fasterxml.jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>${com.fasterxml.jackson.version}</version>
-		</dependency-->
+		<!--dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-core</artifactId> 
+			<version>${com.fasterxml.jackson.version}</version> </dependency> <dependency> 
+			<groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-databind</artifactId> 
+			<version>${com.fasterxml.jackson.version}</version> </dependency> <dependency> 
+			<groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-annotations</artifactId> 
+			<version>${com.fasterxml.jackson.version}</version> </dependency -->
 		<!-- JPA Persistence Framework -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
@@ -128,7 +118,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.odata4j</groupId>
+			<artifactId>odata4j-core</artifactId>
+			<version>0.7.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.odata4j</groupId>
 			<artifactId>odata4j-dist</artifactId>

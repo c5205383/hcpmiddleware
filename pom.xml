@@ -13,11 +13,12 @@
 		<org.springframework.version>4.2.4.RELEASE</org.springframework.version>
 		<org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
 		<org.springframework.data.version>1.9.2.RELEASE</org.springframework.data.version>
-		<!--com.fasterxml.jackson.version>2.6.5</com.fasterxml.jackson.version -->
+		<!--com.fasterxml.jackson.version>2.6.5</com.fasterxml.jackson.version-->
 		<org.eclipse.persistence.jpa.version>2.6.2</org.eclipse.persistence.jpa.version>
 		<version.olingo>4.2.0</version.olingo>
 		<version.json>20151123</version.json>
 		<version.odata4j>0.7.0</version.odata4j>
+		<version.hdb.platform>0.6.70.rt2</version.hdb.platform>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -44,6 +45,11 @@
 			<version>${org.springframework.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 			<version>${org.springframework.security.version}</version>
@@ -58,12 +64,22 @@
 			<artifactId>json</artifactId>
 			<version>${version.json}</version>
 		</dependency>
-		<!--dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-core</artifactId> 
-			<version>${com.fasterxml.jackson.version}</version> </dependency> <dependency> 
-			<groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-databind</artifactId> 
-			<version>${com.fasterxml.jackson.version}</version> </dependency> <dependency> 
-			<groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-annotations</artifactId> 
-			<version>${com.fasterxml.jackson.version}</version> </dependency -->
+		<!--dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${com.fasterxml.jackson.version}</version>
+
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${com.fasterxml.jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${com.fasterxml.jackson.version}</version>
+		</dependency-->
 		<!-- JPA Persistence Framework -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
@@ -118,17 +134,47 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
-			<groupId>org.odata4j</groupId>
-			<artifactId>odata4j-core</artifactId>
-			<version>0.7.0</version>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>1.7.0.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.jpa</artifactId>
+			<version>2.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.odata4j</groupId>
 			<artifactId>odata4j-dist</artifactId>
 			<version>${version.odata4j}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.odata4j</groupId>
+			<artifactId>odata4j-core</artifactId>
+			<version>${version.odata4j}</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.sap.core.persistence.osgi</groupId>
+		  <artifactId>com.sap.core.persistence.osgi.hdb.platform</artifactId>
+		  <version>${version.hdb.platform}</version>
+		</dependency> 
 	</dependencies>
 	<build>
 		<finalName>hcpmiddleware</finalName>

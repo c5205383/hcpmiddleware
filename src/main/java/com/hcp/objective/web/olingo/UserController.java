@@ -80,7 +80,7 @@ public class UserController {
 			//ODataFeed dataFeed = odataUtils.readFeed(edm, serviceUrl, "application/xml+atom", edm.getEntitySets().get(0).getName(), 
 			//		"'cgrant1'", "directReports", null);
 			ODataEntry entryExpanded = odataUtils.readEntry(edm, serviceUrl, "application/xml+atom", 
-					"User", "'cgrant1'", "directReports",null);
+					"User", "'cgrant1'", "directReports", null);
 			Set<Entry<String, Object>> entries = entryExpanded.getProperties().entrySet();
 			ODataDeltaFeed feed = null;
 			for (Entry<String, Object> entry : entries) {

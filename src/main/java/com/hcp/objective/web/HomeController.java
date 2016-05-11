@@ -63,17 +63,21 @@ public class HomeController {
 package com.hcp.objective.web;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -128,10 +132,42 @@ public class HomeController {
 		
 	}
 	
-//	@RequestMapping(value = "/Post")
-//	public @ResponseBody String post(){
-//		
-//	}
+	@RequestMapping(value = "/Post", method = RequestMethod.POST)
+	public @ResponseBody String post(){
+		try {
+			ODataBean bean = odataExecutor.getInitializeBean(request);
+			String authType = bean.getAuthorizationType();
+			String auth = bean.getAuthorization();
+			String serviceUrl = bean.getUrl();
+			String authorizationHeader = authType + " ";
+			authorizationHeader += new String(Base64.encodeBase64((auth).getBytes()));
+			
+			URL url = new URL(serviceUrl + "/upsert");
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setRequestProperty("Authorization", authorizationHeader);
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+			//String requestBody = "{\"__metadata\": {\"uri\": \"PerPerson('testzero')\"},\"personIdExternal\": \"i326962x\",\"userId\": \"testzero\"}";
+			//String requestBody = "{\"__metadata\": {\"uri\": \"User('testzero01')\"},\"username\": \"tzero\",\"status\": \"Active\",\"userId\": \"testzero01\"}";
+			String requestBody = "";
+			out.write(requestBody);
+			out.flush();
+			out.close();
+			
+			InputStream in = conn.getInputStream();
+			String encoding = conn.getContentEncoding();
+			encoding = encoding == null ? "UTF-8" : encoding;
+			String body = IOUtils.toString(in, encoding);
+            
+            return body;
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			return "";
+		}
+	}
 	
 }
 

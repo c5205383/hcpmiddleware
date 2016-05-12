@@ -95,7 +95,7 @@ public class HomeController {
 	private  HttpServletRequest request;
 	
 	
-	@RequestMapping(value = "/get")
+	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	public @ResponseBody String get(@RequestParam String entitySetName, 
 			@RequestParam(required=false) String eid, 
 			@RequestParam(required=false) String expand, @RequestParam(required=false) String query) {
@@ -122,6 +122,9 @@ public class HomeController {
 			while ((line = rd.readLine()) != null) {
 				result.append(line);
 			}
+			
+			conn.disconnect();
+			
 			rd.close();
 			
 			return result.toString();
@@ -161,7 +164,9 @@ public class HomeController {
 			String encoding = conn.getContentEncoding();
 			encoding = encoding == null ? "UTF-8" : encoding;
 			String body = IOUtils.toString(in, encoding);
-            
+
+			conn.disconnect();
+			
             return body;
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);

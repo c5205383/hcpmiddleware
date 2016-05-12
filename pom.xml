@@ -13,29 +13,26 @@
 		<org.springframework.version>4.2.4.RELEASE</org.springframework.version>
 		<org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
 		<org.springframework.data.version>1.9.2.RELEASE</org.springframework.data.version>
-		<!--com.fasterxml.jackson.version>2.6.5</com.fasterxml.jackson.version -->
+		<!--com.fasterxml.jackson.version>2.6.5</com.fasterxml.jackson.version-->
 		<org.eclipse.persistence.jpa.version>2.6.2</org.eclipse.persistence.jpa.version>
-		<version.olingo4>4.2.0</version.olingo4>
-		<version.olingo2>2.0.5</version.olingo2>
+		<version.olingo>4.2.0</version.olingo>
 		<version.json>20151123</version.json>
 		<version.odata4j>0.7.0</version.odata4j>
 		<version.hdb.platform>0.6.70.rt2</version.hdb.platform>
 	</properties>
 	<dependencies>
-		<!-- JUnit Dependency -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Servlet Dependency -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
 		</dependency>
-		<!-- Spring Dependency -->
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
@@ -62,23 +59,81 @@
 			<artifactId>spring-jdbc</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
-		<!-- JSON Dependency -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>${version.json}</version>
 		</dependency>
-		<!--dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-core</artifactId> <version>${com.fasterxml.jackson.version}</version> 
-			</dependency> <dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-databind</artifactId> <version>${com.fasterxml.jackson.version}</version> 
-			</dependency> <dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-annotations</artifactId> <version>${com.fasterxml.jackson.version}</version> 
-			</dependency -->
+		<!--dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${com.fasterxml.jackson.version}</version>
+
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${com.fasterxml.jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${com.fasterxml.jackson.version}</version>
+		</dependency-->
 		<!-- JPA Persistence Framework -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>org.eclipse.persistence.jpa</artifactId>
 			<version>${org.eclipse.persistence.jpa.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.eclipse.persistence</groupId> <artifactId>org.eclipse.persistence.jpa</artifactId> <version>2.5.2</version> </dependency> -->
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo-odata2-core</artifactId>
+			<version>2.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>odata-client-core</artifactId>
+			<version>${version.olingo}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>odata-client-proxy</artifactId>
+			<version>${version.olingo}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo-odata2-api</artifactId>
+			<version>2.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>odata-client-api</artifactId>
+			<version>${version.olingo}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
@@ -90,74 +145,21 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.jpa</artifactId>
+			<version>2.5.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
 			<version>2.5.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.core.persistence.osgi</groupId>
-			<artifactId>com.sap.core.persistence.osgi.hdb.platform</artifactId>
-			<version>${version.hdb.platform}</version>
-		</dependency>
-		<!-- Olingo 4.0 -->
-		<!-- <dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>odata-client-core</artifactId>
-			<version>${version.olingo4}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>odata-client-proxy</artifactId>
-			<version>${version.olingo4}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>odata-client-api</artifactId>
-			<version>${version.olingo4}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency> -->
-		<!-- Olingo 2.0 -->
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-core</artifactId>
-			<version>${version.olingo2}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-api</artifactId>
-			<version>${version.olingo2}</version>
-		</dependency>
-		<!-- Others -->
-		<dependency>
-			<groupId>taglibs</groupId>
-			<artifactId>standard</artifactId>
-			<version>1.1.2</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2</version>
 		</dependency>
-		<!-- ODATA4J -->
 		<dependency>
 			<groupId>org.odata4j</groupId>
 			<artifactId>odata4j-dist</artifactId>
@@ -168,6 +170,11 @@
 			<artifactId>odata4j-core</artifactId>
 			<version>${version.odata4j}</version>
 		</dependency>
+		<dependency>
+		  <groupId>com.sap.core.persistence.osgi</groupId>
+		  <artifactId>com.sap.core.persistence.osgi.hdb.platform</artifactId>
+		  <version>${version.hdb.platform}</version>
+		</dependency> 
 	</dependencies>
 	<build>
 		<finalName>hcpmiddleware</finalName>

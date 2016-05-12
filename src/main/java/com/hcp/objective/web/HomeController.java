@@ -95,7 +95,7 @@ public class HomeController {
 	private  HttpServletRequest request;
 	
 	
-	@RequestMapping(value = "/Get")
+	@RequestMapping(value = "/get")
 	public @ResponseBody String get(@RequestParam String entitySetName, 
 			@RequestParam(required=false) String eid, 
 			@RequestParam(required=false) String expand, @RequestParam(required=false) String query) {
@@ -132,7 +132,7 @@ public class HomeController {
 		
 	}
 	
-	@RequestMapping(value = "/Post", method = RequestMethod.POST)
+	@RequestMapping(value = "/post", method = RequestMethod.POST)
 	public @ResponseBody String post(){
 		try {
 			ODataBean bean = odataExecutor.getInitializeBean(request);

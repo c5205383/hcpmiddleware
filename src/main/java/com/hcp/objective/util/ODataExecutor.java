@@ -50,42 +50,43 @@ public class ODataExecutor {
 	public Environment env;
 	private ODataBean odataBean = null;
 
+	@Autowired  
+	private  HttpServletRequest request;
+	
 	public ODataBean getInitializeBean(HttpServletRequest request) throws Exception {
-		if (odataBean == null) {
-			odataBean = new ODataBean();
-			InitialContext ctx;
-			String userName = "";
-			String sfUserName = null;
-			String sfPassword = null;
-			try {
-				ctx = new InitialContext();
-				UserProvider userProvider = (UserProvider) ctx.lookup("java:comp/env/user/Provider");
-				User user = null;
-				if (request.getUserPrincipal() != null) {
-					user = userProvider.getUser(request.getUserPrincipal().getName());
-					userName = user.getName().toLowerCase();
-				}
-			} catch (NamingException | UMException e) {
-				logger.error(e.getMessage(), e);
-				throw e;
-			}
-			sfUserName = env.getProperty("service.username." + userName);
-			sfPassword = env.getProperty("service.password." + userName);
-			if (StringUtils.isEmpty(sfUserName)) {
-				sfUserName = env.getProperty("service.username.default");
-				sfPassword = env.getProperty("service.password.default");
-			}
-			odataBean.setAuthorization(sfUserName + ":" + sfPassword);
-			odataBean.setAuthorizationType(env.getProperty("service.authorizationType"));
-			odataBean.setProxyName(env.getProperty("service.proxy.hostname"));
-			odataBean.setProxyPort(Integer.parseInt(env.getProperty("service.proxy.port")));
-			odataBean.setUrl(env.getProperty("service.url"));
-			odataBean.setQueryUser(sfUserName);
-			odataBean.setQueryPwd(sfPassword);
-		}
+		odataBean = new ODataBean();
+		String sfUserName = null;
+		String sfPassword = null;
+			
+		sfUserName = env.getProperty("service.username.default");
+		sfPassword = env.getProperty("service.password.default");
+		odataBean.setAuthorization(sfUserName + ":" + sfPassword);
+		odataBean.setAuthorizationType(env.getProperty("service.authorizationType"));
+		odataBean.setProxyName(env.getProperty("service.proxy.hostname"));
+		odataBean.setProxyPort(Integer.parseInt(env.getProperty("service.proxy.port")));
+		odataBean.setUrl(env.getProperty("service.url"));
+		odataBean.setQueryUser(sfUserName);
+		odataBean.setQueryPwd(sfPassword);
+		
 		return odataBean;
 	}
 
+	private User getLoginUser(){
+		InitialContext ctx;
+		try {
+		    ctx = new InitialContext();
+		    UserProvider userProvider = (UserProvider) ctx.lookup("java:comp/env/user/Provider");
+		    User user = null;
+		    if (request.getUserPrincipal() != null) {
+		    	user = userProvider.getUser(request.getUserPrincipal().getName());
+		    }
+		    return user;
+		} catch (NamingException | UMException e) {
+			logger.error(e.getMessage(),e);
+			return null;
+		}
+	}
+	
 	public Edm readEdmAndNotValidate(String serviceUri, String authorizationType, String authorizatoin)
 			throws IOException, ODataException {
 		InputStream content = execute(serviceUri, ODataConstants.APPLICATION_ATOM_XML, ODataConstants.HTTP_METHOD_GET,

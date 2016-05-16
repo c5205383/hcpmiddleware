@@ -40,13 +40,16 @@ public class EmpEmploymentController {
 			empService.createEmpEmployment(empInfoRequest);
 			empService.createEmpJob(empInfoRequest);
 			empService.createPerPersonal(empInfoRequest);
+
+			return "done";
 		} catch (IOException e1) {
 			logger.error(e1.getMessage(),e1);
+			return "error";
 		} catch (Exception e2) {
 			logger.error(e2.getMessage(),e2);
+			return "error";
 		}
 		
-		return "done";
 	}
 
 }

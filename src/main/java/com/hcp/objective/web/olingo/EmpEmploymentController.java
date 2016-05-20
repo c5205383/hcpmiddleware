@@ -37,6 +37,7 @@ public class EmpEmploymentController {
 			
 			empService.createUser(empInfoRequest);
 			empService.createPerPerson(empInfoRequest);
+			empService.createPerEmail(empInfoRequest);
 			empService.createEmpEmployment(empInfoRequest);
 			empService.createEmpJob(empInfoRequest);
 			empService.createPerPersonal(empInfoRequest);

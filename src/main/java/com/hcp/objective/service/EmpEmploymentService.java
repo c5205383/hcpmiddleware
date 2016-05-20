@@ -86,7 +86,23 @@ public class EmpEmploymentService {
 		logger.info(body);
 	}
 
-	
+	public void createPerEmail(EmpInfoRequest empInfoRequest) throws IOException {
+		HttpURLConnection conn = openConnection();
+		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+		String requestBody = createEmailRequestBody(empInfoRequest);
+		out.write(requestBody);
+		out.flush();
+		out.close();
+		
+		InputStream in = conn.getInputStream();
+		String encoding = conn.getContentEncoding();
+		encoding = encoding == null ? "UTF-8" : encoding;
+		String body = IOUtils.toString(in, encoding);
+		conn.disconnect();
+		
+		logger.info("========create peremail========");
+		logger.info(body);
+	}
 
 	public void createEmpEmployment(EmpInfoRequest empInfoRequest) throws IOException {
 		HttpURLConnection conn = openConnection();
@@ -164,7 +180,17 @@ public class EmpEmploymentService {
 		JSONObject jsonobj = new JSONObject(propMap);
 		return jsonobj.toString();
 	}
-	
+
+	private String createEmailRequestBody(EmpInfoRequest empInfoRequest) {
+		Map<String,Object> propMap = new HashMap<String, Object>();
+		Map<String,Object> uriMap = new HashMap<String, Object>();
+		uriMap.put("uri", "PerEmail(personIdExternal='"+empInfoRequest.getPersonIdExternal()+"',emailType='17161')");
+		propMap.put("__metadata", uriMap);
+		propMap.put("personIdExternal", empInfoRequest.getPersonIdExternal());
+		propMap.put("userId", empInfoRequest.getUserId());
+		JSONObject jsonobj = new JSONObject(propMap);
+		return jsonobj.toString();
+	}
 	
 	private String createEmpRequestBody(EmpInfoRequest empInfoRequest) {
 		Map<String,Object> propMap = new HashMap<String, Object>();

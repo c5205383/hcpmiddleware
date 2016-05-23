@@ -73,6 +73,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,5 +175,76 @@ public class HomeController {
 		}
 	}
 	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public @ResponseBody String get(@RequestParam String wfRequestId, String eventReason){
+//		String authType = null;
+//		String auth = null;
+//		String serviceUrl = null;
+//		ODataEntry dataEntry = null;
+//		String entitySetName = "EmpWfRequest";
+//		String entityLink = null;
+//		String queryString = "$filter=eventReason%20eq%20%27"+eventReason
+//				+"%27%20and%20"+"wfRequestId%20eq%20"+wfRequestId;
+//		try {
+//			ODataBean bean = odataExecutor.getInitializeBean(request);
+//			authType = bean.getAuthorizationType();
+//			auth = bean.getAuthorization();
+//			serviceUrl = bean.getUrl();
+//			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl + "/" + entitySetName + "/$metadata", authType, auth);
+//			dataEntry = odataExecutor.readEntry(edm, serviceUrl, ODataConstants.APPLICATION_ATOM_XML, entitySetName, null,
+//					entityLink, queryString);
+//			return new JSONObject(dataEntry.getProperties()).toString();
+//
+//		} catch (Exception e) {
+//			logger.error(e.getMessage(), e);
+//			return null;
+//		}
+		
+		ODataBean bean;
+		try {
+			bean = odataExecutor.getInitializeBean(request);
+			String authType = bean.getAuthorizationType();
+			String auth = bean.getAuthorization();
+			String serviceUrl = bean.getUrl();
+			String entitySetName = "EmpWfRequest";
+			String queryString = "$filter=eventReason%20eq%20%27"+eventReason
+					+"%27%20and%20"+"wfRequestId%20eq%20"+wfRequestId
+					+"&$format=json";
+			String authorizationHeader = authType + " ";
+			authorizationHeader += new String(Base64.encodeBase64((auth).getBytes()));
+			
+			StringBuilder result = new StringBuilder();
+			String absolutUri = odataExecutor.createUri(serviceUrl, entitySetName, null, null, queryString);
+			URL url = new URL(absolutUri);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Authorization", authorizationHeader);
+			
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String line;
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			
+			conn.disconnect();
+			
+			rd.close();
+			
+			JSONObject jsonObj = new JSONObject(result.toString());
+			JSONObject results = jsonObj.getJSONObject("d");
+			JSONArray array = results.getJSONArray("results");
+			if(array.length() != 0){
+				JSONObject tmp = array.getJSONObject(0);
+				JSONObject obj = new JSONObject();
+				obj.put("empWf", tmp);
+				return obj.toString();
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
 

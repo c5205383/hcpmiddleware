@@ -1,16 +1,12 @@
 package com.hcp.objective.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
@@ -18,20 +14,14 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
-import org.apache.olingo.odata2.api.edm.EdmEntitySet;
-import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
-import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,8 +259,8 @@ public class ODataExecutor {
 	public void setOdataBean(ODataBean odataBean) {
 		this.odataBean = odataBean;
 	}
-
-	public ODataEntry createEntry(Edm edm, String serviceUri, String contentType, String entitySetName,
+	
+	/*public ODataEntry createEntry(Edm edm, String serviceUri, String contentType, String entitySetName,
 			Map<String, Object> data, String authorizationType, String authorization) throws Exception {
 		String absolutUri = createUri(serviceUri, entitySetName, null);
 		return writeEntity(edm, absolutUri, entitySetName, data, contentType, ODataConstants.HTTP_METHOD_POST, 
@@ -284,16 +274,28 @@ public class ODataExecutor {
 		HttpURLConnection connection = initializeConnectionWithoutProxy(absolutUri, contentType, httpMethod,
 				authorizationType, authorization);
 		connection.setDoOutput(true);
+		connection.setDoInput(true);
 		connection.setRequestProperty(ODataConstants.HTTP_HEADER_ACCEPT, contentType);
 		connection.setRequestProperty(ODataConstants.HTTP_HEADER_CONTENT_TYPE, contentType);
-		
+		connection.setRequestMethod("POST");
+		connection.setUseCaches(false);
+		connection.setRequestProperty("Connection", "Keep-Alive");
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		EdmEntitySet entitySet = entityContainer.getEntitySet(entitySetName);
-		URI rootUri = new URI(entitySetName);
-
-		EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(rootUri).build();
-		// serialize data into ODataResponse object
+		//EntityProviderReadProperties properties = EntityProviderReadProperties.init().mergeSemantic(false).build();
+		//ODataEntry entry = EntityProvider.readEntry(requestContentType, uriInfo.getStartEntitySet(), content, properties);
+		
+		//URI rootUri = new URI(entitySetName);
+		//UriInfo uriInfo = new UriInfoImpl();
+		URI rootUri = new URI("http://localhost:8181/odata/v2");
+       data.put("key", "id");
+       //Map<String, Map<String, Object>> linkdata = new HashMap();
+       //linkdata.put("d", null);
+		EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(rootUri).includeSimplePropertyType(true).contentOnly(true).omitJsonWrapper(true).omitETag(false).build();
+        List<Map<String, Object>> dataList =  new ArrayList();
+         dataList.add(data);
 		ODataResponse response = EntityProvider.writeEntry(contentType, entitySet, data, properties);
+		//ODataResponse response = EntityProvider.writeFeed(contentType, entitySet, dataList, properties);
 		// get (http) entity which is for default Olingo implementation an
 		// InputStream
 		Object entity = response.getEntity();
@@ -309,15 +311,11 @@ public class ODataExecutor {
 		ODataEntry entry = null;
 		HttpStatusCodes statusCode = HttpStatusCodes.fromStatusCode(connection.getResponseCode());
 		if (statusCode == HttpStatusCodes.CREATED) {
-			// get the content as InputStream and de-serialize it into an
-			// ODataEntry object
 			InputStream content = connection.getInputStream();
 			content = logRawContent(httpMethod + " response:\n  ", content, "\n");
 			entry = EntityProvider.readEntry(contentType, entitySet, content,
 					EntityProviderReadProperties.init().build());
 		}
-
-		//
 		connection.disconnect();
 
 		return entry;
@@ -347,5 +345,6 @@ public class ODataExecutor {
 			readCount = stream.read(tmp);
 		}
 		return result;
-	}
+	}*/
+
 }

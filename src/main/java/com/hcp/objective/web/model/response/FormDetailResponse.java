@@ -12,7 +12,7 @@ public class FormDetailResponse  implements Serializable {
 	 */
 	private static final long serialVersionUID = 342743430021959138L;
 
-	private Integer id;
+	private Long id;
 	private String userId;
 	private Double score;
 	private Timestamp compeleteDate;
@@ -31,11 +31,11 @@ public class FormDetailResponse  implements Serializable {
 		this.setRouteMapId(form.getRouteMapId());
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

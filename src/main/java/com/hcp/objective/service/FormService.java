@@ -1,6 +1,9 @@
 package com.hcp.objective.service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,13 +50,16 @@ public class FormService {
 			Map<String, Object> propMap = formEntry.getProperties();
 			for (String key : propMap.keySet()) {
 				if(key.equals("formDataId")) {
-					form.setId((Integer) propMap.get(key));
+					form.setId((Long) propMap.get(key));
 				} else if(key.equals("formSubjectId")) {
 					form.setUserId((String) propMap.get(key));
 				} else if(key.equals("rating")){
-					form.setScore((Double) propMap.get(key));
+					BigDecimal bigDecimal = (BigDecimal) propMap.get(key);
+					form.setScore(bigDecimal.doubleValue());
 				} else if(key.equals("formReviewEndDate")){
-					form.setCompeleteDate((Timestamp) propMap.get(key));
+					Calendar calendar = (Calendar) propMap.get(key);
+					Date date = calendar.getTime();
+					form.setCompeleteDate(new Timestamp(date.getTime()));
 				} else if(key.equals("formDataStatus")){
 					form.setStatus(propMap.get(key).toString());
 				} /*else if(key.equals("xxx")) {

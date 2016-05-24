@@ -6,15 +6,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
-import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,16 +37,85 @@ public class WorkflowController {
 	@Autowired
 	private HttpServletRequest request;
 
-	@RequestMapping(value = "/getWorkflow")
-	public @ResponseBody String getWorkflow() {
+//	@RequestMapping(value = "/getEmpWorkflow")
+//	public @ResponseBody String getEmpWorkflow() {
+//		String authType = null;
+//		String auth = null;
+//		String serviceUrl = null;
+//		ODataEntry dataEntry = null;
+//		String entitySetName = "EmpWfRequest";
+//		// String entityId = "844L";
+//		String entityLink = null;
+//		// String queryString = "$top=200";
+//		String queryString = "$filter=eventReason%20eq%20%27HIRNEW%27";
+//		try {
+//			ODataBean bean = odataUtils.getInitializeBean(request);
+//			authType = bean.getAuthorizationType();
+//			auth = bean.getAuthorization();
+//			serviceUrl = bean.getUrl();
+//
+//			Edm edm = odataUtils.readEdmAndNotValidate(serviceUrl + "/" + entitySetName + "/$metadata", authType, auth);
+//
+//			ODataFeed dataFeed = odataUtils.readFeed(edm, serviceUrl, ODataConstants.APPLICATION_ATOM_XML,
+//					entitySetName, entityLink, queryString);
+//
+//			List<ODataEntry> dataEntryList = dataFeed.getEntries();
+//			JSONObject workflowJsonObj = new JSONObject();
+//			JSONArray jsonArr = new JSONArray();
+//			for (int i = 0; i < dataEntryList.size(); i++) {
+//				dataEntry = dataEntryList.get(i);
+//				Map<String, Object> propMap = dataEntry.getProperties();
+//				JSONObject jsonobj = new JSONObject(propMap);
+//				
+//				// request wfRequest
+//				String key = propMap.get("wfRequestId").toString();
+//				ODataEntry wfEntry = geWorkflow(key);
+//				JSONObject subJsonobj = new JSONObject(wfEntry.getProperties());
+//				jsonobj.append("wfRequest", subJsonobj);
+//				
+//				jsonArr.put(jsonobj);
+//			}
+//			workflowJsonObj.put("dataObj", jsonArr);
+//			return workflowJsonObj.toString();
+//		} catch (Exception e) {
+//			logger.error(e.getMessage(), e);
+//			return "";
+//		}
+//	}
+//
+//	public ODataEntry geWorkflow(String key) {
+//		String authType = null;
+//		String auth = null;
+//		String serviceUrl = null;
+//		ODataEntry dataEntry = null;
+//		String entitySetName = "WfRequest";
+//		String entityLink = null;
+//		String queryString = null;
+//		try {
+//			ODataBean bean = odataUtils.getInitializeBean(request);
+//			authType = bean.getAuthorizationType();
+//			auth = bean.getAuthorization();
+//			serviceUrl = bean.getUrl();
+//			Edm edm = odataUtils.readEdmAndNotValidate(serviceUrl + "/" + entitySetName + "/$metadata", authType, auth);
+//			dataEntry = odataUtils.readEntry(edm, serviceUrl, ODataConstants.APPLICATION_ATOM_XML, entitySetName, key,
+//					entityLink, queryString);
+//			return dataEntry;
+//
+//		} catch (Exception e) {
+//			logger.error(e.getMessage(), e);
+//			return null;
+//		}
+//	}
+	
+	@RequestMapping(value = "/getEmpWorkflow")
+	public @ResponseBody String getEmpWorkflow(@RequestParam String userId, @RequestParam String eventReason) {
 		String authType = null;
 		String auth = null;
 		String serviceUrl = null;
 		ODataEntry dataEntry = null;
 		String entitySetName = "WfRequest";
-		String entityId = "844L";
-		String entityLink = "empWfRequestNav";
-		String queryString = null;
+		String entityLink = null;
+		String queryString = "$filter=createdBy%20eq%20%27"+userId+"%27";
 		try {
 			ODataBean bean = odataUtils.getInitializeBean(request);
 			authType = bean.getAuthorizationType();
@@ -57,32 +123,81 @@ public class WorkflowController {
 			serviceUrl = bean.getUrl();
 
 			Edm edm = odataUtils.readEdmAndNotValidate(serviceUrl + "/" + entitySetName + "/$metadata", authType, auth);
-			ODataEntry entryExpanded = odataUtils.readEntry(edm, serviceUrl, ODataConstants.APPLICATION_ATOM_XML,
-					entitySetName, entityId, entityLink, queryString);
-			Set<Entry<String, Object>> entries = entryExpanded.getProperties().entrySet();
-			ODataDeltaFeed feed = null;
-			for (Entry<String, Object> entry : entries) {
-				Object value = entry.getValue();
-				if (value instanceof ODataDeltaFeed) {
-					feed = (ODataDeltaFeed) value;
-				}
-			}
-			List<ODataEntry> dataEntryList = feed.getEntries();
-			JSONObject userJsonObj = new JSONObject();
+
+			ODataFeed dataFeed = odataUtils.readFeed(edm, serviceUrl, ODataConstants.APPLICATION_ATOM_XML,
+					entitySetName, entityLink, queryString);
+
+			List<ODataEntry> dataEntryList = dataFeed.getEntries();
+			JSONObject workflowJsonObj = new JSONObject();
 			JSONArray jsonArr = new JSONArray();
 			for (int i = 0; i < dataEntryList.size(); i++) {
 				dataEntry = dataEntryList.get(i);
 				Map<String, Object> propMap = dataEntry.getProperties();
 				JSONObject jsonobj = new JSONObject(propMap);
-				jsonArr.put(jsonobj);
+				
+				// request wfRequest
+				String wfRequestId = propMap.get("wfRequestId").toString();
+				JSONObject subJsonObj = getEmpWfEntry(wfRequestId, eventReason);
+				if(subJsonObj != null) {
+					jsonobj.append("wfRequest", subJsonObj);
+					jsonArr.put(jsonobj);
+				}
 			}
-			userJsonObj.put("dataObj", jsonArr);
-			return userJsonObj.toString();
+			workflowJsonObj.put("dataObj", jsonArr);
+			return workflowJsonObj.toString();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return "";
 		}
 	}
 
+	private JSONObject getEmpWfEntry(String wfRequestId, String eventReason) {
+		ODataBean bean;
+		try {
+			bean = odataUtils.getInitializeBean(request);
+			String authType = bean.getAuthorizationType();
+			String auth = bean.getAuthorization();
+			String serviceUrl = bean.getUrl();
+			String entitySetName = "EmpWfRequest";
+			String queryString = "$filter=eventReason%20eq%20%27"+eventReason
+					+"%27%20and%20"+"wfRequestId%20eq%20"+wfRequestId
+					+"&$format=json";
+			String authorizationHeader = authType + " ";
+			authorizationHeader += new String(Base64.encodeBase64((auth).getBytes()));
+			
+			StringBuilder result = new StringBuilder();
+			String absolutUri = odataUtils.createUri(serviceUrl, entitySetName, null, null, queryString);
+			URL url = new URL(absolutUri);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Authorization", authorizationHeader);
+			
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String line;
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			
+			conn.disconnect();
+			
+			rd.close();
+			
+			JSONObject jsonObj = new JSONObject(result.toString());
+			JSONObject results = jsonObj.getJSONObject("d");
+			JSONArray array = results.getJSONArray("results");
+			if(array.length() != 0){
+				JSONObject tmp = array.getJSONObject(0);
+				JSONObject obj = new JSONObject();
+				obj.put("empWf", tmp);
+				return obj;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
 	
 }

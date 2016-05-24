@@ -65,6 +65,7 @@ public class FormService {
 				} /*else if(key.equals("xxx")) {
 					form.setRouteMapId(propMap.get(key));
 				}*/
+				form.setRouteMapId(Integer.parseInt("0"));
 			}
 			return form;
 		} catch (Exception e) {

@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "T_FORM")
+@Table(name = "FORM")
 public class Form implements Serializable {
 
 	/**

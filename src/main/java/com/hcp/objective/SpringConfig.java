@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -18,12 +17,13 @@ public class SpringConfig extends AbstractAnnotationConfigDispatcherServletIniti
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class[] { SpringAppConfig.class };
+		return new Class[] { SpringAppConfig.class,SpringWebConfig.class};
 	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class[] { SpringWebConfig.class };
+		//return new Class[] { SpringAppConfig.class };
+		return null;
 	}
 
 	@Override

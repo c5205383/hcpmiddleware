@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-	<!--persistence-unit name="HcpDefaultPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<!--persistence-unit name="HcpDefaultPersistenceUnit" transaction-type="RESOURCE_LOCAL"> 
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> <class>com.hcp.objective.jpa.bean.Person</class> 
+		<properties> <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/> 
+		<property name="eclipselink.ddl-generation.output-mode" value="database"/> 
+		</properties> </persistence-unit -->
+	<persistence-unit name="HcpDefaultPersistenceUnit">
+		<description>JPA-HANA</description>
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<class>com.hcp.objective.jpa.bean.Person</class>
+		<class>com.hcp.objective.jpa.bean.Form</class>
 		<properties>
-			<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+			<property name="eclipselink.ddl-generation" value="create-tables" />
+			<property name="eclipselink.ddl-generation.output-mode" value="both" />
 		</properties>
-	</persistence-unit-->
-	<persistence-unit name="HcpDefaultPersistenceUnit">
-	  <description>JPA-HANA</description>
-	  <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-	  <class>com.hcp.objective.jpa.bean.Person</class>
-	  <properties>
-		<property name="eclipselink.ddl-generation" value="create-tables" />
-		<property name="eclipselink.ddl-generation.output-mode" value="both" />
-    </properties>
-
-</persistence-unit> 
+	</persistence-unit>
 </persistence>

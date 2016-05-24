@@ -118,55 +118,30 @@ public class GoalController {
 		}		
 	}
 	
-	/*@RequestMapping(value = "/createGoal")
+	/* Create use olingo failed
+	 * @RequestMapping(value = "/createGoal")
 	public @ResponseBody String createGoal() {
-		
 		try{
 			ODataBean bean = odataExecutor.getInitializeBean(request);
 			String authType = bean.getAuthorizationType();
 			String auth = bean.getAuthorization();
 			String serviceUrl = bean.getUrl();
-			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl+"/User/$metadata", authType, auth);
+			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl+"/Goal_5/$metadata", authType, auth);
 			
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("username", "eclark100");
-			data.put("hireDate", new Date());
-			data.put("gender", "M");
-			data.put("status", "active");
-			data.put("userId", "eclark100");
-			data.put("firstName", "eclark100");
-			data.put("lastName", "eclark100");
-			data.put("email", "yongkang.ren@sap.com");
-			data.put("department", "test");
-			data.put("timeZone", "PST");
-			
-			Map<String, Map<String, Object>> map = new HashMap<String, Map<String, Object>>();
-			Map<String, Object> subMap = new HashMap<String, Object>();
-			subMap.put("userId", new String("eclark1"));
-			
-			map.put("manager", subMap);
-			map.put("hr", subMap);
-			
-			List<String> selectProperties = new ArrayList<String>();
-			selectProperties.add("username");
-			selectProperties.add("hireDate");
-			selectProperties.add("gender");
-			selectProperties.add("status");
-			selectProperties.add("userId");
-			selectProperties.add("firstName");
-			selectProperties.add("lastName");
-			selectProperties.add("email");
-			selectProperties.add("department");
-			selectProperties.add("department");
-			selectProperties.add("timeZone");
-			
-			List<String> selectLinks = new ArrayList<String>();
-			selectLinks.add("manager");
-			selectLinks.add("hr");
-
+			data.put("name", "goal103");
+			data.put("userId", "admin");
+			data.put("type", "user");
+			data.put("flag", 0);
+			data.put("start", new Date());
+			data.put("due", new Date());
+			data.put("category", "Financial");
+			//data.put("planId", null);
+			data.put("id", -1L);
+			//data.put("__deferred",null);
+			//UriInfo uriInfo = new UriInfoImpl();
 			ODataEntry createdEntry = odataExecutor.createEntry(edm, serviceUrl,
-					edm.getEntitySets().get(0).getName(), data, selectProperties, map, selectLinks,
-					ODataConstants.APPLICATION_JSON, authType, auth);
+					"application/json",edm.getEntitySets().get(0).getName(), data, authType, auth);
 			
 			logger.info("============="+createdEntry.getMetadata().toString());
 		}catch(Exception e){

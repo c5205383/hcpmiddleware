@@ -2,6 +2,8 @@ package com.hcp.objective.web.olingo;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -118,9 +120,10 @@ public class GoalController {
 		}		
 	}
 	
-	/* Create use olingo failed
-	 * @RequestMapping(value = "/createGoal")
+	// Create use olingo failed
+	@RequestMapping(value = "/createGoal")
 	public @ResponseBody String createGoal() {
+		long requestStartTime = System.currentTimeMillis();
 		try{
 			ODataBean bean = odataExecutor.getInitializeBean(request);
 			String authType = bean.getAuthorizationType();
@@ -129,26 +132,24 @@ public class GoalController {
 			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl+"/Goal_5/$metadata", authType, auth);
 			
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("name", "goal103");
+			data.put("name", "goal10999");
 			data.put("userId", "admin");
 			data.put("type", "user");
 			data.put("flag", 0);
 			data.put("start", new Date());
 			data.put("due", new Date());
 			data.put("category", "Financial");
-			//data.put("planId", null);
-			data.put("id", -1L);
-			//data.put("__deferred",null);
-			//UriInfo uriInfo = new UriInfoImpl();
+			data.put("id", 4269L);
 			ODataEntry createdEntry = odataExecutor.createEntry(edm, serviceUrl,
 					"application/json",edm.getEntitySets().get(0).getName(), data, authType, auth);
-			
+		    long requestEndTime = System.currentTimeMillis();
+			    logger.error("=========olingo=========="+(requestEndTime-requestStartTime)/1000);
 			logger.info("============="+createdEntry.getMetadata().toString());
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
 		}
 		
 		return null;
-	}*/
+	}
 
 }

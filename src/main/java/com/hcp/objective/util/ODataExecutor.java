@@ -1,12 +1,18 @@
 package com.hcp.objective.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
@@ -17,11 +23,17 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,7 +272,7 @@ public class ODataExecutor {
 		this.odataBean = odataBean;
 	}
 	
-	/*public ODataEntry createEntry(Edm edm, String serviceUri, String contentType, String entitySetName,
+	public ODataEntry createEntry(Edm edm, String serviceUri, String contentType, String entitySetName,
 			Map<String, Object> data, String authorizationType, String authorization) throws Exception {
 		String absolutUri = createUri(serviceUri, entitySetName, null);
 		return writeEntity(edm, absolutUri, entitySetName, data, contentType, ODataConstants.HTTP_METHOD_POST, 
@@ -282,22 +294,13 @@ public class ODataExecutor {
 		connection.setRequestProperty("Connection", "Keep-Alive");
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		EdmEntitySet entitySet = entityContainer.getEntitySet(entitySetName);
-		//EntityProviderReadProperties properties = EntityProviderReadProperties.init().mergeSemantic(false).build();
-		//ODataEntry entry = EntityProvider.readEntry(requestContentType, uriInfo.getStartEntitySet(), content, properties);
-		
-		//URI rootUri = new URI(entitySetName);
-		//UriInfo uriInfo = new UriInfoImpl();
-		URI rootUri = new URI("http://localhost:8181/odata/v2");
-       data.put("key", "id");
-       //Map<String, Map<String, Object>> linkdata = new HashMap();
-       //linkdata.put("d", null);
-		EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(rootUri).includeSimplePropertyType(true).contentOnly(true).omitJsonWrapper(true).omitETag(false).build();
-        List<Map<String, Object>> dataList =  new ArrayList();
-         dataList.add(data);
+		URI rootUri = new URI(absolutUri);
+       ExpandSelectTreeNode node = ExpandSelectTreeNode.entitySet(entitySet)
+    		    .selectedProperties(new ArrayList<String>(data.keySet())).build();
+       
+		EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(rootUri).omitJsonWrapper(true).contentOnly(true)
+	            .expandSelectTree(node).build();
 		ODataResponse response = EntityProvider.writeEntry(contentType, entitySet, data, properties);
-		//ODataResponse response = EntityProvider.writeFeed(contentType, entitySet, dataList, properties);
-		// get (http) entity which is for default Olingo implementation an
-		// InputStream
 		Object entity = response.getEntity();
 		if (entity instanceof InputStream) {
 			byte[] buffer = streamToArray((InputStream) entity);
@@ -345,6 +348,6 @@ public class ODataExecutor {
 			readCount = stream.read(tmp);
 		}
 		return result;
-	}*/
+	}
 
 }

@@ -132,16 +132,48 @@ public class GoalController {
 			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl+"/Goal_5/$metadata", authType, auth);
 			
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("name", "goal10999");
+			data.put("name", "goal104444");
 			data.put("userId", "admin");
 			data.put("type", "user");
 			data.put("flag", 0);
 			data.put("start", new Date());
 			data.put("due", new Date());
 			data.put("category", "Financial");
+			ODataEntry createdEntry = odataExecutor.upsertEntry(edm, serviceUrl,
+					"application/json",edm.getEntitySets().get(0).getName(), data, authType, auth,"id");
+		    long requestEndTime = System.currentTimeMillis();
+			    logger.error("=========olingo=========="+(requestEndTime-requestStartTime)/1000);
+			logger.info("============="+createdEntry.getMetadata().toString());
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
+		
+		return null;
+	}
+	
+	// Create use olingo failed
+	@RequestMapping(value = "/updateGoal")
+	public @ResponseBody String updateGoal() {
+		long requestStartTime = System.currentTimeMillis();
+		try{
+			ODataBean bean = odataExecutor.getInitializeBean(request);
+			String authType = bean.getAuthorizationType();
+			String auth = bean.getAuthorization();
+			String serviceUrl = bean.getUrl();
+			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl+"/Goal_5/$metadata", authType, auth);
+			
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("name", "goal10777999");
+			data.put("userId", "admin");
+			data.put("type", "user");
+			data.put("flag", 0);
+			data.put("start", new Date());
+			data.put("due", new Date());
+			//data.put("weight", 0.5);
+			data.put("category", "Financial");
 			data.put("id", 4269L);
-			ODataEntry createdEntry = odataExecutor.createEntry(edm, serviceUrl,
-					"application/json",edm.getEntitySets().get(0).getName(), data, authType, auth);
+			ODataEntry createdEntry = odataExecutor.upsertEntry(edm, serviceUrl,
+					"application/json",edm.getEntitySets().get(0).getName(), data, authType, auth,"id");
 		    long requestEndTime = System.currentTimeMillis();
 			    logger.error("=========olingo=========="+(requestEndTime-requestStartTime)/1000);
 			logger.info("============="+createdEntry.getMetadata().toString());

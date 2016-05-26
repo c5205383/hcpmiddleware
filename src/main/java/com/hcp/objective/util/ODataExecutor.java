@@ -1,6 +1,5 @@
 package com.hcp.objective.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -11,7 +10,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -272,11 +270,22 @@ public class ODataExecutor {
 		this.odataBean = odataBean;
 	}
 	
-	public ODataEntry createEntry(Edm edm, String serviceUri, String contentType, String entitySetName,
-			Map<String, Object> data, String authorizationType, String authorization) throws Exception {
-		String absolutUri = createUri(serviceUri, entitySetName, null);
-		return writeEntity(edm, absolutUri, entitySetName, data, contentType, ODataConstants.HTTP_METHOD_POST, 
-				authorizationType,authorization);
+	public ODataEntry upsertEntry(Edm edm, String serviceUri, String contentType, String entitySetName,
+			Map<String, Object> data, String authorizationType, String authorization,String key) throws Exception {
+		Long keyVal = 0L;
+		if(data.get(key)!=null ){
+			keyVal = Long.parseLong(data.get(key).toString());
+		}
+		if(keyVal>0L){
+			String absolutUri = createUri(serviceUri, entitySetName,keyVal.toString());
+			return writeEntity(edm, absolutUri, entitySetName, data, contentType, ODataConstants.HTTP_METHOD_PUT, 
+					authorizationType,authorization);
+		}else{
+			String absolutUri = createUri(serviceUri, entitySetName, null);
+			return writeEntity(edm, absolutUri, entitySetName, data, contentType, ODataConstants.HTTP_METHOD_POST, 
+					authorizationType,authorization);
+		}
+		
 	}
 
 	private ODataEntry writeEntity(Edm edm, String absolutUri, String entitySetName, Map<String, Object> data,
@@ -289,7 +298,6 @@ public class ODataExecutor {
 		connection.setDoInput(true);
 		connection.setRequestProperty(ODataConstants.HTTP_HEADER_ACCEPT, contentType);
 		connection.setRequestProperty(ODataConstants.HTTP_HEADER_CONTENT_TYPE, contentType);
-		connection.setRequestMethod("POST");
 		connection.setUseCaches(false);
 		connection.setRequestProperty("Connection", "Keep-Alive");
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
@@ -305,7 +313,7 @@ public class ODataExecutor {
 		if (entity instanceof InputStream) {
 			byte[] buffer = streamToArray((InputStream) entity);
 			// just for logging
-			String content = new String(buffer);
+			//String content = new String(buffer);
 			connection.getOutputStream().write(buffer);
 		}
 
@@ -315,25 +323,13 @@ public class ODataExecutor {
 		HttpStatusCodes statusCode = HttpStatusCodes.fromStatusCode(connection.getResponseCode());
 		if (statusCode == HttpStatusCodes.CREATED) {
 			InputStream content = connection.getInputStream();
-			content = logRawContent(httpMethod + " response:\n  ", content, "\n");
+			
 			entry = EntityProvider.readEntry(contentType, entitySet, content,
 					EntityProviderReadProperties.init().build());
 		}
 		connection.disconnect();
 
 		return entry;
-	}
-
-	private InputStream logRawContent(String prefix, InputStream content, String postfix) throws IOException {
-		if (true) {
-			byte[] buffer = streamToArray(content);
-			content.close();
-
-			// print(prefix + new String(buffer) + postfix);
-
-			return new ByteArrayInputStream(buffer);
-		}
-		return content;
 	}
 
 	private byte[] streamToArray(InputStream stream) throws IOException {

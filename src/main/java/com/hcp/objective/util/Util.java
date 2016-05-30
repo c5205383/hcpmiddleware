@@ -1,55 +1,57 @@
 package com.hcp.objective.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Util {
-	/*public static String getStringValue(OEntity e, String propertyName) {
-		String s;
-		String tmp = e.getProperty(propertyName, String.class).getValue();
-		if (tmp != null) {
-			s = tmp;
-		} else {
-			s = "";
-		}
-		return s;
+	/**
+	 * 取得当前时间戳（精确到秒）
+	 * 
+	 * @return
+	 */
+	public static String timeStamp() {
+		long time = System.currentTimeMillis();
+		String t = String.valueOf(time / 1000);
+		return t;
 	}
 
-	public static int getIntValue(OEntity e, String propertyName) {
-		int i;
-		Integer tmp = (Integer) e.getProperty(propertyName, Integer.class).getValue();
-		if (tmp != null) {
-			i = tmp;
-		} else {
-			i = 0;
+	/**
+	 * 时间戳转换成日期格式字符串
+	 * 
+	 * @param seconds
+	 *            精确到秒的字符串
+	 * @param formatStr
+	 * @return
+	 */
+	public static String timeStamp2Date(String seconds, String format) {
+		if (seconds == null || seconds.isEmpty() || seconds.equals("null")) {
+			return "";
 		}
-		return i;
+		if (format == null || format.isEmpty())
+			format = "yyyy-MM-dd HH:mm:ss";
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.format(new Date(Long.valueOf(seconds + "000")));
 	}
 
-	public static String getDateValue(OEntity e, String propertyName) {
-		//String date;
-		Object obj=e.getProperty(propertyName).getValue();
-		String tmp = obj==null?"":obj.toString();
-		return tmp;
-	}
+	/**
+	 * 日期格式字符串转换成时间戳 Convert date string to time stamp
+	 * 
+	 * @param date
+	 *            字符串日期
+	 * @param format
+	 *            如：yyyy-MM-dd HH:mm:ss
+	 * @return
+	 */
+	public static String date2TimeStamp(String date_str, String format) {
 
-	public static long getLongValue(OEntity e, String propertyName) {
-		long l;
-		Long tmp=(Long)e.getProperty(propertyName, Long.class).getValue();
-		if (tmp != null) {
-			l = tmp;
-		} else {
-			l = 0;
+		try {
+			if (format == null || format.isEmpty())
+				format = "yyyy-MM-dd";
+			SimpleDateFormat sdf = new SimpleDateFormat(format);
+			return String.valueOf(sdf.parse(date_str).getTime() / 1000) + "000";
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return l;
+		return "";
 	}
-
-	public static double getDoubleValue(OEntity e, String propertyName) {
-		double d;
-		Double tmp=(Double)e.getProperty(propertyName, Double.class).getValue();
-		if (tmp != null) {
-			d = tmp;
-		} else {
-			d = 0;
-		}
-		return d;
-	}*/
 }

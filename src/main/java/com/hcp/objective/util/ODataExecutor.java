@@ -3,6 +3,7 @@ package com.hcp.objective.util;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -18,7 +19,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
@@ -71,6 +72,7 @@ public class ODataExecutor {
 		return odataBean;
 	}
 
+	@SuppressWarnings("unused")
 	private User getLoginUser(){
 		InitialContext ctx;
 		try {
@@ -348,4 +350,107 @@ public class ODataExecutor {
 		}
 		return result;
 	}
+	
+	/**************************************************************************************************/
+	// Add by Bruce 2016-05-26
+	public String readData(HttpServletRequest request, String entityName, String key, String query, String requestMethod) {
+		String result = null;
+		try {
+			if (odataBean == null)
+				this.getInitializeBean(request);
+			String charset = odataBean.getCharset();
+			String authorizationType = odataBean.getAuthorizationType();
+			String authorization = odataBean.getAuthorization();
+			// String contentType = odataBean.getContentType();
+
+			String absolutUri = createAbsolutUri(entityName, key, query);
+			HttpURLConnection conn = initializeConnection(absolutUri, requestMethod, authorizationType, authorization, null);
+
+			InputStream in = conn.getInputStream();
+			String encoding = conn.getContentEncoding();
+			encoding = encoding == null ? charset : encoding;
+			result = IOUtils.toString(in, encoding);
+			logger.info(result);
+			conn.disconnect();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public String postData(HttpServletRequest request, String entityName, String postData, String query, String requestMethod) {
+
+		String result = null;
+		try {
+			if (odataBean == null)
+				this.getInitializeBean(request);
+			String charset = odataBean.getCharset();
+			String authorizationType = odataBean.getAuthorizationType();
+			String authorization = odataBean.getAuthorization();
+			String contentType = odataBean.getContentType();
+
+			String absolutUri = createAbsolutUri(entityName, null, query);
+			HttpURLConnection conn = initializeConnection(absolutUri, requestMethod, authorizationType, authorization, contentType);
+
+			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+			writer.write(postData);
+			writer.flush();
+			writer.close();
+
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+			}
+			InputStream in = conn.getInputStream();
+			String encoding = conn.getContentEncoding();
+			encoding = encoding == null ? charset : encoding;
+			result = IOUtils.toString(in, encoding);
+			logger.info(result);
+			conn.disconnect();
+			// rd.close();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private String createAbsolutUri(String entityName, String key, String query) {
+		String serviceUri = odataBean.getUrl();
+		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR).append(entityName);
+		if (key != null) {
+			absolutUri.append("(").append(key).append(")");
+
+		} else if (query != null) {
+			absolutUri.append("?").append(query);
+		}
+		return absolutUri.toString();
+	}
+
+	private HttpURLConnection initializeConnection(String absolutUri, String httpMethod, String authorizationType, String authorization, String contentType)
+			throws MalformedURLException, IOException {
+		HttpURLConnection connection = null;
+
+		if (odataBean.isProxy()) {
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(odataBean.getProxyName(), odataBean.getProxyPort()));
+			connection = (HttpURLConnection) new URL(absolutUri).openConnection(proxy);
+		} else {
+			connection = (HttpURLConnection) new URL(absolutUri).openConnection();
+		}
+
+		String authorizationHeader = authorizationType + " ";
+		authorizationHeader += new String(Base64.encodeBase64((authorization).getBytes()));
+
+		connection.setRequestProperty("Authorization", authorizationHeader);
+		if (contentType != null)
+			connection.setRequestProperty("content-type", "application/json");
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setRequestMethod(httpMethod);
+
+		return connection;
+	}
+	
 }

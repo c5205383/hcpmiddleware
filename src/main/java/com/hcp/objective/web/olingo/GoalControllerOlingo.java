@@ -25,15 +25,15 @@ import com.hcp.objective.util.ODataConstants;
 import com.hcp.objective.util.ODataExecutor;
 
 @RestController
-public class GoalController {
-	public static final Logger logger = LoggerFactory.getLogger(GoalController.class);
+public class GoalControllerOlingo {
+	public static final Logger logger = LoggerFactory.getLogger(GoalControllerOlingo.class);
 	@Autowired
 	public ODataExecutor odataExecutor;
 	
 	@Autowired  
 	private  HttpServletRequest request;
 	
-	@RequestMapping(value = "/getGoalPlanTemplate")
+	@RequestMapping(value = "/getGoalPlanTemplate1")
 	public @ResponseBody String getGoalPlanTemplate() {
 		long requestStartTime = System.currentTimeMillis();
 		SimpleDateFormat sdf = new SimpleDateFormat(ODataConstants.DATE_FROMAT);
@@ -75,7 +75,7 @@ public class GoalController {
 		}
 	}
 	
-	@RequestMapping(value = "/getGoalsByTemplateId")
+	@RequestMapping(value = "/getGoalsByTemplateId1")
 	public @ResponseBody String getGoalsByTemplate(String templateId) {
 		SimpleDateFormat sdf = new SimpleDateFormat(ODataConstants.DATE_FROMAT);
 		ODataEntry dataEntry = null;

@@ -33,7 +33,7 @@ public class FOEventReasonController {
 	@Autowired
 	private HttpServletRequest request;
 
-	@RequestMapping(value = "/getFOEventReason")
+	@RequestMapping(value = "/getFOEventReason1")
 	public @ResponseBody String getFOEventReason() {
 		long requestStartTime = System.currentTimeMillis();
 		SimpleDateFormat sdf = new SimpleDateFormat(ODataConstants.DATE_FROMAT);

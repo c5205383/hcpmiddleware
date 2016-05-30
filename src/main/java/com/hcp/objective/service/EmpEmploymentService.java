@@ -18,11 +18,10 @@ import org.slf4j.LoggerFactory;
 import com.hcp.objective.bean.ODataBean;
 import com.hcp.objective.util.ODataConstants;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
-import com.hcp.objective.web.olingo.GoalController;
 import com.sun.istack.NotNull;
 
 public class EmpEmploymentService {
-	public static final Logger logger = LoggerFactory.getLogger(GoalController.class);
+	public static final Logger logger = LoggerFactory.getLogger(EmpEmploymentService.class);
 	
 	private String authType;
 	private String auth;

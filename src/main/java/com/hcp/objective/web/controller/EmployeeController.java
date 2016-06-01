@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.util.ODataConstants;
 import com.hcp.objective.util.ODataExecutor;
+import com.hcp.objective.util.Util;
 
 @RestController
 public class EmployeeController {
@@ -36,8 +37,9 @@ public class EmployeeController {
 				return result;
 
 			JSONObject resultObj = new JSONObject(result);
-			JSONObject root = (JSONObject) resultObj.get("d");
-			JSONObject directReports = (JSONObject) root.get("directReports");
+			JSONObject directReports = Util.findObject(resultObj, "directReports");
+			// JSONObject root = (JSONObject) resultObj.get("d");
+			// JSONObject directReports = (JSONObject) root.get("directReports");
 			result = directReports.toString();
 
 			long requestEndTime = System.currentTimeMillis();

@@ -2,6 +2,10 @@ package com.hcp.objective.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Util {
 	/**
@@ -53,5 +57,43 @@ public class Util {
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	/**
+	 * 
+	 * @param obj
+	 * @param key
+	 * @return
+	 */
+	public static JSONObject findObject(JSONObject obj, String key) {
+		@SuppressWarnings("rawtypes")
+		Iterator it = obj.keys();
+		JSONObject result = null;
+		while (it.hasNext()) {
+			String property = (String) it.next();
+			Object subObj = obj.get(property);
+
+			if (subObj instanceof JSONObject) {
+				if (property.equals(key)) {
+					result = (JSONObject) subObj;
+					break;
+				} else {
+					result = findObject((JSONObject) subObj, key);
+				}
+			} else if (subObj instanceof JSONArray) {
+				JSONArray array = (JSONArray) subObj;
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject tmpObj = array.getJSONObject(i);
+					JSONObject tmpResult = findObject(tmpObj, key);
+					if (tmpResult != null) {
+						result = tmpResult;
+						break;
+					}
+				}
+			}
+			if (result != null)
+				break;
+		}
+		return result;
 	}
 }

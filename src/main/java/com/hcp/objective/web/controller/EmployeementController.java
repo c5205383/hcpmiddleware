@@ -1,6 +1,5 @@
 package com.hcp.objective.web.controller;
 
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -84,39 +83,6 @@ public class EmployeementController {
 			logger.error(e.getMessage(), e);
 			return "";
 		}
-	}
-
-	@SuppressWarnings("unused")
-	private JSONObject findObject(JSONObject obj, String key) {
-		@SuppressWarnings("rawtypes")
-		Iterator it = obj.keys();
-		JSONObject result = null;
-		while (it.hasNext()) {
-			String property = (String) it.next();
-			Object subObj = obj.get(property);
-
-			if (subObj instanceof JSONObject) {
-				if (property.equals(key)) {
-					result = (JSONObject) subObj;
-					break;
-				} else {
-					result = findObject((JSONObject) subObj, key);
-				}
-			} else if (subObj instanceof JSONArray) {
-				JSONArray array = (JSONArray) subObj;
-				for (int i = 0; i < array.length(); i++) {
-					JSONObject tmpObj = array.getJSONObject(i);
-					JSONObject tmpResult = findObject(tmpObj, key);
-					if (tmpResult != null) {
-						result = tmpResult;
-						break;
-					}
-				}
-			}
-			if (result != null)
-				break;
-		}
-		return result;
 	}
 
 	@RequestMapping(value = "/transferEmployee", method = RequestMethod.POST)

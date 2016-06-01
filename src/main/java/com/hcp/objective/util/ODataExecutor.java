@@ -409,8 +409,8 @@ public class ODataExecutor {
 		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR).append(entityName);
 		if (key != null) {
 			absolutUri.append("(").append(key).append(")");
-
-		} else if (query != null) {
+		}
+		if (query != null) {
 			absolutUri.append("?").append(query);
 		}
 		return absolutUri.toString();

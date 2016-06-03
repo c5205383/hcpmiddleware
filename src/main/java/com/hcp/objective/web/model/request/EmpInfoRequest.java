@@ -28,6 +28,13 @@ public class EmpInfoRequest implements Serializable {
 	private String firstName;
 	private String lastName;
 	
+	
+	//Added by Bruce 2016-5-30
+	private String transferCity;
+	private String transferLocation;
+	private String effectiveDate;
+	private String transferCompany;
+	
 	public EmpInfoRequest(){
 		
 	}
@@ -146,6 +153,38 @@ public class EmpInfoRequest implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getTransferCity() {
+		return transferCity;
+	}
+
+	public void setTransferCity(String transferCity) {
+		this.transferCity = transferCity;
+	}
+
+	public String getTransferLocation() {
+		return transferLocation;
+	}
+
+	public void setTransferLocation(String transferLocation) {
+		this.transferLocation = transferLocation;
+	}
+
+	public String getEffectiveDate() {
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(String effectiveDate) {
+		this.effectiveDate = effectiveDate;
+	}
+
+	public String getTransferCompany() {
+		return transferCompany;
+	}
+
+	public void setTransferCompany(String transferCompany) {
+		this.transferCompany = transferCompany;
 	}
 	
 }

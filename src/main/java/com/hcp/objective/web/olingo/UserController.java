@@ -65,6 +65,30 @@ public class UserController {
 		}
 	}
 	
+	@RequestMapping(value = "/getUserById")
+	public @ResponseBody String getUserById(String userId){
+		String authType = null;
+		String auth = null;
+		String serviceUrl = null;
+		ODataEntry dataEntry = null;
+		try{
+			ODataBean bean = odataUtils.getInitializeBean(request);
+		    authType = bean.getAuthorizationType();
+			auth = bean.getAuthorization();
+			serviceUrl = bean.getUrl();
+			Edm edm = odataUtils.readEdmAndNotValidate(serviceUrl+"/User/$metadata", authType, auth);
+			dataEntry = odataUtils.readEntry(edm, serviceUrl, "application/xml+atom", "User", "'"+userId+"'", null, null);
+			Map<String,Object> propMap = dataEntry.getProperties();
+			JSONObject userJsonObj = new JSONObject();
+			userJsonObj.put("dataObj", propMap);
+			
+			return userJsonObj.toString();
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+			return "";
+		}
+	}
+	
 	@RequestMapping(value = "/getUserDirectReports")
 	public @ResponseBody String getUserDirectReports(){ 
 		String authType = null;

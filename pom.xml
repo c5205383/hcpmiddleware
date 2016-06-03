@@ -13,6 +13,7 @@
 		<org.springframework.version>4.2.4.RELEASE</org.springframework.version>
 		<org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
 		<org.springframework.data.version>1.9.2.RELEASE</org.springframework.data.version>
+		<org.hibernate.version>5.2.4.Final</org.hibernate.version>
 		<!--com.fasterxml.jackson.version>2.6.5</com.fasterxml.jackson.version-->
 		<org.eclipse.persistence.jpa.version>2.6.2</org.eclipse.persistence.jpa.version>
 		<version.olingo>4.2.0</version.olingo>
@@ -59,6 +60,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${org.springframework.version}</version>
+		</dependency>
+		<!-- Data Validations -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${org.hibernate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
@@ -137,6 +144,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency-->
+		
+		<!-- Enhancement for JDK -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>

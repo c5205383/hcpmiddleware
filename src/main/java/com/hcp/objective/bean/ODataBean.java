@@ -8,6 +8,11 @@ public class ODataBean {
 	private int proxyPort;
 	private String queryUser;
 	private String queryPwd;
+	
+	//Added by Bruce 2016-5-30
+	private String contentType;
+	private boolean isProxy;
+	private String charset;
 
 	
 	public String getUrl() {
@@ -55,6 +60,24 @@ public class ODataBean {
 	
 	public void setQueryPwd(String queryPwd) {
 		this.queryPwd = queryPwd;
+	}
+	public String getContentType() {
+		return contentType;
+	}
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	public boolean isProxy() {
+		return isProxy;
+	}
+	public void setProxy(boolean isProxy) {
+		this.isProxy = isProxy;
+	}
+	public String getCharset() {
+		return charset;
+	}
+	public void setCharset(String charset) {
+		this.charset = charset;
 	}
 
 }

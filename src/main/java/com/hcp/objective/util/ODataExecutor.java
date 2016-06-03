@@ -1,7 +1,9 @@
 package com.hcp.objective.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -9,7 +11,6 @@ import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
@@ -18,6 +19,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
@@ -31,7 +33,6 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,14 +51,14 @@ public class ODataExecutor {
 	public Environment env;
 	private ODataBean odataBean = null;
 
-	@Autowired  
-	private  HttpServletRequest request;
-	
+	@Autowired
+	private HttpServletRequest request;
+
 	public ODataBean getInitializeBean(HttpServletRequest request) throws Exception {
 		odataBean = new ODataBean();
 		String sfUserName = null;
 		String sfPassword = null;
-			
+
 		sfUserName = env.getProperty("service.username.default");
 		sfPassword = env.getProperty("service.password.default");
 		odataBean.setAuthorization(sfUserName + ":" + sfPassword);
@@ -67,38 +68,40 @@ public class ODataExecutor {
 		odataBean.setUrl(env.getProperty("service.url"));
 		odataBean.setQueryUser(sfUserName);
 		odataBean.setQueryPwd(sfPassword);
-		
+		// added by bruce
+		odataBean.setContentType(env.getProperty("service.contentType"));
+		odataBean.setProxy(Boolean.parseBoolean(env.getProperty("service.isProxy")));
+		odataBean.setCharset(env.getProperty("service.charset"));
+
 		return odataBean;
 	}
 
-	private User getLoginUser(){
+	@SuppressWarnings("unused")
+	private User getLoginUser() {
 		InitialContext ctx;
 		try {
-		    ctx = new InitialContext();
-		    UserProvider userProvider = (UserProvider) ctx.lookup("java:comp/env/user/Provider");
-		    User user = null;
-		    if (request.getUserPrincipal() != null) {
-		    	user = userProvider.getUser(request.getUserPrincipal().getName());
-		    }
-		    return user;
+			ctx = new InitialContext();
+			UserProvider userProvider = (UserProvider) ctx.lookup("java:comp/env/user/Provider");
+			User user = null;
+			if (request.getUserPrincipal() != null) {
+				user = userProvider.getUser(request.getUserPrincipal().getName());
+			}
+			return user;
 		} catch (NamingException | UMException e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 			return null;
 		}
 	}
-	
-	public Edm readEdmAndNotValidate(String serviceUri, String authorizationType, String authorizatoin)
-			throws IOException, ODataException {
-		InputStream content = execute(serviceUri, ODataConstants.APPLICATION_ATOM_XML, ODataConstants.HTTP_METHOD_GET,
-				authorizationType, authorizatoin);
+
+	public Edm readEdmAndNotValidate(String serviceUri, String authorizationType, String authorizatoin) throws IOException, ODataException {
+		InputStream content = execute(serviceUri, ODataConstants.APPLICATION_ATOM_XML, ODataConstants.HTTP_METHOD_GET, authorizationType, authorizatoin);
 		Edm edm = EntityProvider.readMetadata(content, false);
 		return edm;
 	}
 
 	/**
 	 * 
-	 * There is no filter and query string of this method. The query is like
-	 * https://.../odata/v2/User
+	 * There is no filter and query string of this method. The query is like https://.../odata/v2/User
 	 * 
 	 * @param edm
 	 *            metadata object
@@ -116,26 +119,23 @@ public class ODataExecutor {
 	 * @throws IOException
 	 * @throws ODataException
 	 */
-	public ODataFeed readFeed(Edm edm, String serviceUri, String contentType, String entitySetName, String expand,
-			String queryString) throws IOException, ODataException {
+	public ODataFeed readFeed(Edm edm, String serviceUri, String contentType, String entitySetName, String expand, String queryString)
+			throws IOException, ODataException {
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		String absolutUri = createUri(serviceUri, entitySetName, null, expand, queryString);
 		InputStream content = execute(absolutUri, contentType, ODataConstants.HTTP_METHOD_GET);
-		return EntityProvider.readFeed(contentType, entityContainer.getEntitySet(entitySetName), content,
-				EntityProviderReadProperties.init().build());
+		return EntityProvider.readFeed(contentType, entityContainer.getEntitySet(entitySetName), content, EntityProviderReadProperties.init().build());
 	}
 
-	public ODataFeed readFeed(Edm edm, String serviceUri, String contentType, String entitySetName, String id,
-			String expand, String queryString) throws IOException, ODataException {
+	public ODataFeed readFeed(Edm edm, String serviceUri, String contentType, String entitySetName, String id, String expand, String queryString)
+			throws IOException, ODataException {
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		String absolutUri = createUri(serviceUri, entitySetName, id, expand, queryString);
 		InputStream content = execute(absolutUri, contentType, ODataConstants.HTTP_METHOD_GET);
-		return EntityProvider.readFeed(contentType, entityContainer.getEntitySet(entitySetName), content,
-				EntityProviderReadProperties.init().build());
+		return EntityProvider.readFeed(contentType, entityContainer.getEntitySet(entitySetName), content, EntityProviderReadProperties.init().build());
 	}
 
-	public ODataEntry readEntry(Edm edm, String serviceUri, String contentType, String entitySetName, String keyValue)
-			throws IOException, ODataException {
+	public ODataEntry readEntry(Edm edm, String serviceUri, String contentType, String entitySetName, String keyValue) throws IOException, ODataException {
 		// working with the default entity container
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		// create absolute uri based on service uri, entity set name and key
@@ -144,12 +144,11 @@ public class ODataExecutor {
 
 		InputStream content = execute(absolutUri, contentType, ODataConstants.HTTP_METHOD_GET);
 
-		return EntityProvider.readEntry(contentType, entityContainer.getEntitySet(entitySetName), content,
-				EntityProviderReadProperties.init().build());
+		return EntityProvider.readEntry(contentType, entityContainer.getEntitySet(entitySetName), content, EntityProviderReadProperties.init().build());
 	}
 
-	public ODataEntry readEntry(Edm edm, String serviceUri, String contentType, String entitySetName, String keyValue,
-			String expandRelationName, String queryString) throws IOException, ODataException {
+	public ODataEntry readEntry(Edm edm, String serviceUri, String contentType, String entitySetName, String keyValue, String expandRelationName,
+			String queryString) throws IOException, ODataException {
 		// working with the default entity container
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		// create absolute uri based on service uri, entity set name with its
@@ -158,20 +157,16 @@ public class ODataExecutor {
 
 		InputStream content = execute(absolutUri, contentType, ODataConstants.HTTP_METHOD_GET);
 
-		return EntityProvider.readEntry(contentType, entityContainer.getEntitySet(entitySetName), content,
-				EntityProviderReadProperties.init().build());
+		return EntityProvider.readEntry(contentType, entityContainer.getEntitySet(entitySetName), content, EntityProviderReadProperties.init().build());
 	}
 
-	private InputStream execute(String relativeUri, String contentType, String httpMethod, String authorizationType,
-			String authorization) throws IOException {
+	private InputStream execute(String relativeUri, String contentType, String httpMethod, String authorizationType, String authorization) throws IOException {
 		Boolean isProxy = new Boolean(env.getProperty("service.isProxy"));
 		HttpURLConnection connection = null;
 		if (isProxy) {
-			connection = initializeConnectionWithProxy(relativeUri, contentType, httpMethod, authorizationType,
-					authorization);
+			connection = initializeConnectionWithProxy(relativeUri, contentType, httpMethod, authorizationType, authorization);
 		} else {
-			connection = initializeConnectionWithoutProxy(relativeUri, contentType, httpMethod, authorizationType,
-					authorization);
+			connection = initializeConnectionWithoutProxy(relativeUri, contentType, httpMethod, authorizationType, authorization);
 		}
 		connection.connect();
 		checkStatus(connection);
@@ -185,8 +180,8 @@ public class ODataExecutor {
 		return execute(relativeUri, contentType, httpMethod, authorizationType, authorization);
 	}
 
-	private HttpURLConnection initializeConnectionWithProxy(String absolutUri, String contentType, String httpMethod,
-			String authorizationType, String authorization) throws MalformedURLException, IOException {
+	private HttpURLConnection initializeConnectionWithProxy(String absolutUri, String contentType, String httpMethod, String authorizationType,
+			String authorization) throws MalformedURLException, IOException {
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.sha.sap.corp", 8080));
 		Properties systemProperties = System.getProperties();
 		systemProperties.setProperty("http.proxyHost", "proxy.sha.sap.corp");
@@ -202,8 +197,8 @@ public class ODataExecutor {
 		return connection;
 	}
 
-	public HttpURLConnection initializeConnectionWithoutProxy(String absolutUri, String contentType, String httpMethod,
-			String authorizationType, String authorization) throws MalformedURLException, IOException {
+	public HttpURLConnection initializeConnectionWithoutProxy(String absolutUri, String contentType, String httpMethod, String authorizationType,
+			String authorization) throws MalformedURLException, IOException {
 		String authorizationHeader = authorizationType + " ";
 		authorizationHeader += new String(Base64.encodeBase64((authorization).getBytes()));
 		HttpURLConnection connection = (HttpURLConnection) new URL(absolutUri).openConnection();
@@ -217,8 +212,7 @@ public class ODataExecutor {
 	private HttpStatusCodes checkStatus(HttpURLConnection connection) throws IOException {
 		HttpStatusCodes httpStatusCode = HttpStatusCodes.fromStatusCode(connection.getResponseCode());
 		if (400 <= httpStatusCode.getStatusCode() && httpStatusCode.getStatusCode() <= 599) {
-			throw new RuntimeException("Http Connection failed with status " + httpStatusCode.getStatusCode() + " "
-					+ httpStatusCode.toString());
+			throw new RuntimeException("Http Connection failed with status " + httpStatusCode.getStatusCode() + " " + httpStatusCode.toString());
 		}
 		return httpStatusCode;
 	}
@@ -228,8 +222,7 @@ public class ODataExecutor {
 	}
 
 	private String createUri(String serviceUri, String entitySetName, String id, String expand) {
-		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR)
-				.append(entitySetName);
+		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR).append(entitySetName);
 		if (id != null) {
 			absolutUri.append("(").append(id).append(")");
 			if (expand != null) {
@@ -245,21 +238,20 @@ public class ODataExecutor {
 	}
 
 	public String createUri(String serviceUri, String entitySetName, String id, String expand, String queryString) {
-		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR)
-				.append(entitySetName);
+		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR).append(entitySetName);
 		if (id != null) {
 			absolutUri.append("(").append(id).append(")");
-			
-		} 
-			if (expand != null && queryString != null) {
-				absolutUri.append("?$expand=").append(expand).append("&").append(queryString);
-			} else if (expand != null) {
-				absolutUri.append("?$expand=").append(expand);
-			} else if (queryString != null) {
-				absolutUri.append("?").append(queryString);
-			}
-			return absolutUri.toString();
-		
+
+		}
+		if (expand != null && queryString != null) {
+			absolutUri.append("?$expand=").append(expand).append("&").append(queryString);
+		} else if (expand != null) {
+			absolutUri.append("?$expand=").append(expand);
+		} else if (queryString != null) {
+			absolutUri.append("?").append(queryString);
+		}
+		return absolutUri.toString();
+
 	}
 
 	public ODataBean getOdataBean() {
@@ -269,51 +261,36 @@ public class ODataExecutor {
 	public void setOdataBean(ODataBean odataBean) {
 		this.odataBean = odataBean;
 	}
-	
-	public ODataEntry upsertEntry(Edm edm, String serviceUri, String contentType, String entitySetName,
-			Map<String, Object> data, String authorizationType, String authorization,String key) throws Exception {
-		Long keyVal = 0L;
-		if(data.get(key)!=null ){
-			keyVal = Long.parseLong(data.get(key).toString());
-		}
-		if(keyVal>0L){
-			String absolutUri = createUri(serviceUri, entitySetName,keyVal.toString());
-			return writeEntity(edm, absolutUri, entitySetName, data, contentType, ODataConstants.HTTP_METHOD_PUT, 
-					authorizationType,authorization);
-		}else{
-			String absolutUri = createUri(serviceUri, entitySetName, null);
-			return writeEntity(edm, absolutUri, entitySetName, data, contentType, ODataConstants.HTTP_METHOD_POST, 
-					authorizationType,authorization);
-		}
-		
+
+	public ODataEntry createEntry(Edm edm, String serviceUri, String contentType, String entitySetName, Map<String, Object> data, String authorizationType,
+			String authorization) throws Exception {
+		String absolutUri = createUri(serviceUri, entitySetName, null);
+		return writeEntity(edm, absolutUri, entitySetName, data, contentType, ODataConstants.HTTP_METHOD_POST, authorizationType, authorization);
 	}
 
-	private ODataEntry writeEntity(Edm edm, String absolutUri, String entitySetName, Map<String, Object> data,
-			String contentType, String httpMethod, String authorizationType, String authorization)
+	private ODataEntry writeEntity(Edm edm, String absolutUri, String entitySetName, Map<String, Object> data, String contentType, String httpMethod,
+			String authorizationType, String authorization)
 			throws EdmException, MalformedURLException, IOException, EntityProviderException, URISyntaxException {
 
-		HttpURLConnection connection = initializeConnectionWithoutProxy(absolutUri, contentType, httpMethod,
-				authorizationType, authorization);
+		HttpURLConnection connection = initializeConnectionWithoutProxy(absolutUri, contentType, httpMethod, authorizationType, authorization);
 		connection.setDoOutput(true);
-		connection.setDoInput(true);
 		connection.setRequestProperty(ODataConstants.HTTP_HEADER_ACCEPT, contentType);
 		connection.setRequestProperty(ODataConstants.HTTP_HEADER_CONTENT_TYPE, contentType);
-		connection.setUseCaches(false);
-		connection.setRequestProperty("Connection", "Keep-Alive");
+
 		EdmEntityContainer entityContainer = edm.getDefaultEntityContainer();
 		EdmEntitySet entitySet = entityContainer.getEntitySet(entitySetName);
-		URI rootUri = new URI(absolutUri);
-       ExpandSelectTreeNode node = ExpandSelectTreeNode.entitySet(entitySet)
-    		    .selectedProperties(new ArrayList<String>(data.keySet())).build();
-       
-		EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(rootUri).omitJsonWrapper(true).contentOnly(true)
-	            .expandSelectTree(node).build();
+		URI rootUri = new URI(entitySetName);
+
+		EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(rootUri).build();
+		// serialize data into ODataResponse object
 		ODataResponse response = EntityProvider.writeEntry(contentType, entitySet, data, properties);
+		// get (http) entity which is for default Olingo implementation an
+		// InputStream
 		Object entity = response.getEntity();
 		if (entity instanceof InputStream) {
 			byte[] buffer = streamToArray((InputStream) entity);
 			// just for logging
-			//String content = new String(buffer);
+			String content = new String(buffer);
 			connection.getOutputStream().write(buffer);
 		}
 
@@ -322,14 +299,29 @@ public class ODataExecutor {
 		ODataEntry entry = null;
 		HttpStatusCodes statusCode = HttpStatusCodes.fromStatusCode(connection.getResponseCode());
 		if (statusCode == HttpStatusCodes.CREATED) {
+			// get the content as InputStream and de-serialize it into an
+			// ODataEntry object
 			InputStream content = connection.getInputStream();
-			
-			entry = EntityProvider.readEntry(contentType, entitySet, content,
-					EntityProviderReadProperties.init().build());
+			content = logRawContent(httpMethod + " response:\n  ", content, "\n");
+			entry = EntityProvider.readEntry(contentType, entitySet, content, EntityProviderReadProperties.init().build());
 		}
+
+		//
 		connection.disconnect();
 
 		return entry;
+	}
+
+	private InputStream logRawContent(String prefix, InputStream content, String postfix) throws IOException {
+		if (true) {
+			byte[] buffer = streamToArray(content);
+			content.close();
+
+			// print(prefix + new String(buffer) + postfix);
+
+			return new ByteArrayInputStream(buffer);
+		}
+		return content;
 	}
 
 	private byte[] streamToArray(InputStream stream) throws IOException {
@@ -344,6 +336,108 @@ public class ODataExecutor {
 			readCount = stream.read(tmp);
 		}
 		return result;
+	}
+
+	/**************************************************************************************************/
+	// Add by Bruce 2016-05-26
+	public String readData(HttpServletRequest request, String entityName, String key, String query, String requestMethod) {
+		String result = null;
+		try {
+			if (odataBean == null)
+				this.getInitializeBean(request);
+			String charset = odataBean.getCharset();
+			String authorizationType = odataBean.getAuthorizationType();
+			String authorization = odataBean.getAuthorization();
+			// String contentType = odataBean.getContentType();
+
+			String absolutUri = createAbsolutUri(entityName, key, query);
+			HttpURLConnection conn = initializeConnection(absolutUri, requestMethod, authorizationType, authorization, null);
+
+			InputStream in = conn.getInputStream();
+			String encoding = conn.getContentEncoding();
+			encoding = encoding == null ? charset : encoding;
+			result = IOUtils.toString(in, encoding);
+			logger.info(result);
+			conn.disconnect();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public String postData(HttpServletRequest request, String entityName, String postData, String query, String requestMethod) {
+
+		String result = null;
+		try {
+			if (odataBean == null)
+				this.getInitializeBean(request);
+			String charset = odataBean.getCharset();
+			String authorizationType = odataBean.getAuthorizationType();
+			String authorization = odataBean.getAuthorization();
+			String contentType = odataBean.getContentType();
+
+			String absolutUri = createAbsolutUri(entityName, null, query);
+			HttpURLConnection conn = initializeConnection(absolutUri, requestMethod, authorizationType, authorization, contentType);
+
+			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+			writer.write(postData);
+			writer.flush();
+			writer.close();
+
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+			}
+			InputStream in = conn.getInputStream();
+			String encoding = conn.getContentEncoding();
+			encoding = encoding == null ? charset : encoding;
+			result = IOUtils.toString(in, encoding);
+			logger.info(result);
+			conn.disconnect();
+			// rd.close();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private String createAbsolutUri(String entityName, String key, String query) {
+		String serviceUri = odataBean.getUrl();
+		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR).append(entityName);
+		if (key != null) {
+			absolutUri.append("(").append(key).append(")");
+		}
+		if (query != null) {
+			absolutUri.append("?").append(query);
+		}
+		return absolutUri.toString();
+	}
+
+	private HttpURLConnection initializeConnection(String absolutUri, String httpMethod, String authorizationType, String authorization, String contentType)
+			throws MalformedURLException, IOException {
+		HttpURLConnection connection = null;
+
+		if (odataBean.isProxy()) {
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(odataBean.getProxyName(), odataBean.getProxyPort()));
+			connection = (HttpURLConnection) new URL(absolutUri).openConnection(proxy);
+		} else {
+			connection = (HttpURLConnection) new URL(absolutUri).openConnection();
+		}
+
+		String authorizationHeader = authorizationType + " ";
+		authorizationHeader += new String(Base64.encodeBase64((authorization).getBytes()));
+
+		connection.setRequestProperty("Authorization", authorizationHeader);
+		if (contentType != null)
+			connection.setRequestProperty("content-type", "application/json");
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setRequestMethod(httpMethod);
+
+		return connection;
 	}
 
 }

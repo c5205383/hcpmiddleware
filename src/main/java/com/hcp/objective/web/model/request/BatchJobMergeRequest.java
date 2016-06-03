@@ -28,6 +28,8 @@ public class BatchJobMergeRequest implements Serializable {
 	private String info;
 	@NotBlank
 	private Boolean status;
+	@NotBlank
+	private String owner;
 
 	public BatchJobMergeRequest() {
 	}
@@ -78,5 +80,13 @@ public class BatchJobMergeRequest implements Serializable {
 
 	public void setStatus(Boolean status) {
 		this.status = status;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 }

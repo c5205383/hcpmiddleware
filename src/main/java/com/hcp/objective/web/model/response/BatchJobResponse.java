@@ -17,6 +17,7 @@ public class BatchJobResponse implements Serializable {
 	private Double interval;
 	private String info;
 	private Boolean status;
+	private String owner;
 
 	public BatchJobResponse() {
 	}
@@ -28,6 +29,7 @@ public class BatchJobResponse implements Serializable {
 		this.setInterval(batchJob.getInterval());
 		this.setInfo(batchJob.getInfo());
 		this.setStatus(batchJob.getStatus());
+		this.setOwner(batchJob.getOwner());
 	}
 	
 	public Long getId() {
@@ -78,4 +80,12 @@ public class BatchJobResponse implements Serializable {
 		this.status = status;
 	}
 
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+	
 }

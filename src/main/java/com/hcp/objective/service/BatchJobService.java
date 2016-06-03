@@ -52,12 +52,17 @@ public class BatchJobService {
 		return batchJobRepository.saveAndFlush(batchJob);
 	}
 
+	public List<BatchJob> findByOwner(@NotNull String owner) {
+		return batchJobRepository.findByOwner(owner);
+	}
+	
 	private void mergeScalarProperties(BatchJobMergeRequest batchJobMergeRequest, BatchJob batchJob) {
-		batchJob.setId(batchJobMergeRequest.getId());
+		//batchJob.setId(batchJobMergeRequest.getId());
 		batchJob.setName(batchJobMergeRequest.getName());
 		batchJob.setType(batchJobMergeRequest.getType());
 		batchJob.setInterval(batchJobMergeRequest.getInterval());
 		batchJob.setInfo(batchJobMergeRequest.getInfo());
 		batchJob.setStatus(batchJobMergeRequest.getStatus());
+		batchJob.setOwner(batchJobMergeRequest.getOwner());
 	}
 }

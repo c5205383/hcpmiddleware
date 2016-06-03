@@ -42,6 +42,9 @@ public class BatchJob implements Serializable {
 	@Column(name = "STATUS", nullable = false)
 	private Boolean status;
 
+	@Column(name = "OWNER", nullable = false)
+	private String owner;
+	
 	public Long getId() {
 		return id;
 	}
@@ -88,6 +91,14 @@ public class BatchJob implements Serializable {
 
 	public void setStatus(Boolean status) {
 		this.status = status;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 	
 }

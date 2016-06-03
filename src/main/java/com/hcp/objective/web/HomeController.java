@@ -85,6 +85,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ODataBean;
 import com.hcp.objective.util.ODataExecutor;
+import com.hcp.objective.util.Util;
 
 @RestController
 public class HomeController {
@@ -295,5 +296,10 @@ public class HomeController {
 		} else {
 			return testobj.toString();
 		}
+	}
+	
+	@RequestMapping(value = "/testlogin", method = RequestMethod.GET)
+	public String testlogin() {
+		return Util.getLoginUser(request).toString();
 	}
 }

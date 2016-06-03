@@ -4,12 +4,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.sap.security.um.UMException;
+import com.sap.security.um.user.User;
+import com.sap.security.um.user.UserProvider;
+
 public class Util {
 	/**
-	 * È¡µÃµ±Ç°Ê±¼ä´Á£¨¾«È·µ½Ãë£©
+	 * È¡ï¿½Ãµï¿½Ç°Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ë£©
 	 * 
 	 * @return
 	 */
@@ -20,10 +28,10 @@ public class Util {
 	}
 
 	/**
-	 * Ê±¼ä´Á×ª»»³ÉÈÕÆÚ¸ñÊ½×Ö·û´®
+	 * Ê±ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½Ê½ï¿½Ö·ï¿½
 	 * 
 	 * @param seconds
-	 *            ¾«È·µ½ÃëµÄ×Ö·û´®
+	 *            ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½
 	 * @param formatStr
 	 * @return
 	 */
@@ -38,12 +46,12 @@ public class Util {
 	}
 
 	/**
-	 * ÈÕÆÚ¸ñÊ½×Ö·û´®×ª»»³ÉÊ±¼ä´Á Convert date string to time stamp
+	 * ï¿½ï¿½ï¿½Ú¸ï¿½Ê½ï¿½Ö·ï¿½×ªï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ Convert date string to time stamp
 	 * 
 	 * @param date
-	 *            ×Ö·û´®ÈÕÆÚ
+	 *            ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * @param format
-	 *            Èç£ºyyyy-MM-dd HH:mm:ss
+	 *            ï¿½ç£ºyyyy-MM-dd HH:mm:ss
 	 * @return
 	 */
 	public static String date2TimeStamp(String date_str, String format) {
@@ -95,5 +103,30 @@ public class Util {
 				break;
 		}
 		return result;
+	}
+	
+	@SuppressWarnings("finally")
+	public static JSONObject getLoginUser(HttpServletRequest request){
+		InitialContext ctx;
+		JSONObject udata = new JSONObject();
+		try {
+		    ctx = new InitialContext();
+		    UserProvider userProvider = (UserProvider) ctx.lookup("java:comp/env/user/Provider");
+		    User user = null;
+		    
+		    if (request.getUserPrincipal() != null) {
+		    	user = userProvider.getUser(request.getUserPrincipal().getName());
+		    	
+		    	udata.put("user", user.getName());
+		    	udata.put("firstname", user.getAttribute("firstname"));
+		    	udata.put("lastname", user.getAttribute("lastname"));
+		    	udata.put("email", user.getAttribute("email"));
+		    } 
+		} catch (NamingException | UMException e) {
+			//logger.error(e.getMessage(),e);
+		} finally {
+			return udata;
+		}
+		
 	}
 }

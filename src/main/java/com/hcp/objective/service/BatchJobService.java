@@ -31,11 +31,14 @@ public class BatchJobService {
 	public BatchJob createOne(@NotNull BatchJobMergeRequest batchJobMergeRequest) {
 		BatchJob batchJob = new BatchJob();
 		mergeScalarProperties(batchJobMergeRequest, batchJob);
+		QuartzManager.addBatchJob(batchJob);
 		return batchJobRepository.saveAndFlush(batchJob);
 	}
 
 	public String deleteOneById(@NotNull Long id) {
 		try {
+			BatchJob batchJob = batchJobRepository.findOne(id);
+			QuartzManager.deleteBatchJob(batchJob);
 			batchJobRepository.delete(id);
 			return "Delete session successfully";
 		} catch (IllegalArgumentException e) {
@@ -49,6 +52,7 @@ public class BatchJobService {
 			throw new IllegalArgumentException("id");
 		}
 		mergeScalarProperties(batchJobMergeRequest, batchJob);
+		QuartzManager.changeBatchJob(batchJob);
 		return batchJobRepository.saveAndFlush(batchJob);
 	}
 

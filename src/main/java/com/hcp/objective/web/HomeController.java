@@ -61,9 +61,7 @@ public class HomeController {
 
 package com.hcp.objective.web;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -72,8 +70,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +80,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.schedule.TestJob;
+import com.hcp.objective.service.QuartzManager;
 import com.hcp.objective.util.ODataExecutor;
 import com.hcp.objective.util.Util;
 
@@ -181,125 +179,28 @@ public class HomeController {
 		}
 	}
 
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
-	public @ResponseBody String get(@RequestParam String wfRequestId, String eventReason) {
-		// String authType = null;
-		// String auth = null;
-		// String serviceUrl = null;
-		// ODataEntry dataEntry = null;
-		// String entitySetName = "EmpWfRequest";
-		// String entityLink = null;
-		// String queryString = "$filter=eventReason%20eq%20%27"+eventReason
-		// +"%27%20and%20"+"wfRequestId%20eq%20"+wfRequestId;
-		// try {
-		// ODataBean bean = odataExecutor.getInitializeBean(request);
-		// authType = bean.getAuthorizationType();
-		// auth = bean.getAuthorization();
-		// serviceUrl = bean.getUrl();
-		// Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl + "/" +
-		// entitySetName + "/$metadata", authType, auth);
-		// dataEntry = odataExecutor.readEntry(edm, serviceUrl,
-		// ODataConstants.APPLICATION_ATOM_XML, entitySetName, null,
-		// entityLink, queryString);
-		// return new JSONObject(dataEntry.getProperties()).toString();
-		//
-		// } catch (Exception e) {
-		// logger.error(e.getMessage(), e);
-		// return null;
-		// }
-
-		ODataBean bean;
-		try {
-			bean = odataExecutor.getInitializeBean(request);
-			String authType = bean.getAuthorizationType();
-			String auth = bean.getAuthorization();
-			String serviceUrl = bean.getUrl();
-			String entitySetName = "EmpWfRequest";
-			String queryString = "$filter=eventReason%20eq%20%27" + eventReason + "%27%20and%20" + "wfRequestId%20eq%20"
-					+ wfRequestId + "&$format=json";
-			String authorizationHeader = authType + " ";
-			authorizationHeader += new String(Base64.encodeBase64((auth).getBytes()));
-
-			StringBuilder result = new StringBuilder();
-			String absolutUri = odataExecutor.createUri(serviceUrl, entitySetName, null, null, queryString);
-			URL url = new URL(absolutUri);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.setRequestProperty("Authorization", authorizationHeader);
-
-			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String line;
-			while ((line = rd.readLine()) != null) {
-				result.append(line);
-			}
-
-			conn.disconnect();
-
-			rd.close();
-
-			JSONObject jsonObj = new JSONObject(result.toString());
-			JSONObject results = jsonObj.getJSONObject("d");
-			JSONArray array = results.getJSONArray("results");
-			if (array.length() != 0) {
-				JSONObject tmp = array.getJSONObject(0);
-				JSONObject obj = new JSONObject();
-				obj.put("empWf", tmp);
-				return obj.toString();
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	private JSONObject testobj = new JSONObject();
-
-	@RequestMapping(value = "/testjsonobj", method = RequestMethod.GET)
-	public @ResponseBody String testJsonObj() {
-		if (testobj.toString().equals("{}")) {
-			ODataBean bean;
-			try {
-				bean = odataExecutor.getInitializeBean(request);
-				String authType = bean.getAuthorizationType();
-				String auth = bean.getAuthorization();
-				String serviceUrl = bean.getUrl();
-				String entitySetName = "EmpWfRequest";
-				String queryString = "$format=json";
-				String authorizationHeader = authType + " ";
-				authorizationHeader += new String(Base64.encodeBase64((auth).getBytes()));
-
-				StringBuilder result = new StringBuilder();
-				String absolutUri = odataExecutor.createUri(serviceUrl, entitySetName, null, null, queryString);
-				URL url = new URL(absolutUri);
-				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-				conn.setRequestMethod("GET");
-				conn.setRequestProperty("Authorization", authorizationHeader);
-
-				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				String line;
-				while ((line = rd.readLine()) != null) {
-					result.append(line);
-				}
-
-				conn.disconnect();
-
-				rd.close();
-
-				testobj = new JSONObject(result.toString());
-				return testobj.toString();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		} else {
-			return testobj.toString();
-		}
-	}
-	
 	@RequestMapping(value = "/testlogin", method = RequestMethod.GET)
 	public String testlogin() {
 		return Util.getLoginUser(request).toString();
+	}
+	
+	@RequestMapping(value = "/testadd", method = RequestMethod.GET)
+	public void testadd() {
+		QuartzManager.addJob("testjob1", "trigger1", TestJob.class, "0/3 * * * * ?"); 
+	}
+	
+	@RequestMapping(value = "/testpause", method = RequestMethod.GET)
+	public void testPause() {
+		QuartzManager.pauseJob("testjob1", "trigger1"); 
+	}
+	
+	@RequestMapping(value = "/testresume", method = RequestMethod.GET)
+	public void testresume() {
+		QuartzManager.resumeJob("testjob1", "trigger1"); 
+	}
+	
+	@RequestMapping(value = "/testdelete", method = RequestMethod.GET)
+	public void testdelete() {
+		QuartzManager.deleteJob("testjob1", "trigger1"); 
 	}
 }

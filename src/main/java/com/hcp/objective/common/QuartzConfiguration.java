@@ -10,7 +10,7 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
 import com.hcp.objective.schedule.MyJobTwo;
 
-@Configuration 
+//@Configuration 
 public class QuartzConfiguration {
 	@Bean
 	public MethodInvokingJobDetailFactoryBean methodInvokingJobDetailFactoryBean() {

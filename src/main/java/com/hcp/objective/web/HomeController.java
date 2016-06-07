@@ -198,4 +198,9 @@ public class HomeController {
 	public void testresume() {
 		QuartzManager.resumeJob("testjob1", "trigger1"); 
 	}
+	
+	@RequestMapping(value = "/testdelete", method = RequestMethod.GET)
+	public void testdelete() {
+		QuartzManager.deleteJob("testjob1", "trigger1"); 
+	}
 }

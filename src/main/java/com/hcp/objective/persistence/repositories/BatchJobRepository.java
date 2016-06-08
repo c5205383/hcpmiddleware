@@ -17,5 +17,12 @@ import com.hcp.objective.jpa.bean.BatchJob;
 @Transactional
 public interface BatchJobRepository extends JpaRepository<BatchJob, Long> {
 	
+	/**
+	 * Find a list of batch jobs by owner
+	 * 
+	 * @param owner
+	 *            {@link}BatchJob's owner
+	 * @return List<BatchJob> a list of batch jobs
+	 */
 	List<BatchJob> findByOwner(String owner);
 }

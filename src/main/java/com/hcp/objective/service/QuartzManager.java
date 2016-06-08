@@ -17,6 +17,11 @@ import com.hcp.objective.jpa.bean.BatchJob;
 import com.hcp.objective.schedule.EmpWfJob;
 import com.hcp.objective.schedule.TestJob;
 
+/**
+ * The Quartz Manager
+ * 
+ * @author Zero Yu
+ */
 public class QuartzManager {
 	private static SchedulerFactory gSchedulerFactory = new StdSchedulerFactory();
 	private static String JOB_GROUP_NAME = "DEFAULT_JOBGROUP_NAME";
@@ -69,6 +74,12 @@ public class QuartzManager {
 		}
 	}
 	
+	/**
+	 * Add a batch job and schedule it
+	 * 
+	 * @param batchJob
+	 * 				the {@link}BatchJob object
+	 */
 	public static void addBatchJob(BatchJob batchJob) {
 		Scheduler sched;
 		JobDetail job = null;
@@ -105,6 +116,12 @@ public class QuartzManager {
 		}
 	}
 	
+	/**
+	 * Change a batch job's status
+	 * 
+	 * @param batchJob
+	 * 				the {@link}BatchJob object
+	 */
 	public static void changeBatchJob(BatchJob batchJob) {
 		String triggerName = "trigger_" + batchJob.getName();
 		String jobName = batchJob.getName();
@@ -123,6 +140,12 @@ public class QuartzManager {
 		}
 	}
 	
+	/**
+	 * Delete a batch job
+	 * 
+	 * @param batchJob
+	 * 				the {@link}BatchJob object
+	 */
 	public static void deleteBatchJob(BatchJob batchJob) {
 		String jobName = batchJob.getName();
 		try {

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hcp.objective.util.ODataConstants;
 import com.hcp.objective.util.ODataExecutor;
@@ -22,7 +23,7 @@ public class SFSFODataService {
 
 	private enum SFSFODataEntity {
 		User("User"), FOEventReason("FOEventReason"), EmpJob("EmpJob"), EmpWfRequest("EmpWfRequest"), FOCompany("FOCompany"), Country("Country"), FOLocation(
-				"FOLocation");
+				"FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal("Goal_");
 
 		// 成员变量
 		private String name;
@@ -220,6 +221,7 @@ public class SFSFODataService {
 
 	/**
 	 * Get SFSF Locations
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -233,6 +235,48 @@ public class SFSFODataService {
 			long requestEndTime = System.currentTimeMillis();
 			logger.info("Read Data: " + result);
 			logger.info("Read Data Time: " + (requestEndTime - requestStartTime) / 1000);
+			return result.toString();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return "";
+		}
+	}
+
+	/**
+	 * Get SFSF Goal Plan
+	 * 
+	 * @return
+	 */
+	public String getGoalPlanTemplate(HttpServletRequest request) {
+		long requestStartTime = System.currentTimeMillis();
+
+		try {
+			String entityName = SFSFODataEntity.GoalPlanTemplate.getName();
+			String query = "$format=json";
+			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+
+			long requestEndTime = System.currentTimeMillis();
+			logger.info("Read Data: " + result);
+			logger.info("Read Data Time: " + (requestEndTime - requestStartTime) / 1000);
+			return result.toString();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return "";
+		}
+	}
+
+	/**
+	 * Get SFSF Goals by Goal Plan template
+	 * 
+	 * @param goalPlanId
+	 * @return
+	 */
+	public @ResponseBody String getGoalsByTemplate(HttpServletRequest request, String goalPlanId) {
+		try {
+			String entityName = SFSFODataEntity.Goal.getName() + goalPlanId;
+			String query = "$format=json";
+			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			logger.info("Read Data: " + result);
 			return result.toString();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

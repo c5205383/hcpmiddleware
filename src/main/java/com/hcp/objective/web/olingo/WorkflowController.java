@@ -107,7 +107,7 @@ public class WorkflowController {
 //		}
 //	}
 	
-	@RequestMapping(value = "/getEmpWorkflow")
+	@RequestMapping(value = "/getEmpWorkflow2")
 	public @ResponseBody String getEmpWorkflow(@RequestParam String userId, @RequestParam String eventReason) {
 		String authType = null;
 		String auth = null;

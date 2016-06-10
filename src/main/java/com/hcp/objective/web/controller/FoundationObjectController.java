@@ -14,29 +14,36 @@ import com.hcp.objective.service.SFSFODataService;
 @RestController
 public class FoundationObjectController {
 	public static final Logger logger = LoggerFactory.getLogger(FoundationObjectController.class);
+
+	private final String encoding = "application/json;charset=UTF-8";
 	@Autowired
 	private SFSFODataService oDataService;
 
 	@Autowired
 	private HttpServletRequest request;
 
-	@RequestMapping(value = "/getFOCompany", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/FOCompany", produces = encoding)
 	public @ResponseBody String getFOCompany() {
 		return oDataService.getFOCompany(request);
 	}
 
-	@RequestMapping(value = "/getCountry", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/Country", produces = encoding)
 	public @ResponseBody String getCountry() {
 		return oDataService.getCountry(request);
 	}
 
-	@RequestMapping(value = "/getFOEventReason", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/FOEventReason", produces = encoding)
 	public @ResponseBody String getFOEventReason() {
 		return oDataService.getFOEventReason(request);
 	}
 
-	@RequestMapping(value = "/getFOLocation", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/FOLocation", produces = encoding)
 	public @ResponseBody String getFOLocation() {
 		return oDataService.getFOLocation(request);
+	}
+
+	@RequestMapping(value = "/FOJobCode", produces = encoding)
+	public @ResponseBody String getFOJobCode() {
+		return oDataService.getFOJobCode(request);
 	}
 }

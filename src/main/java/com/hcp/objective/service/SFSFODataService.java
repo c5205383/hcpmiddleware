@@ -23,7 +23,7 @@ public class SFSFODataService {
 
 	private enum SFSFODataEntity {
 		User("User"), FOEventReason("FOEventReason"), EmpJob("EmpJob"), EmpWfRequest("EmpWfRequest"), FOCompany("FOCompany"), Country("Country"), FOLocation(
-				"FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal("Goal_"),FOJobCode("FOJobCode");
+				"FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal("Goal_"),FOJobCode("FOJobCode"),FOBusinessUnit("FOBusinessUnit");
 
 		// 成员变量
 		private String name;
@@ -293,6 +293,25 @@ public class SFSFODataService {
 	public @ResponseBody String getFOJobCode(HttpServletRequest request) {
 		try {
 			String entityName = SFSFODataEntity.FOJobCode.getName();
+			String query = "$format=json";
+			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			logger.info("Read Data: " + result);
+			return result.toString();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return "";
+		}
+	}
+	
+	/**
+	 * Get SFSF Business Unit
+	 * 
+	 * @param 
+	 * @return
+	 */
+	public @ResponseBody String getFOBusinessUnit(HttpServletRequest request) {
+		try {
+			String entityName = SFSFODataEntity.FOBusinessUnit.getName();
 			String query = "$format=json";
 			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 			logger.info("Read Data: " + result);

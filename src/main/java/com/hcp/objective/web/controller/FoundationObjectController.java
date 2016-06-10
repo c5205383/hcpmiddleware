@@ -46,4 +46,9 @@ public class FoundationObjectController {
 	public @ResponseBody String getFOJobCode() {
 		return oDataService.getFOJobCode(request);
 	}
+	
+	@RequestMapping(value = "/FOBusinessUnit", produces = encoding)
+	public @ResponseBody String getFOBusinessUnit() {
+		return oDataService.getFOBusinessUnit(request);
+	}
 }

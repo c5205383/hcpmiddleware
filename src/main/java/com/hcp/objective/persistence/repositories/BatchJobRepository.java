@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.jpa.bean.BatchJob;
 
 /**
@@ -15,6 +16,7 @@ import com.hcp.objective.jpa.bean.BatchJob;
  */
 @Repository
 @Transactional
+@ExcludeForTest
 public interface BatchJobRepository extends JpaRepository<BatchJob, Long> {
 	
 	/**

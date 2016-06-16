@@ -27,13 +27,13 @@ import com.hcp.objective.persistence.DataSourceConfig;
 public class PersonController {
 	public static final Logger logger = LoggerFactory.getLogger(PersonController.class);
 	
-	@Autowired  
+	//@Autowired  
 	private  HttpServletRequest request;
 	
-	@Autowired  
+	//@Autowired  
 	private  DataSourceConfig dataSourceConfig;
 	
-	@Autowired 
+	//@Autowired 
 	private HttpServletResponse response;
 	
 	@RequestMapping(value = "/getPersonsJson")

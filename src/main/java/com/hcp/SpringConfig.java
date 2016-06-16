@@ -1,4 +1,4 @@
-package com.hcp.objective;
+package com.hcp;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;

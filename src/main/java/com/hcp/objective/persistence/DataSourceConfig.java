@@ -79,8 +79,10 @@ public class DataSourceConfig {
 		if (this.entityManagerFactory == null) {
 			try {
 				HashMap<String, Object> properties = new HashMap<String, Object>();
-				properties.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, this.preferentialDataSource());
-				this.entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
+				if (this.preferentialDataSource() != null) {
+					properties.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, this.preferentialDataSource());
+					this.entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -92,7 +94,7 @@ public class DataSourceConfig {
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	@Lazy(false)
 	public synchronized PlatformTransactionManager annotationDrivenTransactionManager() {
-		if (this.annotationDrivenTransactionManager == null) {
+		if (this.annotationDrivenTransactionManager == null && this.entityManagerFactory() != null) {
 			final JpaTransactionManager jpaTxManager = new JpaTransactionManager(this.entityManagerFactory());
 			jpaTxManager.setJpaDialect(new EclipseLinkJpaDialect());
 			this.annotationDrivenTransactionManager = jpaTxManager;
@@ -105,7 +107,7 @@ public class DataSourceConfig {
 	@Primary
 	@Lazy(false)
 	public synchronized EntityManager entityManager() {
-		if (this.entityManager == null) {
+		if (this.entityManager == null && this.entityManagerFactory() != null) {
 			this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(this.entityManagerFactory());
 		}
 		return this.entityManager;

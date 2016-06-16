@@ -5,36 +5,6 @@
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	<!--servlet>
-		<servlet-name>SimpleProxyServlet</servlet-name>
-		<servlet-class>com.sap.ui5.proxy.SimpleProxyServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>SimpleProxyServlet</servlet-name>
-		<url-pattern>/proxy/*</url-pattern>
-	</servlet-mapping>
-	<context-param>
-		<param-name>com.sap.ui5.proxy.REMOTE_LOCATION</param-name>
-		<param-value>https://account.hanatrial.ondemand.com</param-value>
-	</context-param>
-	<servlet>
-		<display-name>ConnectivityProxy</display-name>
-		<servlet-name>ConnectivityProxy</servlet-name>
-		<servlet-class>com.sap.cloudlabs.connectivity.proxy.ProxyServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ConnectivityProxy</servlet-name>
-		<url-pattern>/proxy/my309045/*</url-pattern>
-	</servlet-mapping>
-	<resource-ref>
-		<res-ref-name>sci</res-ref-name>
-		<res-type>com.sap.core.connectivity.api.http.HttpDestination</res-type>
-	</resource-ref>
-	<resource-ref>
-		<res-ref-name>connectivity/DestinationFactory</res-ref-name>
-		<res-type>com.sap.core.connectivity.api.DestinationFactory</res-type>
-	</resource-ref-->
-	
 	
 	<resource-ref id="ResourceRef_1462848887623">
 		<res-ref-name>user/Provider</res-ref-name>

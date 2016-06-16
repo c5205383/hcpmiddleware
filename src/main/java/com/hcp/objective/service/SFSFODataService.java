@@ -1,6 +1,5 @@
 package com.hcp.objective.service;
 
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -451,11 +450,13 @@ public class SFSFODataService {
 		for (int i = 0; i < empInfos.length; i++) {
 			Map<String, Object> propMap = new HashMap<String, Object>();
 			Map<String, Object> uriMap = new HashMap<String, Object>();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-			
-			//String time = dateFormat.format(empInfos[i].getStartDate());
-			uriMap.put("uri",
-					SFSFODataEntity.PerPersonal.getName() + "(personIdExternal='" + empInfos[i].getPersonIdExternal() + "',startDate=datetime'" + empInfos[i].getStartDate() + "')");
+
+			if (empInfos[i].getStartDate() == null)
+				continue;
+			String startDate = Util.timeStamp2Date(Util.date2TimeStamp(empInfos[i].getStartDate(), null), "yyyy-MM-dd'T'HH:mm:ss");
+
+			uriMap.put("uri", SFSFODataEntity.PerPersonal.getName() + "(personIdExternal='" + empInfos[i].getPersonIdExternal() + "',startDate=datetime'"
+					+ startDate + "')");
 			propMap.put("__metadata", uriMap);
 			propMap.put("personIdExternal", empInfos[i].getPersonIdExternal());
 			propMap.put("gender", empInfos[i].getGender());

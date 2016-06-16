@@ -19,14 +19,13 @@ import com.sap.security.um.user.UserProvider;
 @Component
 public class Util {
 
-
 	/**
 	 * 
 	 * @return
 	 */
 	public static String timeStamp() {
 		long time = System.currentTimeMillis();
-		String t = String.valueOf(time / 1000);
+		String t = String.valueOf(time / 1000) + "000";
 		return t;
 	}
 
@@ -43,7 +42,7 @@ public class Util {
 		if (format == null || format.isEmpty())
 			format = "yyyy-MM-dd HH:mm:ss";
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		return sdf.format(new Date(Long.valueOf(seconds + "000")));
+		return sdf.format(new Date(Long.valueOf(seconds)));
 	}
 
 	/**

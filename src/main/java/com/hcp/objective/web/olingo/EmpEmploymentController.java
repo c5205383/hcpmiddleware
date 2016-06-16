@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.service.EmpEmploymentService;
 import com.hcp.objective.util.ODataExecutor;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
 
 @RestController
+@ExcludeForTest
 public class EmpEmploymentController {
 	public static final Logger logger = LoggerFactory.getLogger(EmpEmploymentController.class);
 	@Autowired
@@ -29,10 +31,10 @@ public class EmpEmploymentController {
 	
 	private EmpEmploymentService empService = null;
 
-	@RequestMapping(value = "/createEmpEmployment", method = RequestMethod.POST)
+	@RequestMapping(value = "/createEmpEmployment2", method = RequestMethod.POST)
 	public @ResponseBody String createEmpEmployment(@RequestBody EmpInfoRequest empInfoRequest) {
 		try {
-			ODataBean bean = odataExecutor.getInitializeBean(request);
+			ODataBean bean = odataExecutor.getInitializeBean();
 			empService = new EmpEmploymentService(bean);
 			
 			empService.createUser(empInfoRequest);

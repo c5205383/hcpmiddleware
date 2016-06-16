@@ -24,10 +24,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.util.ODataConstants;
 import com.hcp.objective.util.ODataExecutor;
 
 @RestController
+@ExcludeForTest
 public class WorkflowController {
 	public static final Logger logger = LoggerFactory.getLogger(WorkflowController.class);
 
@@ -117,7 +119,7 @@ public class WorkflowController {
 		String entityLink = null;
 		String queryString = "$filter=createdBy%20eq%20%27"+userId+"%27";
 		try {
-			ODataBean bean = odataUtils.getInitializeBean(request);
+			ODataBean bean = odataUtils.getInitializeBean();
 			authType = bean.getAuthorizationType();
 			auth = bean.getAuthorization();
 			serviceUrl = bean.getUrl();
@@ -154,7 +156,7 @@ public class WorkflowController {
 	private JSONObject getEmpWfEntry(String wfRequestId, String eventReason) {
 		ODataBean bean;
 		try {
-			bean = odataUtils.getInitializeBean(request);
+			bean = odataUtils.getInitializeBean();
 			String authType = bean.getAuthorizationType();
 			String auth = bean.getAuthorization();
 			String serviceUrl = bean.getUrl();

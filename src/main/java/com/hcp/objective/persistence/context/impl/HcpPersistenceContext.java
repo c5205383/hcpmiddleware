@@ -13,12 +13,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.persistence.context.IPersistenceContext;
-
-
 
 @Component
 @Primary
+@ExcludeForTest
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 @Lazy(true)
 public class HcpPersistenceContext implements IPersistenceContext {
@@ -35,9 +35,10 @@ public class HcpPersistenceContext implements IPersistenceContext {
 	public synchronized DataSource getDataSource() {
 		if (hcpDataSource == null) {
 			try {
-				hcpDataSource = (DataSource) this.initialContext
-						.lookup(JNDI_ENV_DS);
+				hcpDataSource = (DataSource) this.initialContext.lookup(JNDI_ENV_DS);
+				// if(this.initialContext.)
 			} catch (NamingException ex) {
+
 				return null;
 			} catch (ClassCastException ex) {
 				return null;
@@ -48,30 +49,26 @@ public class HcpPersistenceContext implements IPersistenceContext {
 
 	@Override
 	public String getDriverName() {
-		throw new UnsupportedOperationException(
-				"Can't get information from HCP embbed data source!");
+		throw new UnsupportedOperationException("Can't get information from HCP embbed data source!");
 	}
 
 	public String getJndiDataResourceName() {
 		return JNDI_ENV_DS;
-    }
+	}
 
 	@Override
 	public String getUrl() {
-		throw new UnsupportedOperationException(
-				"Can't get information from HCP embbed data source!");
+		throw new UnsupportedOperationException("Can't get information from HCP embbed data source!");
 	}
 
 	@Override
 	public String getUsername() {
-		throw new UnsupportedOperationException(
-				"Can't get information from HCP embbed data source!");
+		throw new UnsupportedOperationException("Can't get information from HCP embbed data source!");
 	}
 
 	@Override
 	public String getPassword() {
-		throw new UnsupportedOperationException(
-				"Can't get information from HCP embbed data source!");
+		throw new UnsupportedOperationException("Can't get information from HCP embbed data source!");
 	}
 
 	@Override

@@ -25,7 +25,7 @@ public class SpringBeanConfig {
 	 */
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public synchronized InitialContext initialContext() throws NamingException {
 		return new InitialContext();
 	}

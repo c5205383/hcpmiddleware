@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.util.ODataExecutor;
 
 @RestController
+@ExcludeForTest
 public class UserController {
 	public static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	@Autowired
@@ -39,7 +41,7 @@ public class UserController {
 		String serviceUrl = null;
 		ODataEntry dataEntry = null;
 		try{
-			ODataBean bean = odataUtils.getInitializeBean(request);
+			ODataBean bean = odataUtils.getInitializeBean();
 		    authType = bean.getAuthorizationType();
 			auth = bean.getAuthorization();
 			serviceUrl = bean.getUrl();
@@ -72,7 +74,7 @@ public class UserController {
 		String serviceUrl = null;
 		ODataEntry dataEntry = null;
 		try{
-			ODataBean bean = odataUtils.getInitializeBean(request);
+			ODataBean bean = odataUtils.getInitializeBean();
 		    authType = bean.getAuthorizationType();
 			auth = bean.getAuthorization();
 			serviceUrl = bean.getUrl();
@@ -96,7 +98,7 @@ public class UserController {
 		String serviceUrl = null;
 		ODataEntry dataEntry = null;
 		try{
-			ODataBean bean = odataUtils.getInitializeBean(request);
+			ODataBean bean = odataUtils.getInitializeBean();
 		    authType = bean.getAuthorizationType();
 			auth = bean.getAuthorization();
 			serviceUrl = bean.getUrl();

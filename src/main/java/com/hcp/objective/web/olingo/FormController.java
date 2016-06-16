@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.service.FormService;
 import com.hcp.objective.util.ODataExecutor;
 import com.hcp.objective.web.model.response.FormDetailResponse;
 
 @RestController
+@ExcludeForTest
 public class FormController {
 	public static final Logger logger = LoggerFactory.getLogger(FormController.class);
 	@Autowired

@@ -15,7 +15,7 @@ public class EmpInfoRequest implements Serializable {
 	
 	private String personIdExternal;
 	
-	private long startDate;
+	private String startDate;
 
 	private String jobCode;
 	private String eventReason;
@@ -27,7 +27,19 @@ public class EmpInfoRequest implements Serializable {
 	private String initials;
 	private String firstName;
 	private String lastName;
+	private String email;
 	
+	private String location;
+	private String businessPhone;
+	private String empId;
+	private String city;
+	private String defaultFullName;
+	private String function;
+	private String type;
+	private String hireDate;
+	private String country;
+	private String nationalId;
+	private String nationalIdType;
 	
 	//Added by Bruce 2016-5-30
 	private String transferCity;
@@ -71,11 +83,11 @@ public class EmpInfoRequest implements Serializable {
 		this.personIdExternal = personIdExternal;
 	}
 
-	public long getStartDate() {
+	public String getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(long startDate) {
+	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
 
@@ -185,6 +197,102 @@ public class EmpInfoRequest implements Serializable {
 
 	public void setTransferCompany(String transferCompany) {
 		this.transferCompany = transferCompany;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getBusinessPhone() {
+		return businessPhone;
+	}
+
+	public void setBusinessPhone(String businessPhone) {
+		this.businessPhone = businessPhone;
+	}
+
+	public String getEmpId() {
+		return empId;
+	}
+
+	public void setEmpId(String empId) {
+		this.empId = empId;
+	}
+
+	public String getDefaultFullName() {
+		return defaultFullName;
+	}
+
+	public void setDefaultFullName(String defaultFullName) {
+		this.defaultFullName = defaultFullName;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getFunction() {
+		return function;
+	}
+
+	public void setFunction(String function) {
+		this.function = function;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getHireDate() {
+		return hireDate;
+	}
+
+	public void setHireDate(String hireDate) {
+		this.hireDate = hireDate;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getNationalId() {
+		return nationalId;
+	}
+
+	public void setNationalId(String nationalId) {
+		this.nationalId = nationalId;
+	}
+
+	public String getNationalIdType() {
+		return nationalIdType;
+	}
+
+	public void setNationalIdType(String nationalIdType) {
+		this.nationalIdType = nationalIdType;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 	
 }

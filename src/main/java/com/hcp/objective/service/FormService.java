@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.jpa.bean.Form;
 import com.hcp.objective.persistence.repositories.FormRepository;
 import com.hcp.objective.util.ODataExecutor;
@@ -24,6 +24,7 @@ import com.sun.istack.NotNull;
 
 @Service
 @Transactional
+@ExcludeForTest
 public class FormService {
 	public static final Logger logger = LoggerFactory.getLogger(FormService.class);
 
@@ -31,8 +32,6 @@ public class FormService {
 	private FormRepository formRepository;
 	@Autowired
 	public ODataExecutor odataExecutor;
-	@Autowired
-	private HttpServletRequest request;
 
 	public Form findForm(@NotNull String id) {
 		String authType = null;
@@ -40,31 +39,30 @@ public class FormService {
 		String serviceUrl = null;
 		Form form = new Form();
 		try {
-			ODataBean bean = odataExecutor.getInitializeBean(request);
+			ODataBean bean = odataExecutor.getInitializeBean();
 			authType = bean.getAuthorizationType();
 			auth = bean.getAuthorization();
 			serviceUrl = bean.getUrl();
 			Edm edm = odataExecutor.readEdmAndNotValidate(serviceUrl + "/FormHeader/$metadata", authType, auth);
-			ODataEntry formEntry = odataExecutor.readEntry(edm, serviceUrl, "application/xml+atom", "FormHeader", id,
-					null, null);
+			ODataEntry formEntry = odataExecutor.readEntry(edm, serviceUrl, "application/xml+atom", "FormHeader", id, null, null);
 			Map<String, Object> propMap = formEntry.getProperties();
 			for (String key : propMap.keySet()) {
-				if(key.equals("formDataId")) {
+				if (key.equals("formDataId")) {
 					form.setId((Long) propMap.get(key));
-				} else if(key.equals("formSubjectId")) {
+				} else if (key.equals("formSubjectId")) {
 					form.setUserId((String) propMap.get(key));
-				} else if(key.equals("rating")){
+				} else if (key.equals("rating")) {
 					BigDecimal bigDecimal = (BigDecimal) propMap.get(key);
 					form.setScore(bigDecimal.doubleValue());
-				} else if(key.equals("formReviewEndDate")){
+				} else if (key.equals("formReviewEndDate")) {
 					Calendar calendar = (Calendar) propMap.get(key);
 					Date date = calendar.getTime();
 					form.setCompeleteDate(new Timestamp(date.getTime()));
-				} else if(key.equals("formDataStatus")){
+				} else if (key.equals("formDataStatus")) {
 					form.setStatus(propMap.get(key).toString());
-				} /*else if(key.equals("xxx")) {
-					form.setRouteMapId(propMap.get(key));
-				}*/
+				} /*
+					 * else if(key.equals("xxx")) { form.setRouteMapId(propMap.get(key)); }
+					 */
 				form.setRouteMapId(Integer.parseInt("0"));
 			}
 			return form;
@@ -73,10 +71,10 @@ public class FormService {
 			return form;
 		}
 	}
-	
-	public Form storeForm(@NotNull String id){
+
+	public Form storeForm(@NotNull String id) {
 		Form form = findForm(id);
-		if(form.getId() != null) {
+		if (form.getId() != null) {
 			return formRepository.saveAndFlush(form);
 		} else {
 			return form;

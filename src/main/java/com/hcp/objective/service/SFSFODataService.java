@@ -1,5 +1,9 @@
 package com.hcp.objective.service;
 
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
@@ -23,7 +27,8 @@ public class SFSFODataService {
 
 	private enum SFSFODataEntity {
 		User("User"), FOEventReason("FOEventReason"), EmpJob("EmpJob"), EmpWfRequest("EmpWfRequest"), FOCompany("FOCompany"), Country("Country"), FOLocation(
-				"FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal("Goal_"),FOJobCode("FOJobCode"),FOBusinessUnit("FOBusinessUnit");
+				"FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal("Goal_"), FOJobCode("FOJobCode"), FOBusinessUnit("FOBusinessUnit"), PerPerson(
+						"PerPerson"), PerEmail("PerEmail"), PerPersonal("PerPersonal"), EmpEmployment("EmpEmployment"), Upsert("upsert");
 
 		// 成员变量
 		private String name;
@@ -38,6 +43,10 @@ public class SFSFODataService {
 			return name;
 		}
 
+	}
+
+	private enum SFSFAction {
+		Create, Trnasfer
 	}
 
 	/**
@@ -101,33 +110,11 @@ public class SFSFODataService {
 	 * @return
 	 */
 	public String transferEmployee(HttpServletRequest request, EmpInfoRequest[] empInfos) {
+
 		try {
-			String entityName = SFSFODataEntity.EmpJob.getName();
+			String postData = empJobBody(empInfos, SFSFAction.Trnasfer);
 			String query = "$format=json";
-			String result = null;
-			JSONArray postDataArray = new JSONArray();
-			for (int i = 0; i < empInfos.length; i++) {
-				String userId = empInfos[i].getUserId();
-				// String toCity = empInfos[i].getTransferCity();
-				String toLocation = empInfos[i].getTransferLocation();
-				String effectiveDate = empInfos[i].getEffectiveDate();
-				String company = empInfos[i].getTransferCompany();
-
-				JSONObject post = new JSONObject();
-				JSONObject metadata = new JSONObject();
-				metadata.put("uri", entityName);
-
-				post.put("__metadata", metadata);
-				post.put("jobCode", "ADMIN-1");
-				String timeStamp = Util.date2TimeStamp(effectiveDate, null);
-				post.put("startDate", "/Date(" + timeStamp + ")/");
-				post.put("eventReason", "TRANICOT");
-				post.put("userId", userId);
-				post.put("company", company);
-				post.put("location", toLocation);
-				postDataArray.put(post);
-			}
-			result = odataExecutor.postData(request, "upsert", postDataArray.toString(), query, ODataConstants.HTTP_METHOD_POST);
+			String result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
 			return result;
 		} catch (Exception e2) {
 			logger.error(e2.getMessage(), e2);
@@ -283,11 +270,11 @@ public class SFSFODataService {
 			return "";
 		}
 	}
-	
+
 	/**
 	 * Get SFSF Job Code
 	 * 
-	 * @param 
+	 * @param
 	 * @return
 	 */
 	public @ResponseBody String getFOJobCode(HttpServletRequest request) {
@@ -302,11 +289,11 @@ public class SFSFODataService {
 			return "";
 		}
 	}
-	
+
 	/**
 	 * Get SFSF Business Unit
 	 * 
-	 * @param 
+	 * @param
 	 * @return
 	 */
 	public @ResponseBody String getFOBusinessUnit(HttpServletRequest request) {
@@ -321,4 +308,164 @@ public class SFSFODataService {
 			return "";
 		}
 	}
+
+	/**
+	 * Create Employee
+	 * 
+	 * @param request
+	 * @param empInfos
+	 * @return
+	 */
+	public String createEmployee(HttpServletRequest request, EmpInfoRequest[] empInfos) {
+		try {
+			String query = "$format=json";
+			String postData = null;
+			String result = null;
+
+			// first step upsert user
+			postData = userBody(empInfos);
+			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			// second step upsert per person
+			postData = perPersonBody(empInfos);
+			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			// third step upsert per emial
+			postData = perEmailBody(empInfos);
+			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			// forth step upsert empEmploymentBody
+			postData = empEmploymentBody(empInfos);
+			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			// fivth step upsert emp job
+			postData = empJobBody(empInfos, SFSFAction.Create);
+			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+
+			// fivth step upsert emp job
+			postData = perPersonalBody(empInfos);
+			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			return result;
+		} catch (Exception e2) {
+			logger.error(e2.getMessage(), e2);
+			return "error";
+		}
+	}
+
+	private String userBody(EmpInfoRequest empInfos[]) {
+		JSONArray postDataArray = new JSONArray();
+		for (int i = 0; i < empInfos.length; i++) {
+			Map<String, Object> propMap = new HashMap<String, Object>();
+			Map<String, Object> uriMap = new HashMap<String, Object>();
+			uriMap.put("uri", SFSFODataEntity.User.getName() + "('" + empInfos[i].getUserId() + "')");
+			propMap.put("__metadata", uriMap);
+			propMap.put("username", empInfos[i].getUsername());
+			propMap.put("status", empInfos[i].getStatus());
+			propMap.put("userId", empInfos[i].getUserId());
+			propMap.put("firstName", empInfos[i].getFirstName());
+			propMap.put("lastName", empInfos[i].getLastName());
+			propMap.put("email", empInfos[i].getEmail());
+			propMap.put("gender", empInfos[i].getGender());
+
+			JSONObject post = new JSONObject(propMap);
+			postDataArray.put(post);
+		}
+		return postDataArray.toString();
+	}
+
+	private String perPersonBody(EmpInfoRequest empInfos[]) {
+		JSONArray postDataArray = new JSONArray();
+		for (int i = 0; i < empInfos.length; i++) {
+			Map<String, Object> propMap = new HashMap<String, Object>();
+			Map<String, Object> uriMap = new HashMap<String, Object>();
+			uriMap.put("uri", SFSFODataEntity.PerPerson.getName() + "('" + empInfos[i].getUserId() + "')");
+			propMap.put("__metadata", uriMap);
+			propMap.put("userId", empInfos[i].getUserId());
+			propMap.put("personIdExternal", empInfos[i].getPersonIdExternal());
+
+			JSONObject post = new JSONObject(propMap);
+			postDataArray.put(post);
+		}
+		return postDataArray.toString();
+	}
+
+	private String perEmailBody(EmpInfoRequest empInfos[]) {
+		JSONArray postDataArray = new JSONArray();
+		for (int i = 0; i < empInfos.length; i++) {
+			Map<String, Object> propMap = new HashMap<String, Object>();
+			Map<String, Object> uriMap = new HashMap<String, Object>();
+			uriMap.put("uri", SFSFODataEntity.PerEmail.getName() + "(personIdExternal='" + empInfos[i].getPersonIdExternal() + "',emailType='17161')");
+			propMap.put("__metadata", uriMap);
+			propMap.put("personIdExternal", empInfos[i].getPersonIdExternal());
+			propMap.put("isPrimary", true);
+			propMap.put("emailAddress", empInfos[i].getEmail());
+			JSONObject post = new JSONObject(propMap);
+			postDataArray.put(post);
+		}
+		return postDataArray.toString();
+	}
+
+	private String empEmploymentBody(EmpInfoRequest empInfos[]) {
+		JSONArray postDataArray = new JSONArray();
+		for (int i = 0; i < empInfos.length; i++) {
+			Map<String, Object> propMap = new HashMap<String, Object>();
+			Map<String, Object> uriMap = new HashMap<String, Object>();
+			uriMap.put("uri", SFSFODataEntity.EmpEmployment.getName() + "(personIdExternal='" + empInfos[i].getPersonIdExternal() + "',userId='"
+					+ empInfos[i].getUserId() + "')");
+			propMap.put("__metadata", uriMap);
+			propMap.put("personIdExternal", empInfos[i].getPersonIdExternal());
+			propMap.put("userId", empInfos[i].getUserId());
+			String startDate = empInfos[i].getStartDate();
+			String timeStamp = Util.date2TimeStamp(startDate, null);
+			propMap.put("startDate", "/Date(" + timeStamp + ")/");
+			JSONObject post = new JSONObject(propMap);
+			postDataArray.put(post);
+		}
+		return postDataArray.toString();
+	}
+
+	private String empJobBody(EmpInfoRequest empInfos[], SFSFAction action) {
+		JSONArray postDataArray = new JSONArray();
+		for (int i = 0; i < empInfos.length; i++) {
+
+			Map<String, Object> propMap = new HashMap<String, Object>();
+			Map<String, Object> uriMap = new HashMap<String, Object>();
+			uriMap.put("uri", SFSFODataEntity.EmpJob.getName());
+			propMap.put("__metadata", uriMap);
+			propMap.put("jobCode", action == SFSFAction.Trnasfer ? "ADMIN-1" : empInfos[i].getJobCode());
+			propMap.put("userId", empInfos[i].getUserId());
+
+			String effectiveDate = empInfos[i].getEffectiveDate() != null ? empInfos[i].getEffectiveDate() : empInfos[i].getStartDate();
+			String timeStamp = Util.date2TimeStamp(effectiveDate, null);
+			propMap.put("startDate", "/Date(" + timeStamp + ")/");
+
+			propMap.put("eventReason", action == SFSFAction.Trnasfer ? "TRANICOT" : empInfos[i].getEventReason());
+			propMap.put("company", action == SFSFAction.Trnasfer ? empInfos[i].getTransferCompany() : empInfos[i].getCompany());
+			propMap.put("location", action == SFSFAction.Trnasfer ? empInfos[i].getTransferLocation() : empInfos[i].getLocation());
+			propMap.put("businessUnit", empInfos[i].getBusinessUnit());
+			propMap.put("managerId", empInfos[i].getManagerId());
+			JSONObject post = new JSONObject(propMap);
+			postDataArray.put(post);
+		}
+		return postDataArray.toString();
+	}
+
+	private String perPersonalBody(EmpInfoRequest empInfos[]) {
+		JSONArray postDataArray = new JSONArray();
+		for (int i = 0; i < empInfos.length; i++) {
+			Map<String, Object> propMap = new HashMap<String, Object>();
+			Map<String, Object> uriMap = new HashMap<String, Object>();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			
+			//String time = dateFormat.format(empInfos[i].getStartDate());
+			uriMap.put("uri",
+					SFSFODataEntity.PerPersonal.getName() + "(personIdExternal='" + empInfos[i].getPersonIdExternal() + "',startDate=datetime'" + empInfos[i].getStartDate() + "')");
+			propMap.put("__metadata", uriMap);
+			propMap.put("personIdExternal", empInfos[i].getPersonIdExternal());
+			propMap.put("gender", empInfos[i].getGender());
+			propMap.put("initials", empInfos[i].getInitials());
+			propMap.put("firstName", empInfos[i].getFirstName());
+			propMap.put("lastName", empInfos[i].getLastName());
+			JSONObject post = new JSONObject(propMap);
+			postDataArray.put(post);
+		}
+		return postDataArray.toString();
+	}
+
 }

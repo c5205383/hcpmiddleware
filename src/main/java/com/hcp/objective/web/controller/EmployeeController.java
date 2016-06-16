@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.service.SFSFODataService;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
 
 @RestController
+@ExcludeForTest
 public class EmployeeController {
 	public static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 	@Autowired
@@ -24,7 +26,7 @@ public class EmployeeController {
 	@Autowired
 	private HttpServletRequest request;
 
-	@RequestMapping(value = "/getEmpDirectReports", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/empDirectReports", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getEmpDirectReports() {
 		return oDataService.getEmpDirectReports(request);
 	}
@@ -35,8 +37,14 @@ public class EmployeeController {
 
 	}
 
-	@RequestMapping(value = "/getEmpWorkflow", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/empWorkflow", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getEmpWorkflow(@RequestParam String eventReason) {
 		return oDataService.getEmpWorkflow(request, eventReason);
+	}
+	
+	@RequestMapping(value = "/empEmployeement", method = RequestMethod.POST)
+	public @ResponseBody String createEmployee(@RequestBody EmpInfoRequest[] empInfos) {
+		return oDataService.createEmployee(request, empInfos);
+
 	}
 }

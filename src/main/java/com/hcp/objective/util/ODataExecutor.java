@@ -51,10 +51,7 @@ public class ODataExecutor {
 	public Environment env;
 	private ODataBean odataBean = null;
 
-	@Autowired
-	private HttpServletRequest request;
-
-	public ODataBean getInitializeBean(HttpServletRequest request) throws Exception {
+	public ODataBean getInitializeBean() throws Exception {
 		odataBean = new ODataBean();
 		String sfUserName = null;
 		String sfPassword = null;
@@ -77,7 +74,7 @@ public class ODataExecutor {
 	}
 
 	@SuppressWarnings("unused")
-	private User getLoginUser() {
+	private User getLoginUser(HttpServletRequest request) {
 		InitialContext ctx;
 		try {
 			ctx = new InitialContext();
@@ -344,7 +341,7 @@ public class ODataExecutor {
 		String result = null;
 		try {
 			if (odataBean == null)
-				this.getInitializeBean(request);
+				this.getInitializeBean();
 			String charset = odataBean.getCharset();
 			String authorizationType = odataBean.getAuthorizationType();
 			String authorization = odataBean.getAuthorization();
@@ -372,7 +369,7 @@ public class ODataExecutor {
 		String result = null;
 		try {
 			if (odataBean == null)
-				this.getInitializeBean(request);
+				this.getInitializeBean();
 			String charset = odataBean.getCharset();
 			String authorizationType = odataBean.getAuthorizationType();
 			String authorization = odataBean.getAuthorization();

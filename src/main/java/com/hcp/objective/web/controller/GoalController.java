@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.service.SFSFODataService;
 
 @RestController
+@ExcludeForTest
 public class GoalController {
 	public static final Logger logger = LoggerFactory.getLogger(GoalController.class);
 	@Autowired

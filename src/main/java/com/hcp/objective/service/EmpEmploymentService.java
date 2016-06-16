@@ -198,7 +198,6 @@ public class EmpEmploymentService {
 		propMap.put("__metadata", uriMap);
 		propMap.put("startDate", "/Date("+empInfoRequest.getStartDate()+")/");
 		propMap.put("personIdExternal", empInfoRequest.getPersonIdExternal());
-		propMap.put("userId", empInfoRequest.getUserId());
 		JSONObject jsonobj = new JSONObject(propMap);
 		return jsonobj.toString();
 	}

@@ -91,15 +91,12 @@ public class HomeController {
 	@Autowired
 	public ODataExecutor odataExecutor;
 
-	@Autowired
-	private HttpServletRequest request;
-
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	public @ResponseBody String get(@RequestParam String entitySetName, @RequestParam(required = false) String eid,
 			@RequestParam(required = false) String expand, @RequestParam(required = false) String query) {
 		ODataBean bean;
 		try {
-			bean = odataExecutor.getInitializeBean(request);
+			bean = odataExecutor.getInitializeBean();
 			String authType = bean.getAuthorizationType();
 			String auth = bean.getAuthorization();
 			String serviceUrl = bean.getUrl();
@@ -139,7 +136,7 @@ public class HomeController {
 	@RequestMapping(value = "/post", method = RequestMethod.POST)
 	public @ResponseBody String post() {
 		try {
-			ODataBean bean = odataExecutor.getInitializeBean(request);
+			ODataBean bean = odataExecutor.getInitializeBean();
 			String authType = bean.getAuthorizationType();
 			String auth = bean.getAuthorization();
 			String serviceUrl = bean.getUrl();
@@ -181,7 +178,8 @@ public class HomeController {
 
 	@RequestMapping(value = "/testlogin", method = RequestMethod.GET)
 	public String testlogin() {
-		return Util.getLoginUser(request).toString();
+		return null;
+		//return Util.getLoginUser(request).toString();
 	}
 	
 	@RequestMapping(value = "/testadd", method = RequestMethod.GET)

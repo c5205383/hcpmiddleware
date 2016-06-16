@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.jpa.bean.BatchJob;
 import com.hcp.objective.persistence.repositories.BatchJobRepository;
 import com.hcp.objective.web.model.request.BatchJobMergeRequest;
@@ -19,11 +20,12 @@ import com.hcp.objective.web.model.request.BatchJobMergeRequest;
  */
 @Service
 @Transactional
+@ExcludeForTest
 public class BatchJobService {
 
 	@Autowired
 	private BatchJobRepository batchJobRepository;
-	
+
 	/**
 	 * Find all exist batch jobs
 	 * 
@@ -32,7 +34,7 @@ public class BatchJobService {
 	public List<BatchJob> findAll() {
 		return batchJobRepository.findAll();
 	}
-	
+
 	/**
 	 * Create a batch job
 	 * 
@@ -64,14 +66,14 @@ public class BatchJobService {
 			return e.getMessage();
 		}
 	}
-	
+
 	/**
 	 * Update one batch job by id
 	 * 
 	 * @param id
 	 *            {@link}BatchJob's id
 	 * @param batchJobMergeRequest
-	 *            the request include a batch job information       
+	 *            the request include a batch job information
 	 * @return A {@link}BatchJob object
 	 */
 	public BatchJob updateOne(@NotNull Long id, @NotNull BatchJobMergeRequest batchJobMergeRequest) {
@@ -94,10 +96,9 @@ public class BatchJobService {
 	public List<BatchJob> findByOwner(@NotNull String owner) {
 		return batchJobRepository.findByOwner(owner);
 	}
-	
+
 	/**
-	 * Merge batch job's data from a {@link}BatchJobMergeRequest to a
-	 * {@link}BatchJob object
+	 * Merge batch job's data from a {@link}BatchJobMergeRequest to a {@link}BatchJob object
 	 * 
 	 * @param batchJobMergeRequest
 	 *            the request include a batch job information
@@ -105,7 +106,7 @@ public class BatchJobService {
 	 *            the {@link}BatchJob object
 	 */
 	private void mergeScalarProperties(BatchJobMergeRequest batchJobMergeRequest, BatchJob batchJob) {
-		//batchJob.setId(batchJobMergeRequest.getId());
+		// batchJob.setId(batchJobMergeRequest.getId());
 		batchJob.setName(batchJobMergeRequest.getName());
 		batchJob.setType(batchJobMergeRequest.getType());
 		batchJob.setInterval(batchJobMergeRequest.getInterval());

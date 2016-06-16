@@ -10,14 +10,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import com.sap.security.um.UMException;
 import com.sap.security.um.user.User;
 import com.sap.security.um.user.UserProvider;
 
+@Component
 public class Util {
 	/**
-	 * ȡ�õ�ǰʱ�������ȷ���룩
 	 * 
 	 * @return
 	 */
@@ -28,11 +29,9 @@ public class Util {
 	}
 
 	/**
-	 * ʱ���ת�������ڸ�ʽ�ַ�
 	 * 
 	 * @param seconds
-	 *            ��ȷ������ַ�
-	 * @param formatStr
+	 * @param format
 	 * @return
 	 */
 	public static String timeStamp2Date(String seconds, String format) {
@@ -46,12 +45,9 @@ public class Util {
 	}
 
 	/**
-	 * ���ڸ�ʽ�ַ�ת����ʱ��� Convert date string to time stamp
 	 * 
-	 * @param date
-	 *            �ַ�����
+	 * @param date_str
 	 * @param format
-	 *            �磺yyyy-MM-dd HH:mm:ss
 	 * @return
 	 */
 	public static String date2TimeStamp(String date_str, String format) {
@@ -104,29 +100,29 @@ public class Util {
 		}
 		return result;
 	}
-	
+
 	@SuppressWarnings("finally")
-	public static JSONObject getLoginUser(HttpServletRequest request){
+	public static JSONObject getLoginUser(HttpServletRequest request) {
 		InitialContext ctx;
 		JSONObject udata = new JSONObject();
 		try {
-		    ctx = new InitialContext();
-		    UserProvider userProvider = (UserProvider) ctx.lookup("java:comp/env/user/Provider");
-		    User user = null;
-		    
-		    if (request.getUserPrincipal() != null) {
-		    	user = userProvider.getUser(request.getUserPrincipal().getName());
-		    	
-		    	udata.put("user", user.getName());
-		    	udata.put("firstname", user.getAttribute("firstname"));
-		    	udata.put("lastname", user.getAttribute("lastname"));
-		    	udata.put("email", user.getAttribute("email"));
-		    } 
+			ctx = new InitialContext();
+			UserProvider userProvider = (UserProvider) ctx.lookup("java:comp/env/user/Provider");
+			User user = null;
+
+			if (request.getUserPrincipal() != null) {
+				user = userProvider.getUser(request.getUserPrincipal().getName());
+
+				udata.put("user", user.getName());
+				udata.put("firstname", user.getAttribute("firstname"));
+				udata.put("lastname", user.getAttribute("lastname"));
+				udata.put("email", user.getAttribute("email"));
+			}
 		} catch (NamingException | UMException e) {
-			//logger.error(e.getMessage(),e);
+			// logger.error(e.getMessage(),e);
 		} finally {
 			return udata;
 		}
-		
+
 	}
 }

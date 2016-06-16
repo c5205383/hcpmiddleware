@@ -10,6 +10,8 @@ import javax.persistence.Persistence;
 import javax.sql.DataSource;
 
 import org.eclipse.persistence.config.PersistenceUnitProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -25,25 +27,26 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.persistence.context.impl.HcpPersistenceContext;
 
 @Configuration
+@ExcludeForTest
 public class DataSourceConfig {
+
+	public static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
 
 	// The persistence schema name would determined by deployment environment
 	// 1. Dev : [NO SCHEMA]
 	// 2. HANA : MMDB
 	public static final String PERSISTENCE_SCHEMA_NAME = "MMDB";
-
 	public static final String PERSISTENCE_UNIT_NAME = "HcpDefaultPersistenceUnit";
 
 	@Autowired
 	protected HcpPersistenceContext dataSourceContext;
 
 	protected DataSource dataSource;
-
 	protected EntityManagerFactory entityManagerFactory;
-
 	protected EntityManager entityManager;
 
 	private PlatformTransactionManager annotationDrivenTransactionManager;
@@ -56,18 +59,23 @@ public class DataSourceConfig {
 			return this.dataSource;
 		}
 		final DataSource dataSource = this.dataSourceContext.getDataSource();
+
+		if (dataSource == null) {
+			logger.error("Initialize Datasource Failed");
+			return null;
+		}
 		try (final Connection connection = dataSource.getConnection()) {
 			return this.dataSource = dataSource;
 		} catch (SQLException ex) {
-		    ex.printStackTrace();
-		    return null;
+			ex.printStackTrace();
+			return null;
 		}
 	}
 
 	@Bean(autowire = Autowire.BY_TYPE)
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	@Lazy(true)
-	public synchronized EntityManagerFactory entityManagerFactory(){
+	public synchronized EntityManagerFactory entityManagerFactory() {
 		if (this.entityManagerFactory == null) {
 			try {
 				HashMap<String, Object> properties = new HashMap<String, Object>();

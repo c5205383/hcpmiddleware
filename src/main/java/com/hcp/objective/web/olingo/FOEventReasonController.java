@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.util.ODataConstants;
 import com.hcp.objective.util.ODataExecutor;
 
 @RestController
+@ExcludeForTest
 public class FOEventReasonController {
 	public static final Logger logger = LoggerFactory.getLogger(FOEventReasonController.class);
 	@Autowired
@@ -39,7 +41,7 @@ public class FOEventReasonController {
 		SimpleDateFormat sdf = new SimpleDateFormat(ODataConstants.DATE_FROMAT);
 		ODataEntry dataEntry = null;
 		try {
-			ODataBean bean = odataExecutor.getInitializeBean(request);
+			ODataBean bean = odataExecutor.getInitializeBean();
 			String authType = bean.getAuthorizationType();
 			String auth = bean.getAuthorization();
 			String serviceUrl = bean.getUrl();

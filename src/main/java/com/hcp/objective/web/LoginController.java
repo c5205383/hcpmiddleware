@@ -20,13 +20,11 @@ import com.sap.security.um.user.UserProvider;
 @RestController
 public class LoginController {
 	public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-	@Autowired  
-	private  HttpServletRequest request;
 	
 	@RequestMapping("/login")
 	public String login() {
 		
-		InitialContext ctx;
+		/*InitialContext ctx;
 		String result = null;
 		try {
 		    ctx = new InitialContext();
@@ -40,8 +38,8 @@ public class LoginController {
 		    }
 		} catch (NamingException | UMException e) {
 			logger.error(e.getMessage(),e);
-		}
-		return result;
+		}*/
+		return null;
 		//return  jsonpName + "(" + "{'name':'kevin','score':123}" + ")";
 
 	}

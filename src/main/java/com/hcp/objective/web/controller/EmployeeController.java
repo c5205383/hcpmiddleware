@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcp.objective.common.ExcludeForTest;
 import com.hcp.objective.service.SFSFODataService;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
 
 @RestController
-@ExcludeForTest
+//@ExcludeForTest
 public class EmployeeController {
 	public static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 	@Autowired

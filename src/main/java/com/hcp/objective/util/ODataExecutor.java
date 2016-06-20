@@ -433,6 +433,8 @@ public class ODataExecutor {
 		connection.setDoOutput(true);
 		connection.setDoInput(true);
 		connection.setRequestMethod(httpMethod);
+		
+		connection.setConnectTimeout(30000*2);
 
 		return connection;
 	}

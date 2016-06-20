@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.hcp.objective.BaseSpringTestCase;
 
-public class UtilTest extends BaseSpringTestCase {
+public class UtilTester extends BaseSpringTestCase {
 
 	@Test
 	public void testTimeStamp() {

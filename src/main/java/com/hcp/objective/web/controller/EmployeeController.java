@@ -22,8 +22,8 @@ public class EmployeeController {
 	@Autowired
 	private SFSFODataService oDataService;
 
-	@Autowired
-	private HttpServletRequest request;
+	 @Autowired
+	 private HttpServletRequest request;
 
 	@RequestMapping(value = "/empDirectReports", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getEmpDirectReports() {

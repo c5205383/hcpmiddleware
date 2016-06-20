@@ -61,7 +61,7 @@ public class SFSFODataService {
 			String entityName = SFSFODataEntity.User.getName();
 			String key = "'cgrant1'";
 			String query = "$format=json&$expand=directReports&$select=directReports";
-			String result = odataExecutor.readData(request, entityName, key, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, key, query, ODataConstants.HTTP_METHOD_GET);
 
 			if (result == null || result == "")
 				return result;
@@ -89,7 +89,7 @@ public class SFSFODataService {
 		try {
 			String entityName = SFSFODataEntity.FOEventReason.getName();
 			String query = "$format=json";
-			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 
 			long requestEndTime = System.currentTimeMillis();
 			logger.info("Read Data: " + result);
@@ -113,7 +113,7 @@ public class SFSFODataService {
 		try {
 			String postData = empJobBody(empInfos, SFSFAction.Trnasfer);
 			String query = "$format=json";
-			String result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			String result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
 			return result;
 		} catch (Exception e2) {
 			logger.error(e2.getMessage(), e2);
@@ -137,7 +137,7 @@ public class SFSFODataService {
 			if (eventReason != null) {
 				query = "$format=json&$filter=eventReason%20eq%20%27" + eventReason + "%27";
 			}
-			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 
 			long requestEndTime = System.currentTimeMillis();
 			logger.info("Read Data: " + result);
@@ -162,7 +162,7 @@ public class SFSFODataService {
 			String entityName = SFSFODataEntity.FOCompany.getName();
 			String key = null;
 			String query = "$format=json";
-			String result = odataExecutor.readData(request, entityName, key, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, key, query, ODataConstants.HTTP_METHOD_GET);
 
 			if (result == null || result == "")
 				return result;
@@ -190,7 +190,7 @@ public class SFSFODataService {
 			String entityName = SFSFODataEntity.Country.getName();
 			String key = null;
 			String query = "$format=json";
-			String result = odataExecutor.readData(request, entityName, key, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, key, query, ODataConstants.HTTP_METHOD_GET);
 
 			if (result == null || result == "")
 				return result;
@@ -216,7 +216,7 @@ public class SFSFODataService {
 		try {
 			String entityName = SFSFODataEntity.FOLocation.getName();
 			String query = "$format=json&$expand=companyFlxNav";
-			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 
 			long requestEndTime = System.currentTimeMillis();
 			logger.info("Read Data: " + result);
@@ -239,7 +239,7 @@ public class SFSFODataService {
 		try {
 			String entityName = SFSFODataEntity.GoalPlanTemplate.getName();
 			String query = "$format=json";
-			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 
 			long requestEndTime = System.currentTimeMillis();
 			logger.info("Read Data: " + result);
@@ -261,7 +261,7 @@ public class SFSFODataService {
 		try {
 			String entityName = SFSFODataEntity.Goal.getName() + goalPlanId;
 			String query = "$format=json";
-			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 			logger.info("Read Data: " + result);
 			return result.toString();
 		} catch (Exception e) {
@@ -280,7 +280,7 @@ public class SFSFODataService {
 		try {
 			String entityName = SFSFODataEntity.FOJobCode.getName();
 			String query = "$format=json";
-			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 			logger.info("Read Data: " + result);
 			return result.toString();
 		} catch (Exception e) {
@@ -299,7 +299,7 @@ public class SFSFODataService {
 		try {
 			String entityName = SFSFODataEntity.FOBusinessUnit.getName();
 			String query = "$format=json";
-			String result = odataExecutor.readData(request, entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 			logger.info("Read Data: " + result);
 			return result.toString();
 		} catch (Exception e) {
@@ -323,23 +323,23 @@ public class SFSFODataService {
 
 			// first step upsert user
 			postData = userBody(empInfos);
-			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
 			// second step upsert per person
 			postData = perPersonBody(empInfos);
-			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
 			// third step upsert per emial
 			postData = perEmailBody(empInfos);
-			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
 			// forth step upsert empEmploymentBody
 			postData = empEmploymentBody(empInfos);
-			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
 			// fivth step upsert emp job
 			postData = empJobBody(empInfos, SFSFAction.Create);
-			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
 
 			// fivth step upsert emp job
 			postData = perPersonalBody(empInfos);
-			result = odataExecutor.postData(request, SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
 			return result;
 		} catch (Exception e2) {
 			logger.error(e2.getMessage(), e2);

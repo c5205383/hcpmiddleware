@@ -1,6 +1,5 @@
 package com.hcp.objective.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,34 +15,31 @@ import com.hcp.objective.service.SFSFODataService;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
 
 @RestController
-//@ExcludeForTest
+// @ExcludeForTest
 public class EmployeeController {
 	public static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 	@Autowired
 	private SFSFODataService oDataService;
 
-	 @Autowired
-	 private HttpServletRequest request;
-
 	@RequestMapping(value = "/empDirectReports", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getEmpDirectReports() {
-		return oDataService.getEmpDirectReports(request);
+		return oDataService.getEmpDirectReports(/* TODO: fulfill login user id */null);
 	}
 
 	@RequestMapping(value = "/transferEmployee", method = RequestMethod.POST)
 	public @ResponseBody String transferEmployee(@RequestBody EmpInfoRequest[] empInfos) {
-		return oDataService.transferEmployee(request, empInfos);
+		return oDataService.transferEmployee(empInfos);
 
 	}
 
 	@RequestMapping(value = "/empWorkflow", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getEmpWorkflow(@RequestParam String eventReason) {
-		return oDataService.getEmpWorkflow(request, eventReason);
+		return oDataService.getEmpWorkflow(eventReason);
 	}
-	
+
 	@RequestMapping(value = "/empEmployeement", method = RequestMethod.POST)
 	public @ResponseBody String createEmployee(@RequestBody EmpInfoRequest[] empInfos) {
-		return oDataService.createEmployee(request, empInfos);
+		return oDataService.createEmployee(empInfos);
 
 	}
 }

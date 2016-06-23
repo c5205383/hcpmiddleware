@@ -26,10 +26,10 @@ public class EmployeeControllerTester extends BaseSpringTestCase {
 
 	@Test
 	public void testGetEmpDirectReports() throws Exception {
-		// mockMvc.perform: 发起一个http请求。
+		// mockMvc.perform:发起一个http请求
 		// get/post(url): 表示一个post请求，url对应的是Controller中被测方法的Rest url
-		// andDo（print()）: 表示打印出request和response的详细信息，便于调试
-		// andExpect（status().isOk()）: 表示期望返回的Response Status是200。
+		// andDo(print())示打印出request和response的详细信息，便于调试
+		// andExpect(status().isOk())表示期望返回的Response Status是200
 		this.mockMvc.perform(get("/empDirectReports")).andDo(print()).andExpect(status().isOk()).andReturn();
 	}
 }

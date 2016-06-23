@@ -1,6 +1,5 @@
 package com.hcp.objective.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,36 +20,34 @@ public class FoundationObjectController {
 	@Autowired
 	private SFSFODataService oDataService;
 
-	@Autowired
-	private HttpServletRequest request;
 
 	@RequestMapping(value = "/FOCompany", produces = encoding)
 	public @ResponseBody String getFOCompany() {
-		return oDataService.getFOCompany(request);
+		return oDataService.getFOCompany();
 	}
 
 	@RequestMapping(value = "/Country", produces = encoding)
 	public @ResponseBody String getCountry() {
-		return oDataService.getCountry(request);
+		return oDataService.getCountry();
 	}
 
 	@RequestMapping(value = "/FOEventReason", produces = encoding)
 	public @ResponseBody String getFOEventReason() {
-		return oDataService.getFOEventReason(request);
+		return oDataService.getFOEventReason();
 	}
 
 	@RequestMapping(value = "/FOLocation", produces = encoding)
 	public @ResponseBody String getFOLocation() {
-		return oDataService.getFOLocation(request);
+		return oDataService.getFOLocation();
 	}
 
 	@RequestMapping(value = "/FOJobCode", produces = encoding)
 	public @ResponseBody String getFOJobCode() {
-		return oDataService.getFOJobCode(request);
+		return oDataService.getFOJobCode();
 	}
-	
+
 	@RequestMapping(value = "/FOBusinessUnit", produces = encoding)
 	public @ResponseBody String getFOBusinessUnit() {
-		return oDataService.getFOBusinessUnit(request);
+		return oDataService.getFOBusinessUnit();
 	}
 }

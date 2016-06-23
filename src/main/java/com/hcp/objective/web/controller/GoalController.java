@@ -1,7 +1,5 @@
 package com.hcp.objective.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +17,13 @@ public class GoalController {
 	@Autowired
 	private SFSFODataService oDataService;
 
-	@Autowired
-	private HttpServletRequest request;
-
 	@RequestMapping(value = "/goalPlanTemplate", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getGoalPlanTemplate() {
-		return oDataService.getGoalPlanTemplate(request);
+		return oDataService.getGoalPlanTemplate();
 	}
 
 	@RequestMapping(value = "/goals", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getGoalsByTemplate(String goalPlanId) {
-		return oDataService.getGoalsByTemplate(request, goalPlanId);
+		return oDataService.getGoalsByTemplate(goalPlanId);
 	}
 }

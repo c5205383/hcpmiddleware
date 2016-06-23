@@ -337,7 +337,7 @@ public class ODataExecutor {
 
 	/**************************************************************************************************/
 	// Add by Bruce 2016-05-26
-	public String readData(/*HttpServletRequest request, */String entityName, String key, String query, String requestMethod) {
+	public String readData(/* HttpServletRequest request, */String entityName, String key, String query, String requestMethod) {
 		String result = null;
 		try {
 			if (odataBean == null)
@@ -364,7 +364,7 @@ public class ODataExecutor {
 		return result;
 	}
 
-	public String postData(/*HttpServletRequest request,*/ String entityName, String postData, String query, String requestMethod) {
+	public String postData(/* HttpServletRequest request, */ String entityName, String postData, String query, String requestMethod) {
 
 		String result = null;
 		try {
@@ -433,8 +433,8 @@ public class ODataExecutor {
 		connection.setDoOutput(true);
 		connection.setDoInput(true);
 		connection.setRequestMethod(httpMethod);
-		
-		connection.setConnectTimeout(30000*2);
+
+		connection.setConnectTimeout(30000 * 2);
 
 		return connection;
 	}

@@ -24,6 +24,8 @@ public class SFSFODataService {
 	@Autowired
 	private ODataExecutor odataExecutor;
 
+	private String debug_user_id = "cgrant1";
+
 	private enum SFSFODataEntity {
 		User("User"), FOEventReason("FOEventReason"), EmpJob("EmpJob"), EmpWfRequest("EmpWfRequest"), FOCompany("FOCompany"), Country("Country"), FOLocation(
 				"FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal("Goal_"), FOJobCode("FOJobCode"), FOBusinessUnit("FOBusinessUnit"), PerPerson(
@@ -51,15 +53,15 @@ public class SFSFODataService {
 	/**
 	 * Service for Controller to request User's direct reports by SFSF ODATA API
 	 * 
-	 * @param request
+	 * @param loginUserId
 	 * @return requested ODATA API result formatted as JSON
 	 */
-	public String getEmpDirectReports(HttpServletRequest request) {
+	public String getEmpDirectReports(String loginUserId) {
 		long requestStartTime = System.currentTimeMillis();
 
 		try {
 			String entityName = SFSFODataEntity.User.getName();
-			String key = "'cgrant1'";
+			String key = (loginUserId == null || loginUserId.isEmpty()) ? ("'" + debug_user_id + "'") : ("'" + loginUserId + "'");
 			String query = "$format=json&$expand=directReports&$select=directReports";
 			String result = odataExecutor.readData(entityName, key, query, ODataConstants.HTTP_METHOD_GET);
 
@@ -81,10 +83,9 @@ public class SFSFODataService {
 	/**
 	 * Request SFSF FOEventReason Data
 	 * 
-	 * @param request
 	 * @return
 	 */
-	public String getFOEventReason(HttpServletRequest request) {
+	public String getFOEventReason() {
 		long requestStartTime = System.currentTimeMillis();
 		try {
 			String entityName = SFSFODataEntity.FOEventReason.getName();
@@ -104,11 +105,10 @@ public class SFSFODataService {
 	/**
 	 * Change SFSF employee job location
 	 * 
-	 * @param request
 	 * @param empInfos
 	 * @return
 	 */
-	public String transferEmployee(HttpServletRequest request, EmpInfoRequest[] empInfos) {
+	public String transferEmployee(EmpInfoRequest[] empInfos) {
 
 		try {
 			String postData = empJobBody(empInfos, SFSFAction.Trnasfer);
@@ -128,7 +128,7 @@ public class SFSFODataService {
 	 * @param eventReason
 	 * @return
 	 */
-	public String getEmpWorkflow(HttpServletRequest request, String eventReason) {
+	public String getEmpWorkflow(String eventReason) {
 		long requestStartTime = System.currentTimeMillis();
 
 		try {
@@ -152,10 +152,9 @@ public class SFSFODataService {
 	/**
 	 * Get SFSF Companies
 	 * 
-	 * @param request
 	 * @return
 	 */
-	public String getFOCompany(HttpServletRequest request) {
+	public String getFOCompany() {
 		long requestStartTime = System.currentTimeMillis();
 
 		try {
@@ -180,10 +179,9 @@ public class SFSFODataService {
 	/**
 	 * Get SFSF Countries
 	 * 
-	 * @param request
 	 * @return
 	 */
-	public String getCountry(HttpServletRequest request) {
+	public String getCountry() {
 		long requestStartTime = System.currentTimeMillis();
 
 		try {
@@ -208,10 +206,9 @@ public class SFSFODataService {
 	/**
 	 * Get SFSF Locations
 	 * 
-	 * @param request
 	 * @return
 	 */
-	public String getFOLocation(HttpServletRequest request) {
+	public String getFOLocation() {
 		long requestStartTime = System.currentTimeMillis();
 		try {
 			String entityName = SFSFODataEntity.FOLocation.getName();
@@ -233,7 +230,7 @@ public class SFSFODataService {
 	 * 
 	 * @return
 	 */
-	public String getGoalPlanTemplate(HttpServletRequest request) {
+	public String getGoalPlanTemplate() {
 		long requestStartTime = System.currentTimeMillis();
 
 		try {
@@ -257,7 +254,7 @@ public class SFSFODataService {
 	 * @param goalPlanId
 	 * @return
 	 */
-	public @ResponseBody String getGoalsByTemplate(HttpServletRequest request, String goalPlanId) {
+	public @ResponseBody String getGoalsByTemplate(String goalPlanId) {
 		try {
 			String entityName = SFSFODataEntity.Goal.getName() + goalPlanId;
 			String query = "$format=json";
@@ -276,7 +273,7 @@ public class SFSFODataService {
 	 * @param
 	 * @return
 	 */
-	public @ResponseBody String getFOJobCode(HttpServletRequest request) {
+	public @ResponseBody String getFOJobCode() {
 		try {
 			String entityName = SFSFODataEntity.FOJobCode.getName();
 			String query = "$format=json";
@@ -295,7 +292,7 @@ public class SFSFODataService {
 	 * @param
 	 * @return
 	 */
-	public @ResponseBody String getFOBusinessUnit(HttpServletRequest request) {
+	public @ResponseBody String getFOBusinessUnit() {
 		try {
 			String entityName = SFSFODataEntity.FOBusinessUnit.getName();
 			String query = "$format=json";
@@ -315,7 +312,7 @@ public class SFSFODataService {
 	 * @param empInfos
 	 * @return
 	 */
-	public String createEmployee(HttpServletRequest request, EmpInfoRequest[] empInfos) {
+	public String createEmployee(EmpInfoRequest[] empInfos) {
 		try {
 			String query = "$format=json";
 			String postData = null;

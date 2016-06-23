@@ -1,9 +1,7 @@
-package com.hcp.objective.service;
+package com.hcp.objective.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,14 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.hcp.objective.service.IODataService;
 import com.hcp.objective.util.ODataConstants;
 import com.hcp.objective.util.ODataExecutor;
 import com.hcp.objective.util.Util;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
 
-@Service
-public class SFSFODataService {
-	public static final Logger logger = LoggerFactory.getLogger(SFSFODataService.class);
+@Service("oDataService")
+public class SFSFODataServiceImpl implements IODataService {
+	public static final Logger logger = LoggerFactory.getLogger(SFSFODataServiceImpl.class);
 	@Autowired
 	private ODataExecutor odataExecutor;
 
@@ -81,7 +80,7 @@ public class SFSFODataService {
 	}
 
 	/**
-	 * Request SFSF FOEventReason Data
+	 * Get SFSF FOEventReason Data
 	 * 
 	 * @return
 	 */

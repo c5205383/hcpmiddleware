@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.common.ExcludeForTest;
-import com.hcp.objective.service.SFSFODataService;
+import com.hcp.objective.service.IODataService;
 
 @RestController
 @ExcludeForTest
@@ -18,7 +18,7 @@ public class FoundationObjectController {
 
 	private final String encoding = "application/json;charset=UTF-8";
 	@Autowired
-	private SFSFODataService oDataService;
+	private IODataService oDataService;
 
 
 	@RequestMapping(value = "/FOCompany", produces = encoding)

@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.common.ExcludeForTest;
-import com.hcp.objective.service.SFSFODataService;
+import com.hcp.objective.service.IODataService;
 
 @RestController
 @ExcludeForTest
 public class GoalController {
 	public static final Logger logger = LoggerFactory.getLogger(GoalController.class);
 	@Autowired
-	private SFSFODataService oDataService;
+	private IODataService oDataService;
 
 	@RequestMapping(value = "/goalPlanTemplate", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getGoalPlanTemplate() {

@@ -1,6 +1,5 @@
 package com.hcp.objective.web.controller;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcp.objective.service.SFSFODataService;
+import com.hcp.objective.service.IODataService;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
 
 @RestController
@@ -19,7 +18,7 @@ import com.hcp.objective.web.model.request.EmpInfoRequest;
 public class EmployeeController {
 	public static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 	@Autowired
-	private SFSFODataService oDataService;
+	private IODataService oDataService;
 
 	@RequestMapping(value = "/empDirectReports", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getEmpDirectReports() {

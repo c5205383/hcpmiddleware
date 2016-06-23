@@ -8,10 +8,10 @@ import com.hcp.objective.BaseSpringTestCase;
 public class SFSFODataServiceTester extends BaseSpringTestCase {
 
 	@Autowired
-	SFSFODataService service;
+	IODataService oDataService;
 
 	@Test
 	public void testGetEmpDirectReports() {
-		System.out.println(service.getEmpDirectReports(null));
+		System.out.println(oDataService.getEmpDirectReports(null));
 	}
 }

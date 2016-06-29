@@ -1,11 +1,11 @@
-package com.hcp.objective.service;
+package com.hcp.objective.service.quartz;
 
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-@Service
+import com.hcp.objective.service.quartz.AbstractQuartzManager;
+
 public class SingleQuartzManager extends AbstractQuartzManager {
 	private static final Logger log = LoggerFactory.getLogger(SingleQuartzManager.class);
 	public static final int STATE_RUN = 1; // ÔËÐÐ×´Ì¬

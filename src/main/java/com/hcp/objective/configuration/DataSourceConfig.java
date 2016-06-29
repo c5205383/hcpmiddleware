@@ -29,8 +29,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.hcp.objective.component.impl.HcpPersistenceContext;
 
-
-
 @Configuration
 @ExcludeForTest
 public class DataSourceConfig {

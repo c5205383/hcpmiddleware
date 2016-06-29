@@ -1,4 +1,4 @@
-package com.hcp.objective.service;
+package com.hcp.objective.service.quartz;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -49,6 +49,8 @@ public abstract class AbstractQuartzManager {
 	@Autowired
 	SchedulerFactoryBean schedulerFactoryBean;
 
+	@Autowired
+
 	public String getState() {
 		if (StringUtils.isEmpty(schedulerState)) {
 			schedulerState = appBean.getQuartzState();
@@ -71,8 +73,8 @@ public abstract class AbstractQuartzManager {
 			jobDetail = JobBuilder.newJob(SingleQuartzJobFactory.class).withIdentity(batchJob.getName(), JOB_GROUP_NAME)
 					.build();
 		} else if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_CLUSTER)) {
-			// jobDetail = JobBuilder.newJob(ClusterQuartzJobFactory.class).withIdentity(batchJob.getJobId(),
-			// SchedulerJob.JOB_GOURP).build();
+			jobDetail = JobBuilder.newJob(ClusterQuartzJobFactory.class)
+					.withIdentity(batchJob.getName(), JOB_GROUP_NAME).build();
 		} else {
 			return;
 		}

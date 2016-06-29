@@ -82,7 +82,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.component.ODataExecutor;
 import com.hcp.objective.schedule.TestJob;
-import com.hcp.objective.service.AbstractQuartzManager;
 
 @RestController
 public class HomeController {
@@ -188,16 +187,16 @@ public class HomeController {
 	
 	@RequestMapping(value = "/testpause", method = RequestMethod.GET)
 	public void testPause() {
-		AbstractQuartzManager.pauseJob("testjob1", "trigger1"); 
+		//AbstractQuartzManager.pauseJob("testjob1", "trigger1"); 
 	}
 	
 	@RequestMapping(value = "/testresume", method = RequestMethod.GET)
 	public void testresume() {
-		AbstractQuartzManager.resumeJob("testjob1", "trigger1"); 
+		//AbstractQuartzManager.resumeJob("testjob1", "trigger1"); 
 	}
 	
 	@RequestMapping(value = "/testdelete", method = RequestMethod.GET)
 	public void testdelete() {
-		AbstractQuartzManager.deleteJob("testjob1", "trigger1"); 
+		//AbstractQuartzManager.deleteJob("testjob1", "trigger1"); 
 	}
 }

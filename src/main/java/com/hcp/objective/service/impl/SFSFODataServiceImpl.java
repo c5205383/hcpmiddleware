@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.hcp.objective.component.ODataExecutor;
+import com.hcp.objective.component.Util;
 import com.hcp.objective.service.IODataService;
 import com.hcp.objective.util.ODataConstants;
-import com.hcp.objective.util.ODataExecutor;
-import com.hcp.objective.util.Util;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
 
 @Service("oDataService")

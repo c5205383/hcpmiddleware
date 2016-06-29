@@ -1,6 +1,6 @@
 package com.hcp.objective.bean;
 
-public class ODataBean {
+public class ApplicationPropertyBean {
 	private String url;
 	private String authorizationType;
 	private String authorization;
@@ -13,6 +13,9 @@ public class ODataBean {
 	private String contentType;
 	private boolean isProxy;
 	private String charset;
+	
+	//for quartz scheduler
+	private String quartzState;
 
 	
 	public String getUrl() {
@@ -78,6 +81,12 @@ public class ODataBean {
 	}
 	public void setCharset(String charset) {
 		this.charset = charset;
+	}
+	public String getQuartzState() {
+		return quartzState;
+	}
+	public void setQuartzState(String quartzState) {
+		this.quartzState = quartzState;
 	}
 
 }

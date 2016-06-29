@@ -18,8 +18,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hcp.objective.jpa.bean.Person;
-import com.hcp.objective.jpa.bean.Person_;
+import com.hcp.objective.persistence.bean.Person;
+import com.hcp.objective.persistence.bean.Person_;
+
 
 
 @Repository

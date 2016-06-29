@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcp.objective.common.ExcludeForTest;
-import com.hcp.objective.jpa.bean.Person;
-import com.hcp.objective.persistence.DataSourceConfig;
+import com.hcp.objective.configuration.DataSourceConfig;
+import com.hcp.objective.configuration.ExcludeForTest;
+import com.hcp.objective.persistence.bean.Person;
+
 
 @RestController
 @ExcludeForTest

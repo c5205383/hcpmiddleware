@@ -1,4 +1,4 @@
-package com.hcp.objective.persistence.context.impl;
+package com.hcp.objective.component.impl;
 
 
 import javax.annotation.Resource;
@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
-import com.hcp.objective.common.ExcludeForTest;
-import com.hcp.objective.persistence.context.IPersistenceContext;
+import com.hcp.objective.component.IPersistenceContext;
+import com.hcp.objective.configuration.ExcludeForTest;
 
 @Component
 @Primary

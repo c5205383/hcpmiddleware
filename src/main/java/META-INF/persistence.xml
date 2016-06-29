@@ -10,9 +10,9 @@
 	<persistence-unit name="HcpDefaultPersistenceUnit">
 		<description>JPA-HANA</description>
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>com.hcp.objective.jpa.bean.Person</class>
-		<class>com.hcp.objective.jpa.bean.Form</class>
-		<class>com.hcp.objective.jpa.bean.BatchJob</class>
+		<class>com.hcp.objective.persistence.bean.BatchJob</class>
+		<class>com.hcp.objective.persistence.bean.Person</class>
+		<class>com.hcp.objective.persistence.bean.Form</class>
 		<properties>
 			<property name="eclipselink.ddl-generation" value="create-tables" />
 			<property name="eclipselink.ddl-generation.output-mode" value="both" />

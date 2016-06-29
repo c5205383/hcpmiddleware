@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.util.ODataConstants;
 import com.hcp.objective.web.model.request.EmpInfoRequest;
 import com.sun.istack.NotNull;
@@ -29,7 +29,7 @@ public class EmpEmploymentService {
 	private String authorizationHeader;
 	private URL url;
 	
-	public EmpEmploymentService(ODataBean bean) throws Exception{
+	public EmpEmploymentService(ApplicationPropertyBean bean) throws Exception{
 		authType = bean.getAuthorizationType();
 		auth = bean.getAuthorization();
 		serviceUrl = bean.getUrl();

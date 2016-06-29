@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hcp.objective.common.ExcludeForTest;
+import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.service.IContextService;
 import com.sap.security.um.UMException;
 import com.sap.security.um.user.UnsupportedUserAttributeException;

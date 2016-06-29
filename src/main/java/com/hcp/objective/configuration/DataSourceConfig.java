@@ -1,4 +1,4 @@
-package com.hcp.objective.persistence;
+package com.hcp.objective.configuration;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,8 +27,9 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.hcp.objective.common.ExcludeForTest;
-import com.hcp.objective.persistence.context.impl.HcpPersistenceContext;
+import com.hcp.objective.component.impl.HcpPersistenceContext;
+
+
 
 @Configuration
 @ExcludeForTest

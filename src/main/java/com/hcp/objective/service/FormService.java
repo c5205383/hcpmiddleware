@@ -15,11 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hcp.objective.bean.ODataBean;
-import com.hcp.objective.common.ExcludeForTest;
-import com.hcp.objective.jpa.bean.Form;
+import com.hcp.objective.bean.ApplicationPropertyBean;
+import com.hcp.objective.component.ODataExecutor;
+import com.hcp.objective.configuration.ExcludeForTest;
+import com.hcp.objective.persistence.bean.Form;
 import com.hcp.objective.persistence.repositories.FormRepository;
-import com.hcp.objective.util.ODataExecutor;
 import com.sun.istack.NotNull;
 
 @Service
@@ -39,7 +39,7 @@ public class FormService {
 		String serviceUrl = null;
 		Form form = new Form();
 		try {
-			ODataBean bean = odataExecutor.getInitializeBean();
+			ApplicationPropertyBean bean = odataExecutor.getInitializeBean();
 			authType = bean.getAuthorizationType();
 			auth = bean.getAuthorization();
 			serviceUrl = bean.getUrl();

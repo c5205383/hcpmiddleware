@@ -1,4 +1,4 @@
-package com.hcp.objective.util;
+package com.hcp.objective.component;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,7 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.bean.ApplicationPropertyBean;
+import com.hcp.objective.util.ODataConstants;
 import com.sap.security.um.UMException;
 import com.sap.security.um.user.User;
 import com.sap.security.um.user.UserProvider;
@@ -49,10 +50,13 @@ public class ODataExecutor {
 	public static final Logger logger = LoggerFactory.getLogger(ODataExecutor.class);
 	@Autowired
 	public Environment env;
-	private ODataBean odataBean = null;
+	
+	@Autowired
+	private ApplicationPropertyBean applicationPropertyBean;
 
-	public ODataBean getInitializeBean() throws Exception {
-		odataBean = new ODataBean();
+	public ApplicationPropertyBean getInitializeBean() throws Exception {
+		return applicationPropertyBean;
+		/*odataBean = new ODataBean();
 		String sfUserName = null;
 		String sfPassword = null;
 
@@ -70,7 +74,7 @@ public class ODataExecutor {
 		odataBean.setProxy(Boolean.parseBoolean(env.getProperty("service.isProxy")));
 		odataBean.setCharset(env.getProperty("service.charset"));
 
-		return odataBean;
+		return odataBean;*/
 	}
 
 	@SuppressWarnings("unused")
@@ -172,8 +176,8 @@ public class ODataExecutor {
 	}
 
 	private InputStream execute(String relativeUri, String contentType, String httpMethod) throws IOException {
-		String authorizationType = odataBean.getAuthorizationType();
-		String authorization = odataBean.getAuthorization();
+		String authorizationType = applicationPropertyBean.getAuthorizationType();
+		String authorization = applicationPropertyBean.getAuthorization();
 		return execute(relativeUri, contentType, httpMethod, authorizationType, authorization);
 	}
 
@@ -251,12 +255,12 @@ public class ODataExecutor {
 
 	}
 
-	public ODataBean getOdataBean() {
-		return odataBean;
+	public ApplicationPropertyBean getOdataBean() {
+		return applicationPropertyBean;
 	}
 
-	public void setOdataBean(ODataBean odataBean) {
-		this.odataBean = odataBean;
+	public void setOdataBean(ApplicationPropertyBean odataBean) {
+		this.applicationPropertyBean = odataBean;
 	}
 
 	public ODataEntry createEntry(Edm edm, String serviceUri, String contentType, String entitySetName, Map<String, Object> data, String authorizationType,
@@ -340,11 +344,11 @@ public class ODataExecutor {
 	public String readData(/* HttpServletRequest request, */String entityName, String key, String query, String requestMethod) {
 		String result = null;
 		try {
-			if (odataBean == null)
+			if (applicationPropertyBean == null)
 				this.getInitializeBean();
-			String charset = odataBean.getCharset();
-			String authorizationType = odataBean.getAuthorizationType();
-			String authorization = odataBean.getAuthorization();
+			String charset = applicationPropertyBean.getCharset();
+			String authorizationType = applicationPropertyBean.getAuthorizationType();
+			String authorization = applicationPropertyBean.getAuthorization();
 			// String contentType = odataBean.getContentType();
 
 			String absolutUri = createAbsolutUri(entityName, key, query);
@@ -368,12 +372,12 @@ public class ODataExecutor {
 
 		String result = null;
 		try {
-			if (odataBean == null)
+			if (applicationPropertyBean == null)
 				this.getInitializeBean();
-			String charset = odataBean.getCharset();
-			String authorizationType = odataBean.getAuthorizationType();
-			String authorization = odataBean.getAuthorization();
-			String contentType = odataBean.getContentType();
+			String charset = applicationPropertyBean.getCharset();
+			String authorizationType = applicationPropertyBean.getAuthorizationType();
+			String authorization = applicationPropertyBean.getAuthorization();
+			String contentType = applicationPropertyBean.getContentType();
 
 			String absolutUri = createAbsolutUri(entityName, null, query);
 			HttpURLConnection conn = initializeConnection(absolutUri, requestMethod, authorizationType, authorization, contentType);
@@ -402,7 +406,7 @@ public class ODataExecutor {
 	}
 
 	private String createAbsolutUri(String entityName, String key, String query) {
-		String serviceUri = odataBean.getUrl();
+		String serviceUri = applicationPropertyBean.getUrl();
 		final StringBuilder absolutUri = new StringBuilder(serviceUri).append(ODataConstants.SEPARATOR).append(entityName);
 		if (key != null) {
 			absolutUri.append("(").append(key).append(")");
@@ -417,8 +421,8 @@ public class ODataExecutor {
 			throws MalformedURLException, IOException {
 		HttpURLConnection connection = null;
 
-		if (odataBean.isProxy()) {
-			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(odataBean.getProxyName(), odataBean.getProxyPort()));
+		if (applicationPropertyBean.isProxy()) {
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(applicationPropertyBean.getProxyName(), applicationPropertyBean.getProxyPort()));
 			connection = (HttpURLConnection) new URL(absolutUri).openConnection(proxy);
 		} else {
 			connection = (HttpURLConnection) new URL(absolutUri).openConnection();

@@ -1,4 +1,4 @@
-package com.hcp.objective.jpa.bean;
+package com.hcp.objective.persistence.bean;
 
 import java.io.Serializable;
 
@@ -26,25 +26,25 @@ public class BatchJob implements Serializable {
 	@GeneratedValue
 	@Column(name = "ID", nullable = false)
 	private Long id;
-	
+
 	@Column(name = "NAME", nullable = false)
 	private String name;
-	
+
 	@Column(name = "TYPE", nullable = false)
 	private String type;
-	
+
 	@Column(name = "INTERVAL", nullable = false)
 	private Double interval;
-	
+
 	@Column(name = "INFO", nullable = false)
 	private String info;
-	
+
 	@Column(name = "STATUS", nullable = false)
 	private Boolean status;
 
 	@Column(name = "OWNER", nullable = false)
 	private String owner;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -100,5 +100,17 @@ public class BatchJob implements Serializable {
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
-	
+
+	public String getCronExpression() {
+		// TODO Auto-generated method stub
+		double interval = this.getInterval();
+		String time = null;
+		if (interval == 1) {
+			time = "0 0/1 * * * ?";
+		} else if (interval == 0.5) {
+			time = "0 0/30 * * * ?";
+		}
+		return "0/2 * * * * ?";
+	}
+
 }

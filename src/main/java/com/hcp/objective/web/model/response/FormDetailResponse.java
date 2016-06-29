@@ -3,7 +3,8 @@ package com.hcp.objective.web.model.response;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.hcp.objective.jpa.bean.Form;
+import com.hcp.objective.persistence.bean.Form;
+
 
 public class FormDetailResponse  implements Serializable {
 

@@ -7,11 +7,12 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Configuration;
 
-import com.hcp.objective.common.ExcludeForTest;
+import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.service.BatchJobService;
 
 @Configuration
-@ComponentScan(basePackages = { "com.hcp.objective" }, excludeFilters = @Filter(type = FilterType.ANNOTATION, value = ExcludeForTest.class))
+@ComponentScan(basePackages = {
+		"com.hcp.objective" }, excludeFilters = @Filter(type = FilterType.ANNOTATION, value = ExcludeForTest.class))
 public class SpringAppConfig4Test {
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();

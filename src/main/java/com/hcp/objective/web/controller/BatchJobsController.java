@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcp.objective.common.ExcludeForTest;
-import com.hcp.objective.jpa.bean.BatchJob;
+import com.hcp.objective.configuration.ExcludeForTest;
+import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.service.BatchJobService;
 import com.hcp.objective.web.model.request.BatchJobMergeRequest;
 import com.hcp.objective.web.model.response.BatchJobResponse;

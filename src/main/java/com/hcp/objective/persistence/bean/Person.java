@@ -1,4 +1,4 @@
-package com.hcp.objective.jpa.bean;
+package com.hcp.objective.persistence.bean;
 
 import java.io.Serializable;
 

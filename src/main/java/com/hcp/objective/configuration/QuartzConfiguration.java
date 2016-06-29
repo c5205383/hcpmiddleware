@@ -1,7 +1,9 @@
-package com.hcp.objective.common;
+package com.hcp.objective.configuration;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
@@ -52,10 +54,13 @@ public class QuartzConfiguration {
 		stFactory.setCronExpression("0 0/1 * 1/1 * ? *");
 		return stFactory;
 	}
+	
 	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+	//changed by bruce
 	public SchedulerFactoryBean schedulerFactoryBean() {
 		SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
-		scheduler.setTriggers(simpleTriggerFactoryBean().getObject(),cronTriggerFactoryBean().getObject());
+		//scheduler.setTriggers(simpleTriggerFactoryBean().getObject(),cronTriggerFactoryBean().getObject());
 		return scheduler;
 	}
 }

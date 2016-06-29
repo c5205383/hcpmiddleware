@@ -1,4 +1,4 @@
-package com.hcp.objective.common;
+package com.hcp.objective.configuration;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

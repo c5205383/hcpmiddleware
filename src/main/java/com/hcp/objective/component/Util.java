@@ -1,4 +1,4 @@
-package com.hcp.objective.util;
+package com.hcp.objective.component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.hcp.objective.persistence.context;
+package com.hcp.objective.component;
 
 import javax.sql.DataSource;
 

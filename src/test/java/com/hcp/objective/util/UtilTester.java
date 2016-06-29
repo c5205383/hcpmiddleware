@@ -3,6 +3,7 @@ package com.hcp.objective.util;
 import org.junit.Test;
 
 import com.hcp.objective.BaseSpringTestCase;
+import com.hcp.objective.component.Util;
 
 public class UtilTester extends BaseSpringTestCase {
 

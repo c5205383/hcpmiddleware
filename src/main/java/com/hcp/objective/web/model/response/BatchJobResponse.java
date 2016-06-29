@@ -2,7 +2,8 @@ package com.hcp.objective.web.model.response;
 
 import java.io.Serializable;
 
-import com.hcp.objective.jpa.bean.BatchJob;
+import com.hcp.objective.persistence.bean.BatchJob;
+
 
 public class BatchJobResponse implements Serializable {
 

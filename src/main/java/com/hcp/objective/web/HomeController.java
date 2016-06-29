@@ -79,11 +79,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcp.objective.bean.ODataBean;
+import com.hcp.objective.bean.ApplicationPropertyBean;
+import com.hcp.objective.component.ODataExecutor;
 import com.hcp.objective.schedule.TestJob;
-import com.hcp.objective.service.QuartzManager;
-import com.hcp.objective.util.ODataExecutor;
-import com.hcp.objective.util.Util;
+import com.hcp.objective.service.AbstractQuartzManager;
 
 @RestController
 public class HomeController {
@@ -94,7 +93,7 @@ public class HomeController {
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	public @ResponseBody String get(@RequestParam String entitySetName, @RequestParam(required = false) String eid,
 			@RequestParam(required = false) String expand, @RequestParam(required = false) String query) {
-		ODataBean bean;
+		ApplicationPropertyBean bean;
 		try {
 			bean = odataExecutor.getInitializeBean();
 			String authType = bean.getAuthorizationType();
@@ -136,7 +135,7 @@ public class HomeController {
 	@RequestMapping(value = "/post", method = RequestMethod.POST)
 	public @ResponseBody String post() {
 		try {
-			ODataBean bean = odataExecutor.getInitializeBean();
+			ApplicationPropertyBean bean = odataExecutor.getInitializeBean();
 			String authType = bean.getAuthorizationType();
 			String auth = bean.getAuthorization();
 			String serviceUrl = bean.getUrl();
@@ -184,21 +183,21 @@ public class HomeController {
 	
 	@RequestMapping(value = "/testadd", method = RequestMethod.GET)
 	public void testadd() {
-		QuartzManager.addJob("testjob1", "trigger1", TestJob.class, "0/3 * * * * ?"); 
+		//AbstractQuartzManager.addJob("testjob1", "trigger1", TestJob.class, "0/3 * * * * ?"); 
 	}
 	
 	@RequestMapping(value = "/testpause", method = RequestMethod.GET)
 	public void testPause() {
-		QuartzManager.pauseJob("testjob1", "trigger1"); 
+		AbstractQuartzManager.pauseJob("testjob1", "trigger1"); 
 	}
 	
 	@RequestMapping(value = "/testresume", method = RequestMethod.GET)
 	public void testresume() {
-		QuartzManager.resumeJob("testjob1", "trigger1"); 
+		AbstractQuartzManager.resumeJob("testjob1", "trigger1"); 
 	}
 	
 	@RequestMapping(value = "/testdelete", method = RequestMethod.GET)
 	public void testdelete() {
-		QuartzManager.deleteJob("testjob1", "trigger1"); 
+		AbstractQuartzManager.deleteJob("testjob1", "trigger1"); 
 	}
 }

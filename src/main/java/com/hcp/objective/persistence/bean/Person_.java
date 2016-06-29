@@ -1,4 +1,4 @@
-package com.hcp.objective.jpa.bean;
+package com.hcp.objective.persistence.bean;
 
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;

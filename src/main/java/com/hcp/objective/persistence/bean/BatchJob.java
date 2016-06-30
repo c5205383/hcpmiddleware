@@ -21,6 +21,8 @@ public class BatchJob implements Serializable {
 	 * Generated serial version uid
 	 */
 	private static final long serialVersionUID = 5433969825096666920L;
+	public static final boolean STATUS_USED = true;
+	public static String JOB_GROUP_NAME = "DEFAULT_JOBGROUP_NAME";
 
 	@Id
 	@GeneratedValue
@@ -47,6 +49,10 @@ public class BatchJob implements Serializable {
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getJobId() {
+		return Long.toString(id);
 	}
 
 	public void setId(Long id) {
@@ -110,7 +116,7 @@ public class BatchJob implements Serializable {
 		} else if (interval == 0.5) {
 			time = "0 0/30 * * * ?";
 		}
-		return "0/2 * * * * ?";
+		return time == null ? "0/2 * * * * ?" : time;
 	}
 
 }

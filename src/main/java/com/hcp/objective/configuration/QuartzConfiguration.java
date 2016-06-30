@@ -4,9 +4,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
 import com.hcp.objective.service.jobexcutor.JobExcutor;
 import com.hcp.objective.service.quartz.ClusterQuartzManager;
@@ -15,27 +13,6 @@ import com.hcp.objective.service.quartz.SpringJobFactory;
 
 @Configuration
 public class QuartzConfiguration {
-	@Bean
-	public MethodInvokingJobDetailFactoryBean methodInvokingJobDetailFactoryBean() {
-		MethodInvokingJobDetailFactoryBean obj = new MethodInvokingJobDetailFactoryBean();
-		obj.setTargetBeanName("jobone");
-		obj.setTargetMethod("myTask");
-		return obj;
-	}
-
-	// Job is scheduled for 3+1 times with the interval of 30 seconds
-	@Bean
-	public SimpleTriggerFactoryBean simpleTriggerFactoryBean() {
-		SimpleTriggerFactoryBean stFactory = new SimpleTriggerFactoryBean();
-		stFactory.setJobDetail(methodInvokingJobDetailFactoryBean().getObject());
-		stFactory.setStartDelay(3000);
-		stFactory.setRepeatInterval(30000);
-		stFactory.setRepeatCount(3);
-		return stFactory;
-	}
-
-
-	// Job is scheduled after every 1 minute
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -65,7 +42,7 @@ public class QuartzConfiguration {
 	public SingleQuartzManager singleQuartzManager() {
 		return new SingleQuartzManager();
 	}
-	
+
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public ClusterQuartzManager clusterQuartzManager() {

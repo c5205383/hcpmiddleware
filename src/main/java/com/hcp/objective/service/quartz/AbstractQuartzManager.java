@@ -1,20 +1,14 @@
 package com.hcp.objective.service.quartz;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.JobKey.jobKey;
-import static org.quartz.TriggerBuilder.newTrigger;
-import static org.quartz.TriggerKey.triggerKey;
-
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +19,9 @@ import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.persistence.bean.BatchJob;
 
 /**
- * The Quartz Manager
+ * The Abstract Quartz Manager
  * 
- * @author Zero Yu
+ * @author Zero Yu & Bruce Wang
  */
 
 public abstract class AbstractQuartzManager {
@@ -37,17 +31,14 @@ public abstract class AbstractQuartzManager {
 	public static final String STATE_CLUSTER = "cluster"; // 集群状态
 	public static final String STATE_NULL = "null"; // 未启动状态
 
-	public static String JOB_GROUP_NAME = "DEFAULT_JOBGROUP_NAME";
 	public static String JOB_TRIGGER_PREFIX = "TRIGGER_";
-	public static String JOB_OBJECT_NAME = "batchjob";
+	public static String JOB_OBJECT_NAME = "BATCH_JOB";
 
 	@Autowired
 	ApplicationPropertyBean appBean;
 
 	@Autowired
 	SchedulerFactoryBean schedulerFactoryBean;
-
-	@Autowired
 
 	public String getState() {
 		if (StringUtils.isEmpty(schedulerState)) {
@@ -57,6 +48,7 @@ public abstract class AbstractQuartzManager {
 	}
 
 	/**
+	 * Create batch job, and add it to scheduler.
 	 * 
 	 * @param batchJob
 	 * @throws SchedulerException
@@ -64,15 +56,15 @@ public abstract class AbstractQuartzManager {
 	public void create(BatchJob batchJob) throws SchedulerException {
 
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
-		String triggerName = JOB_TRIGGER_PREFIX + batchJob.getName();
+		String triggerName = JOB_TRIGGER_PREFIX + batchJob.getJobId();
 		// 创建任务
 		JobDetail jobDetail = null;
 		if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_SINGLE)) {
-			jobDetail = JobBuilder.newJob(SingleQuartzJobFactory.class).withIdentity(batchJob.getName(), JOB_GROUP_NAME)
-					.build();
+			jobDetail = JobBuilder.newJob(SingleQuartzJobFactory.class)
+					.withIdentity(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME).build();
 		} else if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_CLUSTER)) {
 			jobDetail = JobBuilder.newJob(ClusterQuartzJobFactory.class)
-					.withIdentity(batchJob.getName(), JOB_GROUP_NAME).build();
+					.withIdentity(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME).build();
 		} else {
 			return;
 		}
@@ -80,126 +72,120 @@ public abstract class AbstractQuartzManager {
 		// 表达式调度构建器
 		CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(batchJob.getCronExpression());
 		// 按新的cronExpression表达式构建一个新的trigger
-		CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerName, JOB_GROUP_NAME)
+		CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerName, BatchJob.JOB_GROUP_NAME)
 				.withSchedule(scheduleBuilder).build();
 		scheduler.scheduleJob(jobDetail, trigger);
-		log.debug("=====定时任务[" + batchJob.getId() + "/" + batchJob.getName() + "]载入成功=====");
+		log.debug("=====定时任务[" + batchJob.getJobId() + "/" + batchJob.getName() + "]载入成功=====");
 	}
 
-	public static void update(BatchJob oldJob, BatchJob newJob) throws SchedulerException {
-
+	/**
+	 * Delete batch job from scheduler
+	 * 
+	 * @param batchJob
+	 * @throws SchedulerException
+	 */
+	public void delete(BatchJob batchJob) throws SchedulerException {
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+		JobKey jobKey = JobKey.jobKey(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME);
+		scheduler.deleteJob(jobKey);
+		log.debug("=====定时任务[" + batchJob.getJobId() + "/" + batchJob.getName() + "]注销成功=====");
 	}
 
-	private static SchedulerFactory gSchedulerFactory = new StdSchedulerFactory();
-
-	private static String TRIGGER_GROUP_NAME = "DEFAULT_TRIGGERGROUP_NAME";
-
-
-	public static void pauseJob(String jobName, String triggerName) {
-		try {
-			Scheduler sched = gSchedulerFactory.getScheduler();
-			sched.pauseTrigger(triggerKey(triggerName, TRIGGER_GROUP_NAME));
-			sched.pauseJob(jobKey(jobName, JOB_GROUP_NAME));
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void resumeJob(String jobName, String triggerName) {
-		try {
-			Scheduler sched = gSchedulerFactory.getScheduler();
-			sched.resumeTrigger(triggerKey(triggerName, TRIGGER_GROUP_NAME));
-			sched.resumeJob(jobKey(jobName, JOB_GROUP_NAME));
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void deleteJob(String jobName, String triggerName) {
-		try {
-			Scheduler sched = gSchedulerFactory.getScheduler();
-			sched.deleteJob(jobKey(jobName, JOB_GROUP_NAME));
-		} catch (SchedulerException e) {
-			e.printStackTrace();
+	/**
+	 * Update old batch job as new job, delete old one from scheduler and add new to scheduler
+	 * 
+	 * @param oldJob
+	 * @param newJob
+	 * @throws SchedulerException
+	 */
+	public void update(BatchJob oldJob, BatchJob newJob) throws SchedulerException {
+		if (oldJob == null) {
+			if (BatchJob.STATUS_USED == newJob.getStatus()) {
+				create(newJob);
+			}
+		} else {
+			Scheduler scheduler = schedulerFactoryBean.getScheduler();
+			// 获取触发器标识
+			TriggerKey triggerKey = TriggerKey.triggerKey(oldJob.getJobId(), BatchJob.JOB_GROUP_NAME);
+			// 获取触发器trigger
+			CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+			if (null != trigger) {// 如果已存在任务
+				delete(oldJob);
+			}
+			if (BatchJob.STATUS_USED == newJob.getStatus()) {
+				create(newJob);
+			}
 		}
 	}
 
 	/**
-	 * Add a batch job and schedule it
+	 * Update job. Find the old one and delete it, add new one.
 	 * 
-	 * @param batchJob
-	 *            the {@link}BatchJob object
+	 * @param job
+	 * @throws SchedulerException
 	 */
-	public static void addBatchJob(BatchJob batchJob) {
-		Scheduler sched;
-		JobDetail job = null;
-		String triggerName = "trigger_" + batchJob.getName();
-		String time = null;
-		try {
-			sched = gSchedulerFactory.getScheduler();
-			switch (batchJob.getType()) {
-			case "workflow":
-				job = newJob(SingleQuartzJobFactory.class).withIdentity(batchJob.getName(), JOB_GROUP_NAME)
-						.usingJobData("eventReason", "HIRNEW").build();
-				break;
-			case "user":
-				break;
+	public void update(BatchJob job) throws SchedulerException {
+		if (job != null) {
+			Scheduler scheduler = schedulerFactoryBean.getScheduler();
+			// 获取触发器标识
+			TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobId(), BatchJob.JOB_GROUP_NAME);
+			// 获取触发器trigger
+			CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+			if (null != trigger) {// 如果已存在任务
+				delete(job);
 			}
-			double interval = batchJob.getInterval();
-			if (interval == 1) {
-				time = "0 0/1 * * * ?";
-			} else if (interval == 0.5) {
-				time = "0 0/30 * * * ?";
+			if (BatchJob.STATUS_USED == job.getStatus()) {
+				create(job);
 			}
-			CronTrigger trigger = newTrigger().withIdentity(triggerName, TRIGGER_GROUP_NAME)
-					.withSchedule(cronSchedule(time)).build();
-			sched.scheduleJob(job, trigger);
-			if (!sched.isShutdown()) {
-				sched.start();
-			}
-		} catch (SchedulerException e1) {
-			e1.printStackTrace();
 		}
 	}
 
 	/**
-	 * Change a batch job's status
 	 * 
-	 * @param batchJob
-	 *            the {@link}BatchJob object
+	 * @param job
+	 * @throws SchedulerException
 	 */
-	public static void changeBatchJob(BatchJob batchJob) {
-		String triggerName = "trigger_" + batchJob.getName();
-		String jobName = batchJob.getName();
-		boolean status = batchJob.getStatus();
-		try {
-			Scheduler sched = gSchedulerFactory.getScheduler();
-			if (status == false) {
-				sched.pauseTrigger(triggerKey(triggerName, TRIGGER_GROUP_NAME));
-				sched.pauseJob(jobKey(jobName, JOB_GROUP_NAME));
-			} else {
-				sched.resumeTrigger(triggerKey(triggerName, TRIGGER_GROUP_NAME));
-				sched.resumeJob(jobKey(jobName, JOB_GROUP_NAME));
-			}
-		} catch (SchedulerException e) {
-			e.printStackTrace();
+	public void modify(BatchJob job) throws SchedulerException {
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+		TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobId(), BatchJob.JOB_GROUP_NAME);
+		// 获取触发器trigger
+		CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+
+		if (trigger != null) {
+			// Trigger已存在，那么更新相应的定时设置
+			// 表达式调度构建器
+			CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression());
+			// 按新的cronExpression表达式重新构建trigger
+			trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
+			// 按新的trigger重新设置job执行
+			scheduler.rescheduleJob(triggerKey, trigger);
+			log.debug("=====定时任务[" + job.getJobId() + "/" + job.getName() + "]更新成功=====");
 		}
+
 	}
 
 	/**
-	 * Delete a batch job
 	 * 
-	 * @param batchJob
-	 *            the {@link}BatchJob object
+	 * @param job
+	 * @throws SchedulerException
 	 */
-	public static void deleteBatchJob(BatchJob batchJob) {
-		String jobName = batchJob.getName();
-		try {
-			Scheduler sched = gSchedulerFactory.getScheduler();
-			sched.deleteJob(jobKey(jobName, JOB_GROUP_NAME));
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
+	public void pause(BatchJob job) throws SchedulerException {
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+		JobKey jobKey = JobKey.jobKey(job.getJobId(), BatchJob.JOB_GROUP_NAME);
+		scheduler.pauseJob(jobKey);
+		log.debug("=====定时任务[" + job.getJobId() + "/" + job.getName() + "]暂停成功=====");
+	}
+
+	/**
+	 * 
+	 * @param scheduleJob
+	 * @throws SchedulerException
+	 */
+	public void resume(BatchJob job) throws SchedulerException {
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+		JobKey jobKey = JobKey.jobKey(job.getJobId(), BatchJob.JOB_GROUP_NAME);
+		scheduler.resumeJob(jobKey);
+		log.debug("=====定时任务[" + job.getJobId() + "/" + job.getName() + "]恢复成功=====");
 	}
 
 }

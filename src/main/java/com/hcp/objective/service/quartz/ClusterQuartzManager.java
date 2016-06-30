@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ClusterQuartzManager extends AbstractQuartzManager {
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ClusterQuartzManager.class);
 	public static final int STATE_RUN = 1; // ÔËÐÐ×´Ì¬
 	public static final int STATE_WAIT = 0; // µÈ´ý×´Ì¬
@@ -13,5 +14,13 @@ public class ClusterQuartzManager extends AbstractQuartzManager {
 
 	public boolean isRun() {
 		return jobState == STATE_RUN;
+	}
+
+	public String getJobFactoryKey() {
+		return jobFactoryKey;
+	}
+
+	public void setJobFactoryKey(String jobFactoryKey) {
+		this.jobFactoryKey = jobFactoryKey;
 	}
 }

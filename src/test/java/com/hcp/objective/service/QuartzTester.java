@@ -14,18 +14,18 @@ public class QuartzTester extends BaseSpringTestCase {
 	SingleQuartzManager singleQuartzManager;
 
 	@Test
-	public void test1() throws InterruptedException {
+	public void testCreate() throws InterruptedException {
 		BatchJob batchJob = new BatchJob();
 		batchJob.setId((long) 123);
 		batchJob.setName("test");
 		batchJob.setType("workflow");
-		batchJob.setInterval(0.5);
-		
+		batchJob.setInterval(0.0);
+
 		BatchJob batchJob2 = new BatchJob();
-		batchJob2.setId((long) 123);
+		batchJob2.setId((long) 1234);
 		batchJob2.setName("test2");
 		batchJob2.setType("workflow2");
-		batchJob2.setInterval(0.5);
+		batchJob2.setInterval(0.0);
 		try {
 			singleQuartzManager.create(batchJob);
 			singleQuartzManager.create(batchJob2);
@@ -39,7 +39,7 @@ public class QuartzTester extends BaseSpringTestCase {
 	}
 
 	@Test
-	public void testadd() throws InterruptedException {
+	public void testDelete() throws InterruptedException {
 		// abstractQuartzManager.addJob("testjob1", "trigger1", TestJob.class, "0/3 * * * * ?");
 		// Thread.sleep(240000); // Sleep 4 minutes (4*60*1.000 = 240.000)
 	}

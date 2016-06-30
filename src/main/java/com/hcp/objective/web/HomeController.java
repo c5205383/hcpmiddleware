@@ -81,7 +81,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.component.ODataExecutor;
-import com.hcp.objective.schedule.TestJob;
 
 @RestController
 public class HomeController {

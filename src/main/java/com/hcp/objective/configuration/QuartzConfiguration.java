@@ -4,14 +4,11 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
-import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
-import com.hcp.objective.schedule.MyJobTwo;
-import com.hcp.objective.service.jobs.JobExcutor;
+import com.hcp.objective.service.jobexcutor.JobExcutor;
 import com.hcp.objective.service.quartz.ClusterQuartzManager;
 import com.hcp.objective.service.quartz.SingleQuartzManager;
 import com.hcp.objective.service.quartz.SpringJobFactory;
@@ -37,30 +34,8 @@ public class QuartzConfiguration {
 		return stFactory;
 	}
 
-	@Bean
-	public JobDetailFactoryBean jobDetailFactoryBean() {
-		JobDetailFactoryBean factory = new JobDetailFactoryBean();
-		factory.setJobClass(MyJobTwo.class);
-		// Map<String,Object> map = new HashMap<String,Object>();
-		// map.put("name", "RAM");
-		// map.put(MyJobTwo.COUNT, 1);
-		// factory.setJobDataAsMap(map);
-		factory.setGroup("mygroup");
-		factory.setName("myjob");
-		return factory;
-	}
 
 	// Job is scheduled after every 1 minute
-	@Bean
-	public CronTriggerFactoryBean cronTriggerFactoryBean() {
-		CronTriggerFactoryBean stFactory = new CronTriggerFactoryBean();
-		stFactory.setJobDetail(jobDetailFactoryBean().getObject());
-		stFactory.setStartDelay(1000);
-		stFactory.setName("mytrigger");
-		stFactory.setGroup("mygroup");
-		stFactory.setCronExpression("0 0/1 * 1/1 * ? *");
-		return stFactory;
-	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)

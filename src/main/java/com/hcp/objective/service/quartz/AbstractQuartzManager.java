@@ -23,8 +23,6 @@ import org.springframework.util.StringUtils;
 
 import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.persistence.bean.BatchJob;
-import com.hcp.objective.schedule.EmpWfJob;
-import com.hcp.objective.schedule.TestJob;
 
 /**
  * The Quartz Manager
@@ -96,21 +94,6 @@ public abstract class AbstractQuartzManager {
 
 	private static String TRIGGER_GROUP_NAME = "DEFAULT_TRIGGERGROUP_NAME";
 
-	public void addJob(String jobName, String triggerName, Class<TestJob> cls, String time) {
-		Scheduler sched;
-		try {
-			sched = gSchedulerFactory.getScheduler();
-			JobDetail job = newJob(cls).withIdentity(jobName, JOB_GROUP_NAME).build();
-			CronTrigger trigger = newTrigger().withIdentity(triggerName, TRIGGER_GROUP_NAME)
-					.withSchedule(cronSchedule(time)).build();
-			sched.scheduleJob(job, trigger);
-			if (!sched.isShutdown()) {
-				sched.start();
-			}
-		} catch (SchedulerException e1) {
-			e1.printStackTrace();
-		}
-	}
 
 	public static void pauseJob(String jobName, String triggerName) {
 		try {
@@ -156,7 +139,7 @@ public abstract class AbstractQuartzManager {
 			sched = gSchedulerFactory.getScheduler();
 			switch (batchJob.getType()) {
 			case "workflow":
-				job = newJob(EmpWfJob.class).withIdentity(batchJob.getName(), JOB_GROUP_NAME)
+				job = newJob(SingleQuartzJobFactory.class).withIdentity(batchJob.getName(), JOB_GROUP_NAME)
 						.usingJobData("eventReason", "HIRNEW").build();
 				break;
 			case "user":

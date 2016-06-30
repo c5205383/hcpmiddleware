@@ -1,4 +1,4 @@
-package com.hcp.objective.service.jobs;
+package com.hcp.objective.service.jobexcutor;
 
 import org.quartz.JobExecutionContext;
 
@@ -9,7 +9,7 @@ import com.hcp.objective.service.quartz.AbstractQuartzManager;
 public class JobExcutor implements IBatchJobExcutor {
 
 	@Override
-	public void execute(JobExecutionContext context) {
+	public void execute(JobExecutionContext context) throws InterruptedException {
 		// TODO Auto-generated method stub
 		BatchJob batchJob = (BatchJob) context.getMergedJobDataMap().get(AbstractQuartzManager.JOB_OBJECT_NAME);
 
@@ -18,6 +18,14 @@ public class JobExcutor implements IBatchJobExcutor {
 			System.out.println(batchJob.getId());
 			System.out.println(batchJob.getName());
 			System.out.println(batchJob.getType());
+			switch (batchJob.getType()) {
+			case "workflow":
+				SFWorkFlowExcutor.execute();
+				Thread.sleep(5000);
+				break;
+			default:
+				break;
+			}
 		}
 
 	}

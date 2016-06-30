@@ -1,4 +1,4 @@
-package com.hcp.objective.service.quartz;
+package com.hcp.objective.component.quartz;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
@@ -7,6 +7,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ public abstract class AbstractQuartzManager {
 
 	public static String JOB_TRIGGER_PREFIX = "TRIGGER_";
 	public static String JOB_OBJECT_NAME = "BATCH_JOB";
+	public static final String SCHEDULER_CHECK_JOB = "SCHEDULER_CHECK_JOB"; // 定时检查任务Id
 
 	@Autowired
 	ApplicationPropertyBean appBean;
@@ -47,6 +49,10 @@ public abstract class AbstractQuartzManager {
 		return schedulerState;
 	}
 
+	private String generateTriggerName(BatchJob job) {
+		return JOB_TRIGGER_PREFIX + job.getJobId();
+	}
+
 	/**
 	 * Create batch job, and add it to scheduler.
 	 * 
@@ -56,7 +62,6 @@ public abstract class AbstractQuartzManager {
 	public void create(BatchJob batchJob) throws SchedulerException {
 
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
-		String triggerName = JOB_TRIGGER_PREFIX + batchJob.getJobId();
 		// 创建任务
 		JobDetail jobDetail = null;
 		if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_SINGLE)) {
@@ -72,8 +77,9 @@ public abstract class AbstractQuartzManager {
 		// 表达式调度构建器
 		CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(batchJob.getCronExpression());
 		// 按新的cronExpression表达式构建一个新的trigger
-		CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerName, BatchJob.JOB_GROUP_NAME)
-				.withSchedule(scheduleBuilder).build();
+		CronTrigger trigger = TriggerBuilder.newTrigger()
+				.withIdentity(generateTriggerName(batchJob), BatchJob.JOB_GROUP_NAME).withSchedule(scheduleBuilder)
+				.build();
 		scheduler.scheduleJob(jobDetail, trigger);
 		log.debug("=====定时任务[" + batchJob.getJobId() + "/" + batchJob.getName() + "]载入成功=====");
 	}
@@ -106,7 +112,7 @@ public abstract class AbstractQuartzManager {
 		} else {
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			// 获取触发器标识
-			TriggerKey triggerKey = TriggerKey.triggerKey(oldJob.getJobId(), BatchJob.JOB_GROUP_NAME);
+			TriggerKey triggerKey = TriggerKey.triggerKey(generateTriggerName(oldJob), BatchJob.JOB_GROUP_NAME);
 			// 获取触发器trigger
 			CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
 			if (null != trigger) {// 如果已存在任务
@@ -125,10 +131,12 @@ public abstract class AbstractQuartzManager {
 	 * @throws SchedulerException
 	 */
 	public void update(BatchJob job) throws SchedulerException {
+
 		if (job != null) {
+
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			// 获取触发器标识
-			TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobId(), BatchJob.JOB_GROUP_NAME);
+			TriggerKey triggerKey = TriggerKey.triggerKey(generateTriggerName(job), BatchJob.JOB_GROUP_NAME);
 			// 获取触发器trigger
 			CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
 			if (null != trigger) {// 如果已存在任务
@@ -139,6 +147,7 @@ public abstract class AbstractQuartzManager {
 			}
 		}
 	}
+
 
 	/**
 	 * 

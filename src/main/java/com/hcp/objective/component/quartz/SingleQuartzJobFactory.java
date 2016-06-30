@@ -1,4 +1,4 @@
-package com.hcp.objective.service.quartz;
+package com.hcp.objective.component.quartz;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hcp.objective.service.IBatchJobExcutor;
+import com.hcp.objective.component.jobexcutor.JobExcutor;
 
 /*
  * @DisallowConcurrentExecution 禁止并发执行多个相同定义的JobDetail, 这个注解是加在Job类上的, 但意思并不是不能同时执行多个Job, 而是不能并发执行同一个Job
@@ -23,13 +23,12 @@ public class SingleQuartzJobFactory implements Job {
 	private static final Logger log = LoggerFactory.getLogger(SingleQuartzJobFactory.class);
 
 	@Autowired
-	IBatchJobExcutor excutor;
+	JobExcutor excutor;
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		try {
 			if (excutor != null) {
-				System.out.println("123");
 				excutor.execute(context);
 			}
 		} catch (Exception ex) {

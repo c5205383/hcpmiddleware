@@ -6,17 +6,19 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.hcp.objective.component.quartz.AbstractQuartzManager;
 import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.service.BatchJobService;
-import com.hcp.objective.service.quartz.AbstractQuartzManager;
 
-public class SingleQuartzManager extends AbstractQuartzManager {
-	private static final Logger log = LoggerFactory.getLogger(SingleQuartzManager.class);
+@Service
+public class SingleQuartzManagerService extends AbstractQuartzManager {
+	private static final Logger log = LoggerFactory.getLogger(SingleQuartzManagerService.class);
 	public static final int STATE_RUN = 1; // 运行状态
 	public static final int STATE_WAIT = 0; // 等待状态
 
-	@Autowired
+	//@Autowired
 	private BatchJobService batchJobService;
 
 	public void startAll() throws SchedulerException {
@@ -31,5 +33,16 @@ public class SingleQuartzManager extends AbstractQuartzManager {
 			}
 			log.debug("=====定时任务启动完成=====");
 		}
+	}
+
+	public void startMyJob(String owner) throws SchedulerException {
+
+		List<BatchJob> jobs = batchJobService.findByOwner(owner);
+		for (BatchJob job : jobs) {
+			if (BatchJob.STATUS_USED == job.getStatus()) {
+				create(job);
+			}
+		}
+		log.debug("=====定时任务启动完成=====");
 	}
 }

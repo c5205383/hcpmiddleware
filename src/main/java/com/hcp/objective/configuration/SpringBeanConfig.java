@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
 import com.hcp.objective.bean.ApplicationPropertyBean;
-import com.hcp.objective.service.IBatchJobExcutor;
 
 @Configuration
 @PropertySource("classpath:config.properties")
@@ -53,9 +52,4 @@ public class SpringBeanConfig {
 		return appBean;
 	}
 
-	@Bean
-	public IBatchJobExcutor iBatchJobExcutor() {
-		return null;
-
-	}
 }

@@ -1,12 +1,11 @@
-package com.hcp.objective.service.jobexcutor;
+package com.hcp.objective.component.jobexcutor;
 
 import org.quartz.JobExecutionContext;
 
+import com.hcp.objective.component.quartz.AbstractQuartzManager;
 import com.hcp.objective.persistence.bean.BatchJob;
-import com.hcp.objective.service.IBatchJobExcutor;
-import com.hcp.objective.service.quartz.AbstractQuartzManager;
 
-public class JobExcutor implements IBatchJobExcutor {
+public class JobExcutor {
 
 	public enum ExcutorEnum {
 		WORK_FLOW("workflow");
@@ -27,19 +26,17 @@ public class JobExcutor implements IBatchJobExcutor {
 
 	}
 
-	@Override
 	public void execute(JobExecutionContext context) throws InterruptedException {
 		// TODO Auto-generated method stub
 		BatchJob batchJob = (BatchJob) context.getMergedJobDataMap().get(AbstractQuartzManager.JOB_OBJECT_NAME);
-
 		System.out.println("Key:" + context.getJobDetail().getKey());
 		if (batchJob != null) {
-			System.out.print("Job Id:" + batchJob.getJobId() + ",");
-			System.out.print("Job Name:" + batchJob.getName() + ", ");
-			System.out.print("Job Type:" + batchJob.getType() + "\n");
 			if (batchJob.getType().equalsIgnoreCase(ExcutorEnum.WORK_FLOW.getName())) {
+				System.out.print("Job Id:" + batchJob.getJobId() + ",");
+				System.out.print("Job Name:" + batchJob.getName() + ", ");
+				System.out.print("Job Type:" + batchJob.getType() + "\n");
+
 				SFWorkFlowExcutor.execute();
-				Thread.sleep(3000);
 			}
 		}
 

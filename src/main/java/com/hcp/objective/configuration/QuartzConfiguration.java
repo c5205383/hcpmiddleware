@@ -6,10 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
-import com.hcp.objective.service.jobexcutor.JobExcutor;
-import com.hcp.objective.service.quartz.ClusterQuartzManager;
-import com.hcp.objective.service.quartz.SingleQuartzManager;
-import com.hcp.objective.service.quartz.SpringJobFactory;
+import com.hcp.objective.component.jobexcutor.JobExcutor;
+import com.hcp.objective.component.quartz.SpringJobFactory;
+
 
 @Configuration
 public class QuartzConfiguration {
@@ -37,22 +36,9 @@ public class QuartzConfiguration {
 
 	}
 
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-	public SingleQuartzManager singleQuartzManager() {
-		return new SingleQuartzManager();
-	}
-
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-	public ClusterQuartzManager clusterQuartzManager() {
-		return new ClusterQuartzManager();
-	}
-
 	@Bean(name = "excutor")
 	public JobExcutor jobExcutor() {
 		JobExcutor excutor = new JobExcutor();
-		// scheduler.setTriggers(simpleTriggerFactoryBean().getObject(),cronTriggerFactoryBean().getObject());
 		return excutor;
 	}
 }

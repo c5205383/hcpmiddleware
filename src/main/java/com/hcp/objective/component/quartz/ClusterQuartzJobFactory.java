@@ -1,4 +1,4 @@
-package com.hcp.objective.service.quartz;
+package com.hcp.objective.component.quartz;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -7,23 +7,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.hcp.objective.component.jobexcutor.JobExcutor;
 import com.hcp.objective.persistence.bean.BatchJob;
-import com.hcp.objective.service.IBatchJobExcutor;
 
 public class ClusterQuartzJobFactory implements Job {
 
 	private static final Logger log = LoggerFactory.getLogger(ClusterQuartzJobFactory.class);
 
 	@Autowired
-	IBatchJobExcutor excutor;
+	JobExcutor excutor;
 
-	@Autowired
-	ClusterQuartzManager clusterQuartzManager;
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		BatchJob batchJob = (BatchJob) context.getMergedJobDataMap().get(AbstractQuartzManager.JOB_OBJECT_NAME);
 
-		if (batchJob.getName().equals(ClusterQuartzManager.SCHEDULER_CHECK_JOB) || clusterQuartzManager.isRun()) { // 如果是检查任务或该服务正在运行
+		if (batchJob.getName().equals(AbstractQuartzManager.SCHEDULER_CHECK_JOB) /*|| clusterQuartzManager.isRun()*/) { // 如果是检查任务或该服务正在运行
 			try {
 				excutor.execute(context);
 			} catch (Exception ex) {

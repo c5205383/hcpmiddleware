@@ -1,4 +1,4 @@
-package com.hcp.objective.service.quartz;
+package com.hcp.objective.component.quartz;
 
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.annotation.Autowired;

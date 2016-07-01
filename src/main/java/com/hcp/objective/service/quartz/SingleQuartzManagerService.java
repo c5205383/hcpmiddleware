@@ -9,16 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hcp.objective.component.quartz.AbstractQuartzManager;
+import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.service.BatchJobService;
 
 @Service
+@ExcludeForTest
 public class SingleQuartzManagerService extends AbstractQuartzManager {
 	private static final Logger log = LoggerFactory.getLogger(SingleQuartzManagerService.class);
 	public static final int STATE_RUN = 1; // ÔËÐÐ×´Ì¬
 	public static final int STATE_WAIT = 0; // µÈ´ý×´Ì¬
 
-	//@Autowired
+	@Autowired
 	private BatchJobService batchJobService;
 
 	public void startAll() throws SchedulerException {

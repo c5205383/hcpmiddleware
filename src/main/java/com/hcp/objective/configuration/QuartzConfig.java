@@ -9,9 +9,8 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import com.hcp.objective.component.jobexcutor.JobExcutor;
 import com.hcp.objective.component.quartz.SpringJobFactory;
 
-
 @Configuration
-public class QuartzConfiguration {
+public class QuartzConfig {
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)

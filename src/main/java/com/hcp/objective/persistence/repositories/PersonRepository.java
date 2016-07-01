@@ -21,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hcp.objective.persistence.bean.Person;
 import com.hcp.objective.persistence.bean.Person_;
 
-
-
 @Repository
 @Transactional
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON, proxyMode = ScopedProxyMode.TARGET_CLASS)

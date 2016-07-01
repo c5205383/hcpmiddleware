@@ -133,16 +133,8 @@
 			<version>1.1.2</version>
 		</dependency>
 		<!-- OLINGO JAVA 2 -->
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-core</artifactId>
-			<version>${version.olingo2}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-api</artifactId>
-			<version>${version.olingo2}</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.apache.olingo</groupId> <artifactId>olingo-odata2-core</artifactId> <version>${version.olingo2}</version> </dependency> 
+			<dependency> <groupId>org.apache.olingo</groupId> <artifactId>olingo-odata2-api</artifactId> <version>${version.olingo2}</version> </dependency> -->
 		<!-- Enhancement for JDK -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -177,16 +169,8 @@
 			</exclusions>
 		</dependency>
 		<!-- odata4j -->
-		<dependency>
-			<groupId>org.odata4j</groupId>
-			<artifactId>odata4j-dist</artifactId>
-			<version>${version.odata4j}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.odata4j</groupId>
-			<artifactId>odata4j-core</artifactId>
-			<version>${version.odata4j}</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.odata4j</groupId> <artifactId>odata4j-dist</artifactId> <version>${version.odata4j}</version> </dependency> <dependency> 
+			<groupId>org.odata4j</groupId> <artifactId>odata4j-core</artifactId> <version>${version.odata4j}</version> </dependency> -->
 
 	</dependencies>
 	<build>

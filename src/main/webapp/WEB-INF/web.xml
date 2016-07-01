@@ -33,14 +33,4 @@
 	<session-config>
 		<session-timeout>15</session-timeout>
 	</session-config>
-	<servlet id="Servlet_1461128827669">
-		<description></description>
-		<display-name>GetLoginUser</display-name>
-		<servlet-name>GetLoginUser</servlet-name>
-		<servlet-class>com.hcp.objective.web.GetLoginUser</servlet-class>
-	</servlet>
-	<servlet-mapping id="ServletMapping_1461128827597">
-		<servlet-name>GetLoginUser</servlet-name>
-		<url-pattern>/GetLoginUser</url-pattern>
-	</servlet-mapping>
 </web-app>

@@ -10,10 +10,7 @@
 		<res-ref-name>user/Provider</res-ref-name>
 		<res-type>com.sap.security.um.user.UserProvider</res-type>
 	</resource-ref>
-	<resource-ref id="ResourceRef_1462848887843">
-	    <res-ref-name>jdbc/DefaultDB</res-ref-name>
-	    <res-type>javax.sql.DataSource</res-type>
-	</resource-ref>
+	<!-- <resource-ref id="ResourceRef_1462848887843"> <res-ref-name>jdbc/DefaultDB</res-ref-name> <res-type>javax.sql.DataSource</res-type> </resource-ref> -->
 	<login-config>
 		<auth-method>SAML2</auth-method>
 	</login-config>

@@ -58,7 +58,6 @@ import org.springframework.util.Assert;
  * @param <ID>
  *            the type of the entity's identifier
  */
-// @Repository
 @Transactional(readOnly = true)
 public class GeneralJpaRepository<T, ID extends Serializable> implements
 		JpaRepository<T, ID>, JpaSpecificationExecutor<T> {

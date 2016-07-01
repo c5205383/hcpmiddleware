@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.persistence.bean.Person;
 import com.hcp.objective.persistence.bean.Person_;
 
@@ -25,6 +26,7 @@ import com.hcp.objective.persistence.bean.Person_;
 @Transactional
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON, proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Lazy(true)
+@ExcludeForTest
 public class PersonRepository extends GeneralJpaRepository<Person, Long> {
 
 	/*

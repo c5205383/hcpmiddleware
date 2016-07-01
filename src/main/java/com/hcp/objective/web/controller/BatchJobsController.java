@@ -1,6 +1,8 @@
 package com.hcp.objective.web.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.service.BatchJobService;
+import com.hcp.objective.service.IContextService;
 import com.hcp.objective.web.model.request.BatchJobMergeRequest;
 import com.hcp.objective.web.model.response.BatchJobResponse;
 
@@ -26,14 +29,16 @@ import com.hcp.objective.web.model.response.BatchJobResponse;
  * @author Zero Yu
  */
 @RestController
-@RequestMapping("/batchJob")
 @ExcludeForTest
 public class BatchJobsController {
 
 	@Autowired
 	private BatchJobService batchJobService;
 
-	private Transformer<BatchJob, BatchJobResponse> DETAIL_RESPONSE_TRANSFORMER = new Transformer<BatchJob, BatchJobResponse>() {
+	@Autowired
+	private IContextService contextService;
+
+	private Transformer<BatchJob, BatchJobResponse> SuccessTransformer = new Transformer<BatchJob, BatchJobResponse>() {
 
 		@Override
 		public BatchJobResponse transform(BatchJob job) {
@@ -47,7 +52,7 @@ public class BatchJobsController {
 	 *            the {@link}BatchJobMergeRequest object.
 	 * @return a {@link}BatchJobResponse object.
 	 */
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value = "/batchJob", method = RequestMethod.POST)
 	public BatchJobResponse createOne(@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
 		return new BatchJobResponse(batchJobService.createOne(batchJobMergeRequest));
 	}
@@ -58,9 +63,9 @@ public class BatchJobsController {
 	 *            the batch job's id.
 	 * @return the status message string.
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public String deleteOne(@PathVariable("id") Long id) {
-		return batchJobService.deleteOneById(id);
+	@RequestMapping(value = "/batchJob/{id}", method = RequestMethod.DELETE)
+	public BatchJobResponse deleteOne(@PathVariable("id") Long id) {
+		return new BatchJobResponse(batchJobService.deleteOneById(id), null, null);
 	}
 
 	/**
@@ -71,7 +76,7 @@ public class BatchJobsController {
 	 *            the {@link}BatchJobMergeRequest object.
 	 * @return a {@link}BatchJobResponse object.
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/batchJob/{id}", method = RequestMethod.PUT)
 	public BatchJobResponse updateOne(@PathVariable("id") Long id,
 			@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
 		return new BatchJobResponse(batchJobService.updateOne(id, batchJobMergeRequest));
@@ -83,13 +88,29 @@ public class BatchJobsController {
 	 *            the owner's name
 	 * @return the {@link}Collection of {@link}BatchJobResponse.
 	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public Collection<BatchJobResponse> findBySeveralConditions(
-			@RequestParam(value = "owner", required = false) String owner) {
+	@RequestMapping(value = "/mybatchjob", method = RequestMethod.GET)
+	public Collection<BatchJobResponse> findMyJobs(@RequestParam(value = "owner", required = false) String owner) {
 		if (owner != null && owner.equals("") != true) {
-			return CollectionUtils.collect(batchJobService.findByOwner(owner), DETAIL_RESPONSE_TRANSFORMER);
 		} else {
-			return CollectionUtils.collect(batchJobService.findAll(), DETAIL_RESPONSE_TRANSFORMER);
+			owner = contextService.getLoginUserName();
 		}
+
+		if (owner == null || owner.equals("") == true) {
+			List<BatchJobResponse> list = new ArrayList<BatchJobResponse>();
+			list.add(new BatchJobResponse(BatchJobService.FAILED, null, null));
+			return list;
+		}
+		return CollectionUtils.collect(batchJobService.findByOwner(owner), SuccessTransformer);
+	}
+
+	/**
+	 * 
+	 * @param owner
+	 *            the owner's name
+	 * @return the {@link}Collection of {@link}BatchJobResponse.
+	 */
+	@RequestMapping(value = "/batchJob", method = RequestMethod.GET)
+	public Collection<BatchJobResponse> findAllJobs() {
+		return CollectionUtils.collect(batchJobService.findAll(), SuccessTransformer);
 	}
 }

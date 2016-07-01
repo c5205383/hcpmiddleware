@@ -23,6 +23,9 @@ import com.hcp.objective.web.model.request.BatchJobMergeRequest;
 @ExcludeForTest
 public class BatchJobService {
 
+	public static int SUCCESS = 0; //
+	public static int FAILED = -1;
+
 	@Autowired
 	private BatchJobRepository batchJobRepository;
 
@@ -54,16 +57,14 @@ public class BatchJobService {
 	 * 
 	 * @param id
 	 *            {@link}BatchJob's id
-	 * @return state message
+	 * @return state code
 	 */
-	public String deleteOneById(@NotNull Long id) {
+	public int deleteOneById(@NotNull Long id) {
 		try {
-			// BatchJob batchJob = batchJobRepository.findOne(id);
-			// QuartzManager.deleteBatchJob(batchJob);
 			batchJobRepository.delete(id);
-			return "Delete session successfully";
+			return SUCCESS;
 		} catch (IllegalArgumentException e) {
-			return e.getMessage();
+			return FAILED;
 		}
 	}
 
@@ -82,7 +83,7 @@ public class BatchJobService {
 			throw new IllegalArgumentException("id");
 		}
 		mergeScalarProperties(batchJobMergeRequest, batchJob);
-		//QuartzManager.changeBatchJob(batchJob);
+		// QuartzManager.changeBatchJob(batchJob);
 		return batchJobRepository.saveAndFlush(batchJob);
 	}
 

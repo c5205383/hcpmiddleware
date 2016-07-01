@@ -32,19 +32,38 @@ public class ContextServiceImpl implements IContextService {
 
 	public String getLoginUser() {
 		String result = null;
+		User user = getUser();
+
+		if (user != null) {
+			result = userProfile(user);
+		}
+		return result;
+
+	}
+
+	public User getUser() {
+		User user = null;
 		try {
 			UserProvider userProvider = (UserProvider) initialContext.lookup("java:comp/env/user/Provider");
-			User user = null;
+
 			if (request.getUserPrincipal() != null) {
 				user = userProvider.getUser(request.getUserPrincipal().getName());
 				logger.info("User name: " + user.getAttribute("firstname") + " " + user.getAttribute("lastname"));
 				logger.info("Email: " + user.getAttribute("email"));
-
-				result = userProfile(user);
 			}
 		} catch (NamingException | UMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		return user;
+	}
+
+	public String getLoginUserName() {
+		String result = null;
+		User user = getUser();
+
+		if (user != null) {
+			result = user.getName();
 		}
 		return result;
 	}

@@ -18,8 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Base64Utils;
 
 import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.util.ODataConstants;
@@ -179,8 +179,8 @@ public class ODataExecutor {
 		}
 
 		String authorizationHeader = authorizationType + " ";
-		// authorizationHeader += new String(Base64.encodeBase64((authorization).getBytes()));
-		authorizationHeader += new String(Base64Utils.encode(authorization.getBytes()));
+		authorizationHeader += new String(Base64.encode((authorization).getBytes()));
+		//authorizationHeader += new String(Base64Utils.encode(authorization.getBytes()));
 		connection.setRequestProperty("Authorization", authorizationHeader);
 		if (contentType != null)
 			connection.setRequestProperty("content-type", "application/json");

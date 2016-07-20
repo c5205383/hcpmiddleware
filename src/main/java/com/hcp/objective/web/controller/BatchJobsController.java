@@ -2,21 +2,22 @@ package com.hcp.objective.web.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.service.BatchJobService;
 import com.hcp.objective.service.IContextService;
@@ -29,7 +30,7 @@ import com.hcp.objective.web.model.response.BatchJobResponse;
  * @author Zero Yu
  */
 @RestController
-@ExcludeForTest
+// @ExcludeForTest
 public class BatchJobsController {
 
 	@Autowired
@@ -53,8 +54,9 @@ public class BatchJobsController {
 	 * @return a {@link}BatchJobResponse object.
 	 */
 	@RequestMapping(value = "/batchJob", method = RequestMethod.POST)
-	public BatchJobResponse createOne(@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
-		return new BatchJobResponse(batchJobService.createOne(batchJobMergeRequest));
+	public @ResponseBody String createOne(@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
+		BatchJobResponse response = new BatchJobResponse(batchJobService.createOne(batchJobMergeRequest));
+		return new JSONObject(response).toString();
 	}
 
 	/**
@@ -88,29 +90,30 @@ public class BatchJobsController {
 	 *            the owner's name
 	 * @return the {@link}Collection of {@link}BatchJobResponse.
 	 */
-	@RequestMapping(value = "/mybatchjob", method = RequestMethod.GET)
-	public Collection<BatchJobResponse> findMyJobs(@RequestParam(value = "owner", required = false) String owner) {
+	@RequestMapping(value = "/mybatchjob", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public @ResponseBody String findMyJobs(@RequestParam(value = "owner", required = false) String owner) {
+		Collection<BatchJobResponse> list = null;
 		if (owner != null && owner.equals("") != true) {
 		} else {
 			owner = contextService.getLoginUserName();
 		}
-
 		if (owner == null || owner.equals("") == true) {
-			List<BatchJobResponse> list = new ArrayList<BatchJobResponse>();
+			list = new ArrayList<BatchJobResponse>();
 			list.add(new BatchJobResponse(BatchJobService.FAILED, null, null));
-			return list;
+		} else {
+			list = CollectionUtils.collect(batchJobService.findByOwner(owner), SuccessTransformer);
 		}
-		return CollectionUtils.collect(batchJobService.findByOwner(owner), SuccessTransformer);
+		return new JSONArray(list).toString();
 	}
 
 	/**
+	 * Get All jobs
 	 * 
-	 * @param owner
-	 *            the owner's name
-	 * @return the {@link}Collection of {@link}BatchJobResponse.
+	 * @return
 	 */
-	@RequestMapping(value = "/batchJob", method = RequestMethod.GET)
-	public Collection<BatchJobResponse> findAllJobs() {
-		return CollectionUtils.collect(batchJobService.findAll(), SuccessTransformer);
+	@RequestMapping(value = "/batchJob", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public @ResponseBody String findAllJobs() {
+		Collection<BatchJobResponse> list = CollectionUtils.collect(batchJobService.findAll(), SuccessTransformer);
+		return new JSONArray(list).toString();
 	}
 }

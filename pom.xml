@@ -171,6 +171,8 @@
 		<!-- odata4j -->
 		<!-- <dependency> <groupId>org.odata4j</groupId> <artifactId>odata4j-dist</artifactId> <version>${version.odata4j}</version> </dependency> <dependency> 
 			<groupId>org.odata4j</groupId> <artifactId>odata4j-core</artifactId> <version>${version.odata4j}</version> </dependency> -->
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->
+		<!-- <dependency> <groupId>org.codehaus.jackson</groupId> <artifactId>jackson-mapper-asl</artifactId> <version>1.9.13</version> </dependency> -->
 
 	</dependencies>
 	<build>

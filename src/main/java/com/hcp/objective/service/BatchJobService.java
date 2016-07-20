@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.persistence.repositories.BatchJobRepository;
 import com.hcp.objective.web.model.request.BatchJobMergeRequest;
@@ -20,7 +19,7 @@ import com.hcp.objective.web.model.request.BatchJobMergeRequest;
  */
 @Service
 @Transactional
-@ExcludeForTest
+//@ExcludeForTest
 public class BatchJobService {
 
 	public static int SUCCESS = 0; //

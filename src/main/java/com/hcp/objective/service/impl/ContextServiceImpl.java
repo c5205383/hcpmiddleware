@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.service.IContextService;
 import com.sap.security.um.UMException;
 import com.sap.security.um.user.UnsupportedUserAttributeException;
@@ -19,7 +18,7 @@ import com.sap.security.um.user.User;
 import com.sap.security.um.user.UserProvider;
 
 @Service("contextService")
-@ExcludeForTest
+// @ExcludeForTest
 public class ContextServiceImpl implements IContextService {
 	public static final Logger logger = LoggerFactory.getLogger(ContextServiceImpl.class);
 
@@ -78,6 +77,7 @@ public class ContextServiceImpl implements IContextService {
 		} catch (UnsupportedUserAttributeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 		return data.toString();
 	}

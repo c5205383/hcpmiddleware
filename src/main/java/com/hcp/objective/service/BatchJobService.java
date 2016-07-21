@@ -19,7 +19,7 @@ import com.hcp.objective.web.model.request.BatchJobMergeRequest;
  */
 @Service
 @Transactional
-//@ExcludeForTest
+// @ExcludeForTest
 public class BatchJobService {
 
 	public static int SUCCESS = 0; //
@@ -77,10 +77,15 @@ public class BatchJobService {
 	 * @return A {@link}BatchJob object
 	 */
 	public BatchJob updateOne(@NotNull Long id, @NotNull BatchJobMergeRequest batchJobMergeRequest) {
-		BatchJob batchJob = batchJobRepository.findOne(id);
+		
 		if (id == null) {
-			throw new IllegalArgumentException("id");
+			return null;
 		}
+		BatchJob batchJob = batchJobRepository.findOne(id);
+		
+		if(batchJob == null)
+			return null;
+		
 		mergeScalarProperties(batchJobMergeRequest, batchJob);
 		// QuartzManager.changeBatchJob(batchJob);
 		return batchJobRepository.saveAndFlush(batchJob);

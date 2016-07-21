@@ -21,7 +21,7 @@ public class ClusterQuartzJobFactory implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		BatchJob batchJob = (BatchJob) context.getMergedJobDataMap().get(AbstractQuartzManager.JOB_OBJECT_NAME);
 
-		if (batchJob.getName().equals(AbstractQuartzManager.SCHEDULER_CHECK_JOB) /*|| clusterQuartzManager.isRun()*/) { // Èç¹ûÊÇ¼ì²éÈÎÎñ»ò¸Ã·þÎñÕýÔÚÔËÐÐ
+		if (batchJob.getName().equals(AbstractQuartzManager.SCHEDULER_CHECK_JOB) /*|| clusterQuartzManager.isRun()*/) { // ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			try {
 				excutor.execute(context);
 			} catch (Exception ex) {
@@ -29,7 +29,7 @@ public class ClusterQuartzJobFactory implements Job {
 				log.error(ex.toString());
 				StackTraceElement[] element = ex.getStackTrace();
 				for (int i = 0; i < element.length; i++) {
-					log.error("Î»ÖÃ:" + element[i]);
+					log.error("error:" + element[i]);
 				}
 				log.error("====================Scheduler-error-end====================");
 			}

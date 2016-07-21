@@ -16,18 +16,12 @@ public class QuartzConfig {
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public SchedulerFactoryBean schedulerFactoryBean() {
 		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
-		// Job对象的实例化过程是在Quartz中进行的, job内Spring注入的对象无法关联起来。
-		// 解决办法复写SchedulerFactoryBean 生成job的 JobFactory，把复写的JobFactory设置成SchedulerFactoryBean的新属性
-		// org.springframework.scheduling.quartz.SchedulerFactoryBean这个类。源码如下，参考http://www.tuicool.com/articles/Qjyamu
+		//http://www.tuicool.com/articles/Qjyamu
 		schedulerFactoryBean.setJobFactory(springJobFactory());
-
 		// scheduler.setTriggers(simpleTriggerFactoryBean().getObject(),cronTriggerFactoryBean().getObject());
-		return schedulerFactoryBean;
+		return schedulerFactoryBean; 
 	}
 
-	/*
-	 * Spring对Job的注入功能，其实很简单，原理就是在我们扩展JobFactory创建job的方法，在创建完Job以后进行属性注入
-	 */
 	@Bean
 	// @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public SpringJobFactory springJobFactory() {

@@ -26,14 +26,13 @@ import com.hcp.objective.persistence.bean.BatchJob;
 
 public abstract class AbstractQuartzManager {
 	private static final Logger log = LoggerFactory.getLogger(AbstractQuartzManager.class);
-	private static String schedulerState = ""; // 定任务状态（single单机状态、cluster集群状态、null未启动状态）
-	public static final String STATE_SINGLE = "single"; // 单机状态
-	public static final String STATE_CLUSTER = "cluster"; // 集群状态
-	public static final String STATE_NULL = "null"; // 未启动状态
-
+	private static String schedulerState = ""; // single/cluster/null
+	public static final String STATE_SINGLE = "single"; //
+	public static final String STATE_CLUSTER = "cluster";
+	public static final String STATE_NULL = "null";
 	public static String JOB_TRIGGER_PREFIX = "TRIGGER_";
 	public static String JOB_OBJECT_NAME = "BATCH_JOB";
-	public static final String SCHEDULER_CHECK_JOB = "SCHEDULER_CHECK_JOB"; // 定时检查任务Id
+	public static final String SCHEDULER_CHECK_JOB = "SCHEDULER_CHECK_JOB";
 
 	@Autowired
 	ApplicationPropertyBean appBean;
@@ -49,19 +48,17 @@ public abstract class AbstractQuartzManager {
 	}
 
 	private String generateTriggerName(BatchJob job) {
-		return JOB_TRIGGER_PREFIX + job.getJobId();
+		return JOB_TRIGGER_PREFIX + job.getJobId(); 
 	}
 
 	/**
 	 * Create batch job, and add it to scheduler.
-	 * 
 	 * @param batchJob
 	 * @throws SchedulerException
 	 */
 	public void create(BatchJob batchJob) throws SchedulerException {
 
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
-		// 创建任务
 		JobDetail jobDetail = null;
 		if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_SINGLE)) {
 			jobDetail = JobBuilder.newJob(SingleQuartzJobFactory.class)
@@ -73,14 +70,12 @@ public abstract class AbstractQuartzManager {
 			return;
 		}
 		jobDetail.getJobDataMap().put(JOB_OBJECT_NAME, batchJob);
-		// 表达式调度构建器
 		CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(batchJob.getCronExpression());
-		// 按新的cronExpression表达式构建一个新的trigger
 		CronTrigger trigger = TriggerBuilder.newTrigger()
 				.withIdentity(generateTriggerName(batchJob), BatchJob.JOB_GROUP_NAME).withSchedule(scheduleBuilder)
 				.build();
 		scheduler.scheduleJob(jobDetail, trigger);
-		log.debug("=====定时任务[" + batchJob.getJobId() + "/" + batchJob.getName() + "]载入成功=====");
+		log.debug("=====Create[" + batchJob.getJobId() + "/" + batchJob.getName() + "]=====");
 	}
 
 	/**
@@ -93,7 +88,7 @@ public abstract class AbstractQuartzManager {
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
 		JobKey jobKey = JobKey.jobKey(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME);
 		scheduler.deleteJob(jobKey);
-		log.debug("=====定时任务[" + batchJob.getJobId() + "/" + batchJob.getName() + "]注销成功=====");
+		log.debug("=====debug delete[" + batchJob.getJobId() + "/" + batchJob.getName() + "]=====");
 	}
 
 	/**
@@ -110,11 +105,9 @@ public abstract class AbstractQuartzManager {
 			}
 		} else {
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
-			// 获取触发器标识
 			TriggerKey triggerKey = TriggerKey.triggerKey(generateTriggerName(oldJob), BatchJob.JOB_GROUP_NAME);
-			// 获取触发器trigger
 			CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-			if (null != trigger) {// 如果已存在任务
+			if (null != trigger) {
 				delete(oldJob);
 			}
 			if (BatchJob.STATUS_USED == newJob.getStatus()) {
@@ -134,11 +127,9 @@ public abstract class AbstractQuartzManager {
 		if (job != null) {
 
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
-			// 获取触发器标识
 			TriggerKey triggerKey = TriggerKey.triggerKey(generateTriggerName(job), BatchJob.JOB_GROUP_NAME);
-			// 获取触发器trigger
 			CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-			if (null != trigger) {// 如果已存在任务
+			if (null != trigger) {
 				delete(job);
 			}
 			if (BatchJob.STATUS_USED == job.getStatus()) {
@@ -146,7 +137,6 @@ public abstract class AbstractQuartzManager {
 			}
 		}
 	}
-
 
 	/**
 	 * 
@@ -156,18 +146,13 @@ public abstract class AbstractQuartzManager {
 	public void modify(BatchJob job) throws SchedulerException {
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
 		TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobId(), BatchJob.JOB_GROUP_NAME);
-		// 获取触发器trigger
 		CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
 
 		if (trigger != null) {
-			// Trigger已存在，那么更新相应的定时设置
-			// 表达式调度构建器
 			CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression());
-			// 按新的cronExpression表达式重新构建trigger
 			trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
-			// 按新的trigger重新设置job执行
 			scheduler.rescheduleJob(triggerKey, trigger);
-			log.debug("=====定时任务[" + job.getJobId() + "/" + job.getName() + "]更新成功=====");
+			log.debug("=====Modify[" + job.getJobId() + "/" + job.getName() + "]=====");
 		}
 
 	}
@@ -181,7 +166,7 @@ public abstract class AbstractQuartzManager {
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
 		JobKey jobKey = JobKey.jobKey(job.getJobId(), BatchJob.JOB_GROUP_NAME);
 		scheduler.pauseJob(jobKey);
-		log.debug("=====定时任务[" + job.getJobId() + "/" + job.getName() + "]暂停成功=====");
+		log.debug("=====Pause[" + job.getJobId() + "/" + job.getName() + "]=====");
 	}
 
 	/**
@@ -193,7 +178,7 @@ public abstract class AbstractQuartzManager {
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
 		JobKey jobKey = JobKey.jobKey(job.getJobId(), BatchJob.JOB_GROUP_NAME);
 		scheduler.resumeJob(jobKey);
-		log.debug("=====定时任务[" + job.getJobId() + "/" + job.getName() + "]恢复成功=====");
+		log.debug("=====Resume[" + job.getJobId() + "/" + job.getName() + "]=====");
 	}
 
 }

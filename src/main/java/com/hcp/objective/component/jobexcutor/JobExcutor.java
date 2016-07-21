@@ -36,7 +36,7 @@ public class JobExcutor {
 				System.out.print("Job Name:" + batchJob.getName() + ", ");
 				System.out.print("Job Type:" + batchJob.getType() + "\n");
 
-				SFWorkFlowExcutor.execute();
+				SFWorkFlowExcutor.execute(); 
 			}
 		}
 

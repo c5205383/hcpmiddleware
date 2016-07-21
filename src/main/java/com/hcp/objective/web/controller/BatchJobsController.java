@@ -81,6 +81,15 @@ public class BatchJobsController {
 	@RequestMapping(value = "/batchJob/{id}", method = RequestMethod.PUT)
 	public BatchJobResponse updateOne(@PathVariable("id") Long id,
 			@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
+
+		if (batchJobMergeRequest.getStatus()) {
+			// TODO: Start Job
+		} else {
+			// TODO: Stop Job
+		}
+
+		BatchJob result = batchJobService.updateOne(id, batchJobMergeRequest);
+
 		return new BatchJobResponse(batchJobService.updateOne(id, batchJobMergeRequest));
 	}
 

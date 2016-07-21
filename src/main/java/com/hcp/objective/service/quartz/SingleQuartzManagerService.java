@@ -9,16 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hcp.objective.component.quartz.AbstractQuartzManager;
-import com.hcp.objective.configuration.ExcludeForTest;
 import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.service.BatchJobService;
 
 @Service
-@ExcludeForTest
 public class SingleQuartzManagerService extends AbstractQuartzManager {
 	private static final Logger log = LoggerFactory.getLogger(SingleQuartzManagerService.class);
-	public static final int STATE_RUN = 1; // 运行状态
-	public static final int STATE_WAIT = 0; // 等待状态
+	public static final int STATE_RUN = 1; 
+	public static final int STATE_WAIT = 0; 
 
 	@Autowired
 	private BatchJobService batchJobService;
@@ -33,7 +31,7 @@ public class SingleQuartzManagerService extends AbstractQuartzManager {
 					create(job);
 				}
 			}
-			log.debug("=====定时任务启动完成=====");
+			log.debug("Start All");
 		}
 	}
 
@@ -45,6 +43,6 @@ public class SingleQuartzManagerService extends AbstractQuartzManager {
 				create(job);
 			}
 		}
-		log.debug("=====定时任务启动完成=====");
+		log.debug("=====start my job=====");  
 	}
 }

@@ -43,14 +43,8 @@ public class QuartzTester extends BaseSpringTestCase {
 	 */
 	@Test
 	public void test001() throws InterruptedException {
-		try {
-			singleQuartzManager.create(job1);
-			singleQuartzManager.create(job2);
-
-		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		singleQuartzManager.create(job1);
+		singleQuartzManager.create(job2);
 	}
 
 	/**

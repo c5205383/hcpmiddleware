@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.service.BatchJobService;
 import com.hcp.objective.service.IContextService;
+import com.hcp.objective.service.quartz.SingleQuartzManagerService;
 import com.hcp.objective.web.model.request.BatchJobMergeRequest;
 import com.hcp.objective.web.model.response.BatchJobResponse;
 
@@ -39,6 +40,9 @@ public class BatchJobsController {
 	@Autowired
 	private IContextService contextService;
 
+	@Autowired
+	SingleQuartzManagerService singleQuartzManagerService;
+
 	private Transformer<BatchJob, BatchJobResponse> SuccessTransformer = new Transformer<BatchJob, BatchJobResponse>() {
 
 		@Override
@@ -55,7 +59,17 @@ public class BatchJobsController {
 	 */
 	@RequestMapping(value = "/batchJob", method = RequestMethod.POST)
 	public @ResponseBody String createOne(@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
-		BatchJobResponse response = new BatchJobResponse(batchJobService.createOne(batchJobMergeRequest));
+
+		// Create job storage
+		BatchJob job = batchJobService.createOne(batchJobMergeRequest);
+
+		// If job status is active, start Job, else delete job.
+		singleQuartzManagerService.delete(job);
+		if (job != null && job.getStatus()) {
+			singleQuartzManagerService.create(job);
+		}
+
+		BatchJobResponse response = new BatchJobResponse(job);
 		return new JSONObject(response).toString();
 	}
 
@@ -81,16 +95,17 @@ public class BatchJobsController {
 	@RequestMapping(value = "/batchJob/{id}", method = RequestMethod.PUT)
 	public BatchJobResponse updateOne(@PathVariable("id") Long id,
 			@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
+		boolean success = false;
 
-		if (batchJobMergeRequest.getStatus()) {
-			// TODO: Start Job
-		} else {
-			// TODO: Stop Job
+		// Save batch job change to DB
+		BatchJob job = batchJobService.updateOne(id, batchJobMergeRequest);
+		// If job status is active, start Job, else delete job.
+		singleQuartzManagerService.delete(job);
+		if (job.getStatus()) {
+			success = singleQuartzManagerService.create(job);
 		}
 
-		BatchJob result = batchJobService.updateOne(id, batchJobMergeRequest);
-
-		return new BatchJobResponse(batchJobService.updateOne(id, batchJobMergeRequest));
+		return new BatchJobResponse(success ? BatchJobService.SUCCESS : BatchJobService.FAILED, "", job);
 	}
 
 	/**

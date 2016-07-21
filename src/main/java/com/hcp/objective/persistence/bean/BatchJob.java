@@ -112,9 +112,9 @@ public class BatchJob implements Serializable {
 		double interval = this.getInterval();
 		String time = null;
 		if (interval == 1) {
-			time = "0 0/1 * * * ?";
+			//time = "0 0/1 * * * ?";
 		} else if (interval == 0.5) {
-			time = "0 0/30 * * * ?";
+			//time = "0 0/30 * * * ?";
 		}
 		return time == null ? "0/2 * * * * ?" : time;
 	}

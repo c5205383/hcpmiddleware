@@ -19,7 +19,6 @@ import com.hcp.objective.web.model.request.BatchJobMergeRequest;
  */
 @Service
 @Transactional
-// @ExcludeForTest
 public class BatchJobService {
 
 	public static int SUCCESS = 0; //
@@ -66,6 +65,10 @@ public class BatchJobService {
 			return FAILED;
 		}
 	}
+	
+	public BatchJob findOne(@NotNull Long id){
+		return batchJobRepository.findOne(id);
+	}
 
 	/**
 	 * Update one batch job by id
@@ -78,9 +81,6 @@ public class BatchJobService {
 	 */
 	public BatchJob updateOne(@NotNull Long id, @NotNull BatchJobMergeRequest batchJobMergeRequest) {
 		
-		if (id == null) {
-			return null;
-		}
 		BatchJob batchJob = batchJobRepository.findOne(id);
 		
 		if(batchJob == null)

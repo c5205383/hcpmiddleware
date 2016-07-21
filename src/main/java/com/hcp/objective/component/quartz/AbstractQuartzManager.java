@@ -48,34 +48,42 @@ public abstract class AbstractQuartzManager {
 	}
 
 	private String generateTriggerName(BatchJob job) {
-		return JOB_TRIGGER_PREFIX + job.getJobId(); 
+		return JOB_TRIGGER_PREFIX + job.getJobId();
 	}
 
 	/**
 	 * Create batch job, and add it to scheduler.
+	 * 
 	 * @param batchJob
 	 * @throws SchedulerException
 	 */
-	public void create(BatchJob batchJob) throws SchedulerException {
-
-		Scheduler scheduler = schedulerFactoryBean.getScheduler();
-		JobDetail jobDetail = null;
-		if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_SINGLE)) {
-			jobDetail = JobBuilder.newJob(SingleQuartzJobFactory.class)
-					.withIdentity(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME).build();
-		} else if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_CLUSTER)) {
-			jobDetail = JobBuilder.newJob(ClusterQuartzJobFactory.class)
-					.withIdentity(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME).build();
-		} else {
-			return;
+	public boolean create(BatchJob batchJob) {
+		boolean success = true;
+		try {
+			Scheduler scheduler = schedulerFactoryBean.getScheduler();
+			JobDetail jobDetail = null;
+			if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_SINGLE)) {
+				jobDetail = JobBuilder.newJob(SingleQuartzJobFactory.class)
+						.withIdentity(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME).build();
+			} else if (getState().equalsIgnoreCase(AbstractQuartzManager.STATE_CLUSTER)) {
+				jobDetail = JobBuilder.newJob(ClusterQuartzJobFactory.class)
+						.withIdentity(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME).build();
+			} else {
+				return false;
+			}
+			jobDetail.getJobDataMap().put(JOB_OBJECT_NAME, batchJob);
+			CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(batchJob.getCronExpression());
+			CronTrigger trigger = TriggerBuilder.newTrigger()
+					.withIdentity(generateTriggerName(batchJob), BatchJob.JOB_GROUP_NAME).withSchedule(scheduleBuilder)
+					.build();
+			scheduler.scheduleJob(jobDetail, trigger);
+			log.debug("=====Create[" + batchJob.getJobId() + "/" + batchJob.getName() + "]=====");
+		} catch (SchedulerException e) {
+			success = false;
+			log.error(e.getLocalizedMessage());
 		}
-		jobDetail.getJobDataMap().put(JOB_OBJECT_NAME, batchJob);
-		CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(batchJob.getCronExpression());
-		CronTrigger trigger = TriggerBuilder.newTrigger()
-				.withIdentity(generateTriggerName(batchJob), BatchJob.JOB_GROUP_NAME).withSchedule(scheduleBuilder)
-				.build();
-		scheduler.scheduleJob(jobDetail, trigger);
-		log.debug("=====Create[" + batchJob.getJobId() + "/" + batchJob.getName() + "]=====");
+		return success;
+
 	}
 
 	/**
@@ -84,11 +92,33 @@ public abstract class AbstractQuartzManager {
 	 * @param batchJob
 	 * @throws SchedulerException
 	 */
-	public void delete(BatchJob batchJob) throws SchedulerException {
-		Scheduler scheduler = schedulerFactoryBean.getScheduler();
-		JobKey jobKey = JobKey.jobKey(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME);
-		scheduler.deleteJob(jobKey);
-		log.debug("=====debug delete[" + batchJob.getJobId() + "/" + batchJob.getName() + "]=====");
+	public void delete(BatchJob batchJob) {
+		try {
+			Scheduler scheduler = schedulerFactoryBean.getScheduler();
+			JobKey jobKey = JobKey.jobKey(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME);
+			scheduler.deleteJob(jobKey);
+			log.debug("=====debug delete[" + batchJob.getJobId() + "/" + batchJob.getName() + "]=====");
+		} catch (SchedulerException e) {
+			log.error(e.getLocalizedMessage());
+		}
+
+	}
+
+	public boolean findJob(BatchJob batchJob) {
+		boolean find = false;
+		try {
+			Scheduler scheduler = schedulerFactoryBean.getScheduler();
+			JobKey jobKey = JobKey.jobKey(batchJob.getJobId(), BatchJob.JOB_GROUP_NAME);
+			if (scheduler.getJobDetail(jobKey) != null) {
+				find = true;
+			}
+		} catch (SchedulerException e) {
+			log.error(e.getLocalizedMessage());
+			find = false;
+		} finally {
+		}
+		return find;
+
 	}
 
 	/**

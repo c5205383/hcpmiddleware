@@ -16,10 +16,10 @@ public class QuartzConfig {
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public SchedulerFactoryBean schedulerFactoryBean() {
 		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
-		//http://www.tuicool.com/articles/Qjyamu
+		// http://www.tuicool.com/articles/Qjyamu
 		schedulerFactoryBean.setJobFactory(springJobFactory());
-		// scheduler.setTriggers(simpleTriggerFactoryBean().getObject(),cronTriggerFactoryBean().getObject());
-		return schedulerFactoryBean; 
+		schedulerFactoryBean.setWaitForJobsToCompleteOnShutdown(true);
+		return schedulerFactoryBean;
 	}
 
 	@Bean

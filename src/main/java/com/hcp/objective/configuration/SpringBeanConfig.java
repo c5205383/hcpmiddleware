@@ -19,6 +19,7 @@ import com.hcp.objective.bean.ApplicationPropertyBean;
 @PropertySource("classpath:config.properties")
 public class SpringBeanConfig {
 	public static final Logger logger = LoggerFactory.getLogger(SpringBeanConfig.class);
+	
 	@Autowired
 	public Environment env;
 

@@ -14,7 +14,7 @@ public class SFWorkFlowExcutor {
 	public static final Logger logger = LoggerFactory.getLogger(SFWorkFlowExcutor.class);
 
 	public static void execute() {
-		logger.error(new Date().toString());
+		logger.info(new Date().toString());
 	}
 
 }

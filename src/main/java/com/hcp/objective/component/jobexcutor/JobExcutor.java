@@ -1,11 +1,14 @@
 package com.hcp.objective.component.jobexcutor;
 
 import org.quartz.JobExecutionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hcp.objective.component.quartz.AbstractQuartzManager;
 import com.hcp.objective.persistence.bean.BatchJob;
 
 public class JobExcutor {
+	public static final Logger logger = LoggerFactory.getLogger(JobExcutor.class);
 
 	public enum ExcutorEnum {
 		WORK_FLOW("workflow");
@@ -27,17 +30,17 @@ public class JobExcutor {
 	}
 
 	public void execute(JobExecutionContext context) throws InterruptedException {
-		// TODO Auto-generated method stub
 		BatchJob batchJob = (BatchJob) context.getMergedJobDataMap().get(AbstractQuartzManager.JOB_OBJECT_NAME);
 		System.out.println("Key:" + context.getJobDetail().getKey());
 		if (batchJob != null) {
 			if (batchJob.getType().equalsIgnoreCase(ExcutorEnum.WORK_FLOW.getName())) {
-				System.out.print("Job Id:" + batchJob.getJobId() + ",");
-				System.out.print("Job Name:" + batchJob.getName() + ", ");
-				System.out.print("Job Type:" + batchJob.getType() + "\n");
 
-				SFWorkFlowExcutor.execute(); 
+				logger.info("Job Id:{}, Job Name:{}, Job Type:{}", batchJob.getId(), batchJob.getName(),
+						batchJob.getType());
+
+				SFWorkFlowExcutor.execute();
 			}
+
 		}
 
 	}

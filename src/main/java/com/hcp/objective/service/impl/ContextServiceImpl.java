@@ -47,8 +47,8 @@ public class ContextServiceImpl implements IContextService {
 
 			if (request.getUserPrincipal() != null) {
 				user = userProvider.getUser(request.getUserPrincipal().getName());
-				logger.info("User name: " + user.getAttribute("firstname") + " " + user.getAttribute("lastname"));
-				logger.info("Email: " + user.getAttribute("email"));
+				logger.info("User name: {} {}", user.getAttribute("firstname"), user.getAttribute("lastname"));
+				logger.info("Email: {}", user.getAttribute("email"));
 			}
 		} catch (NamingException | UMException e) {
 			// TODO Auto-generated catch block

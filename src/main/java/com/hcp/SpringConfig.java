@@ -17,12 +17,12 @@ public class SpringConfig extends AbstractAnnotationConfigDispatcherServletIniti
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class[] { SpringAppConfig.class,SpringWebConfig.class};
+		return new Class[] { SpringAppConfig.class, SpringWebConfig.class };
 	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		//return new Class[] { SpringAppConfig.class };
+		// return new Class[] { SpringAppConfig.class };
 		return null;
 	}
 
@@ -40,7 +40,7 @@ public class SpringConfig extends AbstractAnnotationConfigDispatcherServletIniti
 	@ComponentScan(basePackages = "com.hcp.objective")
 	@EnableWebMvc
 	@EnableTransactionManagement
-	@EnableJpaRepositories(transactionManagerRef = "annotationDrivenTransactionManager")
+	@EnableJpaRepositories(basePackages = "com.hcp.objective.persistence.repositories", transactionManagerRef = "annotationDrivenTransactionManager")
 	public static class SpringWebConfig extends WebMvcConfigurerAdapter {
 
 		private static final int MAX_UPLOAD_SIZE = 1000000;

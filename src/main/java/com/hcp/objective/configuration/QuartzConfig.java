@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
-import com.hcp.objective.component.jobexcutor.JobExcutor;
 import com.hcp.objective.component.quartz.SpringJobFactory;
 
 @Configuration
@@ -27,11 +26,5 @@ public class QuartzConfig {
 	public SpringJobFactory springJobFactory() {
 		return new SpringJobFactory();
 
-	}
-
-	@Bean(name = "excutor")
-	public JobExcutor jobExcutor() {
-		JobExcutor excutor = new JobExcutor();
-		return excutor;
 	}
 }

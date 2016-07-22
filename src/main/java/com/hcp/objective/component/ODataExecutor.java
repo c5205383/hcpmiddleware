@@ -100,11 +100,20 @@ public class ODataExecutor {
 			HttpURLConnection conn = initializeConnection(absolutUri, requestMethod, authorizationType, authorization,
 					null);
 
-			InputStream in = conn.getInputStream();
-			String encoding = conn.getContentEncoding();
-			encoding = encoding == null ? charset : encoding;
-			result = IOUtils.toString(in, encoding);
-			logger.info(result);
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				InputStream in = conn.getInputStream();
+				String encoding = conn.getContentEncoding();
+				encoding = encoding == null ? charset : encoding;
+				result = IOUtils.toString(in, encoding);
+				logger.info(result);
+			} else if (conn.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+				InputStream in = conn.getErrorStream();
+				String encoding = conn.getContentEncoding();
+				encoding = encoding == null ? charset : encoding;
+				result = IOUtils.toString(in, encoding);
+				logger.info(result);
+			}
+
 			conn.disconnect();
 
 		} catch (Exception e) {
@@ -180,9 +189,9 @@ public class ODataExecutor {
 
 		String authorizationHeader = authorizationType + " ";
 		authorizationHeader += new String(Base64.encode((authorization).getBytes()));
-		//authorizationHeader += new String(Base64Utils.encode(authorization.getBytes()));
+		// authorizationHeader += new String(Base64Utils.encode(authorization.getBytes()));
 		connection.setRequestProperty("Authorization", authorizationHeader);
-		if (contentType != null)
+		if (contentType == null)
 			connection.setRequestProperty("content-type", "application/json");
 		connection.setDoOutput(true);
 		connection.setDoInput(true);

@@ -10,8 +10,18 @@ public class SFSFODataServiceTester extends BaseSpringTestCase {
 	@Autowired
 	IODataService oDataService;
 
-	@Test
+	//@Test
 	public void testGetEmpDirectReports() {
 		System.out.println(oDataService.getEmpDirectReports(null));
+	}
+
+	//@Test
+	public void testGetGoalPlanTemplate() {
+		System.out.println(oDataService.getGoalPlanTemplate());
+	}
+
+	@Test
+	public void testGetGoalsByTemplate() {
+		System.out.println(oDataService.getGoalsByTemplate("1"));
 	}
 }

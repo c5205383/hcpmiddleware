@@ -26,19 +26,18 @@ public class SFSFODataServiceImpl implements IODataService {
 	private String debug_user_id = "cgrant1";
 
 	private enum SFSFODataEntity {
-		User("User"), FOEventReason("FOEventReason"), EmpJob("EmpJob"), EmpWfRequest("EmpWfRequest"), FOCompany("FOCompany"), Country("Country"), FOLocation(
-				"FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal("Goal_"), FOJobCode("FOJobCode"), FOBusinessUnit("FOBusinessUnit"), PerPerson(
-						"PerPerson"), PerEmail("PerEmail"), PerPersonal("PerPersonal"), EmpEmployment("EmpEmployment"), Upsert("upsert");
+		User("User"), FOEventReason("FOEventReason"), EmpJob("EmpJob"), EmpWfRequest("EmpWfRequest"), FOCompany(
+				"FOCompany"), Country("Country"), FOLocation("FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal(
+						"Goal_"), FOJobCode("FOJobCode"), FOBusinessUnit("FOBusinessUnit"), PerPerson(
+								"PerPerson"), PerEmail("PerEmail"), PerPersonal(
+										"PerPersonal"), EmpEmployment("EmpEmployment"), Upsert("upsert");
 
-		// 成员变量
 		private String name;
 
-		// 构造方法
 		private SFSFODataEntity(String name) {
 			this.name = name;
 		}
 
-		// get set 方法
 		public String getName() {
 			return name;
 		}
@@ -60,7 +59,8 @@ public class SFSFODataServiceImpl implements IODataService {
 
 		try {
 			String entityName = SFSFODataEntity.User.getName();
-			String key = (loginUserId == null || loginUserId.isEmpty()) ? ("'" + debug_user_id + "'") : ("'" + loginUserId + "'");
+			String key = (loginUserId == null || loginUserId.isEmpty()) ? ("'" + debug_user_id + "'")
+					: ("'" + loginUserId + "'");
 			String query = "$format=json&$expand=directReports&$select=directReports";
 			String result = odataExecutor.readData(entityName, key, query, ODataConstants.HTTP_METHOD_GET);
 
@@ -112,7 +112,8 @@ public class SFSFODataServiceImpl implements IODataService {
 		try {
 			String postData = empJobBody(empInfos, SFSFAction.Trnasfer);
 			String query = "$format=json";
-			String result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			String result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query,
+					ODataConstants.HTTP_METHOD_POST);
 			return result;
 		} catch (Exception e2) {
 			logger.error(e2.getMessage(), e2);
@@ -259,7 +260,7 @@ public class SFSFODataServiceImpl implements IODataService {
 			String query = "$format=json";
 			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 			logger.info("Read Data: " + result);
-			return result.toString();
+			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return "";
@@ -319,23 +320,29 @@ public class SFSFODataServiceImpl implements IODataService {
 
 			// first step upsert user
 			postData = userBody(empInfos);
-			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query,
+					ODataConstants.HTTP_METHOD_POST);
 			// second step upsert per person
 			postData = perPersonBody(empInfos);
-			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query,
+					ODataConstants.HTTP_METHOD_POST);
 			// third step upsert per emial
 			postData = perEmailBody(empInfos);
-			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query,
+					ODataConstants.HTTP_METHOD_POST);
 			// forth step upsert empEmploymentBody
 			postData = empEmploymentBody(empInfos);
-			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query,
+					ODataConstants.HTTP_METHOD_POST);
 			// fivth step upsert emp job
 			postData = empJobBody(empInfos, SFSFAction.Create);
-			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query,
+					ODataConstants.HTTP_METHOD_POST);
 
 			// fivth step upsert emp job
 			postData = perPersonalBody(empInfos);
-			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query, ODataConstants.HTTP_METHOD_POST);
+			result = odataExecutor.postData(SFSFODataEntity.Upsert.getName(), postData, query,
+					ODataConstants.HTTP_METHOD_POST);
 			return result;
 		} catch (Exception e2) {
 			logger.error(e2.getMessage(), e2);
@@ -385,7 +392,8 @@ public class SFSFODataServiceImpl implements IODataService {
 		for (int i = 0; i < empInfos.length; i++) {
 			Map<String, Object> propMap = new HashMap<String, Object>();
 			Map<String, Object> uriMap = new HashMap<String, Object>();
-			uriMap.put("uri", SFSFODataEntity.PerEmail.getName() + "(personIdExternal='" + empInfos[i].getPersonIdExternal() + "',emailType='17161')");
+			uriMap.put("uri", SFSFODataEntity.PerEmail.getName() + "(personIdExternal='"
+					+ empInfos[i].getPersonIdExternal() + "',emailType='17161')");
 			propMap.put("__metadata", uriMap);
 			propMap.put("personIdExternal", empInfos[i].getPersonIdExternal());
 			propMap.put("isPrimary", true);
@@ -401,8 +409,8 @@ public class SFSFODataServiceImpl implements IODataService {
 		for (int i = 0; i < empInfos.length; i++) {
 			Map<String, Object> propMap = new HashMap<String, Object>();
 			Map<String, Object> uriMap = new HashMap<String, Object>();
-			uriMap.put("uri", SFSFODataEntity.EmpEmployment.getName() + "(personIdExternal='" + empInfos[i].getPersonIdExternal() + "',userId='"
-					+ empInfos[i].getUserId() + "')");
+			uriMap.put("uri", SFSFODataEntity.EmpEmployment.getName() + "(personIdExternal='"
+					+ empInfos[i].getPersonIdExternal() + "',userId='" + empInfos[i].getUserId() + "')");
 			propMap.put("__metadata", uriMap);
 			propMap.put("personIdExternal", empInfos[i].getPersonIdExternal());
 			propMap.put("userId", empInfos[i].getUserId());
@@ -426,13 +434,16 @@ public class SFSFODataServiceImpl implements IODataService {
 			propMap.put("jobCode", action == SFSFAction.Trnasfer ? "ADMIN-1" : empInfos[i].getJobCode());
 			propMap.put("userId", empInfos[i].getUserId());
 
-			String effectiveDate = empInfos[i].getEffectiveDate() != null ? empInfos[i].getEffectiveDate() : empInfos[i].getStartDate();
+			String effectiveDate = empInfos[i].getEffectiveDate() != null ? empInfos[i].getEffectiveDate()
+					: empInfos[i].getStartDate();
 			String timeStamp = Util.date2TimeStamp(effectiveDate, null);
 			propMap.put("startDate", "/Date(" + timeStamp + ")/");
 
 			propMap.put("eventReason", action == SFSFAction.Trnasfer ? "TRANICOT" : empInfos[i].getEventReason());
-			propMap.put("company", action == SFSFAction.Trnasfer ? empInfos[i].getTransferCompany() : empInfos[i].getCompany());
-			propMap.put("location", action == SFSFAction.Trnasfer ? empInfos[i].getTransferLocation() : empInfos[i].getLocation());
+			propMap.put("company",
+					action == SFSFAction.Trnasfer ? empInfos[i].getTransferCompany() : empInfos[i].getCompany());
+			propMap.put("location",
+					action == SFSFAction.Trnasfer ? empInfos[i].getTransferLocation() : empInfos[i].getLocation());
 			propMap.put("businessUnit", empInfos[i].getBusinessUnit());
 			propMap.put("managerId", empInfos[i].getManagerId());
 			JSONObject post = new JSONObject(propMap);
@@ -449,10 +460,11 @@ public class SFSFODataServiceImpl implements IODataService {
 
 			if (empInfos[i].getStartDate() == null)
 				continue;
-			String startDate = Util.timeStamp2Date(Util.date2TimeStamp(empInfos[i].getStartDate(), null), "yyyy-MM-dd'T'HH:mm:ss");
+			String startDate = Util.timeStamp2Date(Util.date2TimeStamp(empInfos[i].getStartDate(), null),
+					"yyyy-MM-dd'T'HH:mm:ss");
 
-			uriMap.put("uri", SFSFODataEntity.PerPersonal.getName() + "(personIdExternal='" + empInfos[i].getPersonIdExternal() + "',startDate=datetime'"
-					+ startDate + "')");
+			uriMap.put("uri", SFSFODataEntity.PerPersonal.getName() + "(personIdExternal='"
+					+ empInfos[i].getPersonIdExternal() + "',startDate=datetime'" + startDate + "')");
 			propMap.put("__metadata", uriMap);
 			propMap.put("personIdExternal", empInfos[i].getPersonIdExternal());
 			propMap.put("gender", empInfos[i].getGender());

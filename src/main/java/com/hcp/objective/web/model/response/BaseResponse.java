@@ -1,13 +1,28 @@
 package com.hcp.objective.web.model.response;
 
-public abstract class BaseResponse {
+public class BaseResponse<T> {
 
 	public static String SUCCESS = "SUCCESS";
 	public static String FAILED = "FAILED";
 
 	private int status = 0;
 	private String message;
-	private Object object;
+	private T object;
+
+	public BaseResponse(T object) {
+		this.setObject(object);
+	}
+
+	public BaseResponse(int status, String message, T object) {
+		this.setStatus(status);
+		if (message == null) {
+			this.setMessage(status == 0 ? SUCCESS : FAILED);
+		} else {
+			this.setMessage(message);
+		}
+		this.setMessage(message);
+		this.setObject(object);
+	}
 
 	public int getStatus() {
 		return status;
@@ -25,11 +40,11 @@ public abstract class BaseResponse {
 		this.message = message;
 	}
 
-	public Object getObject() {
+	public T getObject() {
 		return object;
 	}
 
-	public void setObject(Object object) {
+	public void setObject(T object) {
 		this.object = object;
 	}
 }

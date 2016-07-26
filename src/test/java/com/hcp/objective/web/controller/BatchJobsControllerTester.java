@@ -26,7 +26,7 @@ public class BatchJobsControllerTester extends BaseSpringTestCase {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
-	@Test
+	//@Test
 	public void testGetMyBatchJobs() throws Exception {
 		// mockMvc.perform:发起一个http请求
 		// get/post(url): 表示一个post请求，url对应的是Controller中被测方法的Rest url
@@ -38,7 +38,7 @@ public class BatchJobsControllerTester extends BaseSpringTestCase {
 				.andDo(print()).andExpect(status().isOk()).andReturn();
 	}
 
-	@Test
+	//@Test
 	public void testGetMyBatchJobsWithWrongId() throws Exception {
 		this.mockMvc
 				.perform(get("/mybatchjob").param("owner", "123").accept(MediaType.APPLICATION_JSON_UTF8)

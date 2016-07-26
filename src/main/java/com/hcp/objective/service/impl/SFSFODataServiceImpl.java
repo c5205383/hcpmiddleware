@@ -29,8 +29,8 @@ public class SFSFODataServiceImpl implements IODataService {
 		User("User"), FOEventReason("FOEventReason"), EmpJob("EmpJob"), EmpWfRequest("EmpWfRequest"), FOCompany(
 				"FOCompany"), Country("Country"), FOLocation("FOLocation"), GoalPlanTemplate("GoalPlanTemplate"), Goal(
 						"Goal_"), FOJobCode("FOJobCode"), FOBusinessUnit("FOBusinessUnit"), PerPerson(
-								"PerPerson"), PerEmail("PerEmail"), PerPersonal(
-										"PerPersonal"), EmpEmployment("EmpEmployment"), Upsert("upsert");
+								"PerPerson"), PerEmail("PerEmail"), PerPersonal("PerPersonal"), EmpEmployment(
+										"EmpEmployment"), FormFolder("FormFolder"), Upsert("upsert");
 
 		private String name;
 
@@ -475,6 +475,26 @@ public class SFSFODataServiceImpl implements IODataService {
 			postDataArray.put(post);
 		}
 		return postDataArray.toString();
+	}
+
+	@Override
+	public String getFormFolder(String userId) {
+		long requestStartTime = System.currentTimeMillis();
+		try {
+			String entityName = SFSFODataEntity.FormFolder.getName();
+			String query = "$format=json";
+			query = (userId == null) ? query : query + "&$filter=userId%20eq%20%27" + userId + "%27";
+			logger.info("quest url:{}", query);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+
+			long requestEndTime = System.currentTimeMillis();
+			logger.info("Read Data: " + result);
+			logger.info("Read Data Time: " + (requestEndTime - requestStartTime) / 1000);
+			return result.toString();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return "";
+		}
 	}
 
 }

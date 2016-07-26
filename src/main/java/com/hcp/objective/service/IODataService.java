@@ -80,5 +80,12 @@ public interface IODataService {
 	 * @return
 	 */
 	String getGoalsByTemplate(String goalPlanId);
+	
+	/**
+	 * Get SFSF Form Folders. 
+	 * @param userid
+	 * @return
+	 */
+	String getFormFolder(String userid);
 
 }

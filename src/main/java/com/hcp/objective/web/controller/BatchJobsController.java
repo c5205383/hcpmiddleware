@@ -9,6 +9,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +25,7 @@ import com.hcp.objective.service.BatchJobService;
 import com.hcp.objective.service.IContextService;
 import com.hcp.objective.service.quartz.SingleQuartzManagerService;
 import com.hcp.objective.web.model.request.BatchJobMergeRequest;
-import com.hcp.objective.web.model.response.BatchJobResponse;
+import com.hcp.objective.web.model.response.BaseResponse;
 
 /**
  * The {@link}RestController for BatchJob entity.
@@ -34,6 +36,8 @@ import com.hcp.objective.web.model.response.BatchJobResponse;
 // @ExcludeForTest
 public class BatchJobsController {
 
+	public static final Logger logger = LoggerFactory.getLogger(BatchJobsController.class);
+
 	@Autowired
 	private BatchJobService batchJobService;
 
@@ -43,11 +47,11 @@ public class BatchJobsController {
 	@Autowired
 	SingleQuartzManagerService singleQuartzManagerService;
 
-	private Transformer<BatchJob, BatchJobResponse> SuccessTransformer = new Transformer<BatchJob, BatchJobResponse>() {
+	private Transformer<BatchJob, BaseResponse<BatchJob>> SuccessTransformer = new Transformer<BatchJob, BaseResponse<BatchJob>>() {
 
 		@Override
-		public BatchJobResponse transform(BatchJob job) {
-			return new BatchJobResponse(job);
+		public BaseResponse<BatchJob> transform(BatchJob job) {
+			return new BaseResponse<BatchJob>(job);
 		}
 	};
 
@@ -69,7 +73,7 @@ public class BatchJobsController {
 			singleQuartzManagerService.create(job);
 		}
 
-		BatchJobResponse response = new BatchJobResponse(job);
+		BaseResponse<BatchJob> response = new BaseResponse<BatchJob>(job);
 		return new JSONObject(response).toString();
 	}
 
@@ -80,8 +84,8 @@ public class BatchJobsController {
 	 * @return the status message string.
 	 */
 	@RequestMapping(value = "/batchJob/{id}", method = RequestMethod.DELETE)
-	public BatchJobResponse deleteOne(@PathVariable("id") Long id) {
-		return new BatchJobResponse(batchJobService.deleteOneById(id), null, null);
+	public BaseResponse<BatchJob> deleteOne(@PathVariable("id") Long id) {
+		return new BaseResponse<BatchJob>(batchJobService.deleteOneById(id), null, null);
 	}
 
 	/**
@@ -93,7 +97,7 @@ public class BatchJobsController {
 	 * @return a {@link}BatchJobResponse object.
 	 */
 	@RequestMapping(value = "/batchJob/{id}", method = RequestMethod.PUT)
-	public BatchJobResponse updateOne(@PathVariable("id") Long id,
+	public BaseResponse<BatchJob> updateOne(@PathVariable("id") Long id,
 			@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
 		boolean success = false;
 
@@ -105,7 +109,7 @@ public class BatchJobsController {
 			success = singleQuartzManagerService.create(job);
 		}
 
-		return new BatchJobResponse(success ? BatchJobService.SUCCESS : BatchJobService.FAILED, "", job);
+		return new BaseResponse<BatchJob>(success ? BatchJobService.SUCCESS : BatchJobService.FAILED, "", job);
 	}
 
 	/**
@@ -116,14 +120,14 @@ public class BatchJobsController {
 	 */
 	@RequestMapping(value = "/mybatchjob", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public @ResponseBody String findMyJobs(@RequestParam(value = "owner", required = false) String owner) {
-		Collection<BatchJobResponse> list = null;
+		Collection<BaseResponse<BatchJob>> list = null;
 		if (owner != null && owner.equals("") != true) {
 		} else {
 			owner = contextService.getLoginUserName();
 		}
 		if (owner == null || owner.equals("") == true) {
-			list = new ArrayList<BatchJobResponse>();
-			list.add(new BatchJobResponse(BatchJobService.FAILED, null, null));
+			list = new ArrayList<BaseResponse<BatchJob>>();
+			list.add(new BaseResponse<BatchJob>(BatchJobService.FAILED, null, null));
 		} else {
 			list = CollectionUtils.collect(batchJobService.findByOwner(owner), SuccessTransformer);
 		}
@@ -137,7 +141,7 @@ public class BatchJobsController {
 	 */
 	@RequestMapping(value = "/batchJob", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public @ResponseBody String findAllJobs() {
-		Collection<BatchJobResponse> list = CollectionUtils.collect(batchJobService.findAll(), SuccessTransformer);
+		Collection<BaseResponse<BatchJob>> list = CollectionUtils.collect(batchJobService.findAll(), SuccessTransformer);
 		return new JSONArray(list).toString();
 	}
 }

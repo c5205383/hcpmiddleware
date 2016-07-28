@@ -33,6 +33,8 @@ public class SpringConfig extends AbstractAnnotationConfigDispatcherServletIniti
 
 	@Configuration
 	@ComponentScan(value = "com.hcp.objective")
+	@EnableTransactionManagement
+	@EnableJpaRepositories(basePackages = "com.hcp.objective.persistence.repositories", transactionManagerRef = "annotationDrivenTransactionManager")
 	public static class SpringAppConfig {
 	}
 

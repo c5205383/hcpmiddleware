@@ -26,7 +26,7 @@ public class ContextServiceImpl implements IContextService {
 	@Autowired
 	private InitialContext initialContext;
 
-	@Autowired
+	@Autowired(required = false)
 	HttpServletRequest request;
 
 	public String getLoginUser() {

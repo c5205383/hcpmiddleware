@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hcp.objective.persistence.bean.FormFolder;
 import com.hcp.objective.service.FormFolderService;
-import com.hcp.objective.service.IContextService;
 import com.hcp.objective.web.model.response.BaseResponse;
 
 /**
@@ -40,8 +39,6 @@ public class FormFolderController {
 	};
 	@Autowired
 	private FormFolderService formFolderService;
-
-	private IContextService contextService;
 
 	@RequestMapping(value = "/formFolder", method = RequestMethod.POST)
 	public @ResponseBody String createOne(@NotNull @RequestBody FormFolder formFolder) {

@@ -1,12 +1,16 @@
 package com.hcp.objective.component.quartz;
 
+import java.util.Date;
+
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
+import org.quartz.DateBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.slf4j.Logger;
@@ -31,7 +35,7 @@ public abstract class AbstractQuartzManager {
 	public static final String STATE_CLUSTER = "cluster";
 	public static final String STATE_NULL = "null";
 	public static String JOB_TRIGGER_PREFIX = "TRIGGER_";
-	public static String JOB_OBJECT_NAME = "BATCH_JOB";
+	public static String JOB_OBJECT_NAME = "HCP_BATCH_JOB";
 	public static final String SCHEDULER_CHECK_JOB = "SCHEDULER_CHECK_JOB";
 
 	@Autowired
@@ -72,10 +76,7 @@ public abstract class AbstractQuartzManager {
 				return false;
 			}
 			jobDetail.getJobDataMap().put(JOB_OBJECT_NAME, batchJob);
-			CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(batchJob.getCronExpression());
-			CronTrigger trigger = TriggerBuilder.newTrigger()
-					.withIdentity(generateTriggerName(batchJob), BatchJob.JOB_GROUP_NAME).withSchedule(scheduleBuilder)
-					.build();
+			Trigger trigger = batchJobTrigger(batchJob);
 			scheduler.scheduleJob(jobDetail, trigger);
 			log.debug("=====Create[" + batchJob.getJobId() + "/" + batchJob.getName() + "]=====");
 		} catch (SchedulerException e) {
@@ -84,6 +85,23 @@ public abstract class AbstractQuartzManager {
 		}
 		return success;
 
+	}
+
+	private Trigger batchJobTrigger(BatchJob batchJob) {
+		Trigger trigger = null;
+		if (batchJob.getCronExpression() == null || batchJob.getCronExpression().isEmpty()) {
+			// Build a trigger for a specific moment in time, with no repeats:
+			// 15 seconds later of current time
+			Date startTime = DateBuilder.nextGivenSecondDate(null, 15);
+			trigger = TriggerBuilder.newTrigger().withIdentity(generateTriggerName(batchJob), BatchJob.JOB_GROUP_NAME)
+					.startAt(startTime).build();
+		} else {
+			CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(batchJob.getCronExpression());
+			trigger = TriggerBuilder.newTrigger().withIdentity(generateTriggerName(batchJob), BatchJob.JOB_GROUP_NAME)
+					.withSchedule(scheduleBuilder).build();
+		}
+
+		return trigger;
 	}
 
 	/**

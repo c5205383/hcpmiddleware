@@ -108,15 +108,18 @@ public class BatchJob implements Serializable {
 	}
 
 	public String getCronExpression() {
-		// TODO Auto-generated method stub
 		double interval = this.getInterval();
 		String time = null;
 		if (interval == 1) {
-			//time = "0 0/1 * * * ?";
+			// time = "0 0/1 * * * ?";
 		} else if (interval == 0.5) {
-			//time = "0 0/30 * * * ?";
+			// time = "0 0/30 * * * ?";
+		} else if (interval == -1) {
+			// FOR TESTING
+			time = "0/2 * * * * ?";
 		}
-		return time == null ? "0/2 * * * * ?" : time;
+		// return time == null ? "0/2 * * * * ?" : time;
+		return time;
 	}
 
 }

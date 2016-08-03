@@ -5,7 +5,6 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hcp.objective.service.IODataService;
 
 /**
  * The Job of querying workflow requests associated with employees.
@@ -20,9 +19,4 @@ public class SFWorkFlowExecutor implements IExecutor {
 		System.out.println(new Date().toString());
 	}
 
-	@Override
-	public void execute(IODataService service) {
-		// TODO Auto-generated method stub
-		
-	}
 }

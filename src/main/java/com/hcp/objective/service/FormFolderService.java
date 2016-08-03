@@ -42,4 +42,9 @@ public class FormFolderService {
 	public FormFolder createOne(@NotNull FormFolder formFolder) {
 		return formFolderRepository.saveAndFlush(formFolder);
 	}
+	
+	public void createMore(@NotNull List<FormFolder> folders){
+		formFolderRepository.save(folders);
+		formFolderRepository.flush();
+	}
 }

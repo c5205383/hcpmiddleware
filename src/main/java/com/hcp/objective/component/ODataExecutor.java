@@ -3,6 +3,7 @@ package com.hcp.objective.component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -85,8 +86,7 @@ public class ODataExecutor {
 
 	/**************************************************************************************************/
 	// Add by Bruce 2016-05-26
-	public String readData(/* HttpServletRequest request, */String entityName, String key, String query,
-			String requestMethod) {
+	public String readData(String entityName, String key, String query, String requestMethod) {
 		String result = null;
 		try {
 			if (applicationPropertyBean == null)
@@ -116,8 +116,9 @@ public class ODataExecutor {
 
 			conn.disconnect();
 
+		} catch (ConnectException coe) {
+			coe.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;
@@ -197,7 +198,7 @@ public class ODataExecutor {
 		connection.setDoInput(true);
 		connection.setRequestMethod(httpMethod);
 
-		connection.setConnectTimeout(30000 * 2);
+		connection.setConnectTimeout(60000 * 3);
 
 		return connection;
 	}

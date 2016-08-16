@@ -28,25 +28,27 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 
 		if (oDataService != null) {
 			String sData = oDataService.getFormFolder(null);
-			System.out.println(sData);
-			JSONObject object = new JSONObject(sData);
-			JSONArray array = object.getJSONObject(key_d).getJSONArray(key_result);
-			System.out.println(array.length());
+			if (sData != null && !sData.isEmpty()) {
+				System.out.println(sData);
+				JSONObject object = new JSONObject(sData);
+				JSONArray array = object.getJSONObject(key_d).getJSONArray(key_result);
+				System.out.println(array.length());
 
-			if (array != null) {
-				List<FormFolder> folders = new ArrayList<FormFolder>();
-				for (Iterator<Object> iterator = array.iterator(); iterator.hasNext();) {
-					JSONObject one = (JSONObject) iterator.next();
-					FormFolder bean = new FormFolder();
-					bean.setFolderId(one.getLong(key_folderId));
-					bean.setUserId(one.getString(key_userId));
-					bean.setFolderName(one.getString(key_folderName));
-					System.out.print("folder id:" + bean.getFolderId());
-					System.out.print("user id:" + bean.getUserId());
-					System.out.println("folder name:" + bean.getFolderName());
-					folders.add(bean);
+				if (array != null) {
+					List<FormFolder> folders = new ArrayList<FormFolder>();
+					for (Iterator<Object> iterator = array.iterator(); iterator.hasNext();) {
+						JSONObject one = (JSONObject) iterator.next();
+						FormFolder bean = new FormFolder();
+						bean.setFolderId(one.getLong(key_folderId));
+						bean.setUserId(one.getString(key_userId));
+						bean.setFolderName(one.getString(key_folderName));
+						System.out.print("folder id:" + bean.getFolderId());
+						System.out.print("user id:" + bean.getUserId());
+						System.out.println("folder name:" + bean.getFolderName());
+						folders.add(bean);
+					}
+					repositoryService.createMore(folders);
 				}
-				repositoryService.createMore(folders);
 			}
 
 		}

@@ -10,7 +10,7 @@ public class SFSFODataServiceTester extends BaseSpringTestCase {
 	@Autowired
 	IODataService oDataService;
 
-	@Test
+	//@Test
 	public void testGetEmpDirectReports() {
 		System.out.println(oDataService.getEmpDirectReports(null));
 	}
@@ -25,7 +25,7 @@ public class SFSFODataServiceTester extends BaseSpringTestCase {
 		System.out.println(oDataService.getGoalsByTemplate("1"));
 	}
 
-	//@Test
+	@Test
 	public void testGetFormFolder() {
 		System.out.println(oDataService.getFormFolder("admin"));
 	}

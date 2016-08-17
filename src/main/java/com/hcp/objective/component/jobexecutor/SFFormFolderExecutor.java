@@ -23,8 +23,9 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 	public void execute() {
 		// TODO Auto-generated method stub
 		FormFolderService repositoryService = (FormFolderService) this.getBean(FormFolderService.class);
-
 		IODataService oDataService = (IODataService) this.getBean(IODataService.class);
+
+		// System.out.println(repositoryService.findAll());
 
 		if (oDataService != null) {
 			String sData = oDataService.getFormFolder(null);
@@ -52,6 +53,8 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 			}
 
 		}
+
+		this.closeContext();
 	}
 
 }

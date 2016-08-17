@@ -21,9 +21,11 @@ public class SpringAppConfig4Test {
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
 		ctx.register(SpringAppConfig4Test.class);
+		//ctx.register(SpringAppConfig.class);
 		ctx.refresh();
 		try {
 			BatchJobService util = ctx.getBean(BatchJobService.class);
+			System.out.println(util.findAll().size());
 			System.out.println("Addition:" + util.getClass().toString());
 		} catch (BeansException be) {
 			System.out.println(be.getMessage());

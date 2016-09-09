@@ -10,6 +10,7 @@ public class ApplicationPropertyBean {
 	private String queryPwd;
 	
 	//Added by Bruce 2016-5-30
+	private String company;
 	private String contentType;
 	private boolean isProxy;
 	private String charset;
@@ -87,6 +88,12 @@ public class ApplicationPropertyBean {
 	}
 	public void setQuartzState(String quartzState) {
 		this.quartzState = quartzState;
+	}
+	public String getCompany() {
+		return company;
+	}
+	public void setCompany(String company) {
+		this.company = company;
 	}
 
 }

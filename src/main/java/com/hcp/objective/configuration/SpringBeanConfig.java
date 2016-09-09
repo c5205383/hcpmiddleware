@@ -48,6 +48,7 @@ public class SpringBeanConfig {
 		appBean.setContentType(env.getProperty("service.contentType"));
 		appBean.setProxy(Boolean.parseBoolean(env.getProperty("service.isProxy")));
 		appBean.setCharset(env.getProperty("service.charset"));
+		appBean.setCompany(env.getProperty("service.company"));
 		// quartz
 		appBean.setQuartzState(env.getProperty("quartz.scheduler.state"));
 		return appBean;

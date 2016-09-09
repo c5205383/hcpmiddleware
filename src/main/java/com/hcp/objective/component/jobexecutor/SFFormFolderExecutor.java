@@ -7,6 +7,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.persistence.bean.FormFolder;
 import com.hcp.objective.service.FormFolderService;
 import com.hcp.objective.service.IODataService;
@@ -22,6 +23,7 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
+		ApplicationPropertyBean app = (ApplicationPropertyBean) this.getBean(ApplicationPropertyBean.class);
 		FormFolderService repositoryService = (FormFolderService) this.getBean(FormFolderService.class);
 		IODataService oDataService = (IODataService) this.getBean(IODataService.class);
 
@@ -40,6 +42,7 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 					for (Iterator<Object> iterator = array.iterator(); iterator.hasNext();) {
 						JSONObject one = (JSONObject) iterator.next();
 						FormFolder bean = new FormFolder();
+						bean.setCompany(app.getCompany());
 						bean.setFolderId(one.getLong(key_folderId));
 						bean.setUserId(one.getString(key_userId));
 						bean.setFolderName(one.getString(key_folderName));

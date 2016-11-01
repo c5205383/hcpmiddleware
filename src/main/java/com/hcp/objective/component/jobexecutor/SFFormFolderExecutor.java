@@ -19,6 +19,7 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 	private String key_folderId = "folderId";
 	private String key_userId = "userId";
 	private String key_folderName = "folderName";
+	private String concat_sign = "_";
 
 	@Override
 	public void execute() {
@@ -42,21 +43,18 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 					for (Iterator<Object> iterator = array.iterator(); iterator.hasNext();) {
 						JSONObject one = (JSONObject) iterator.next();
 						FormFolder bean = new FormFolder();
+						long folderId = one.getLong(key_folderId);
+						bean.setId(app.getCompany() + concat_sign + folderId);
 						bean.setCompany(app.getCompany());
 						bean.setFolderId(one.getLong(key_folderId));
 						bean.setUserId(one.getString(key_userId));
 						bean.setFolderName(one.getString(key_folderName));
-						System.out.print("folder id:" + bean.getFolderId());
-						System.out.print("user id:" + bean.getUserId());
-						System.out.println("folder name:" + bean.getFolderName());
 						folders.add(bean);
 					}
 					repositoryService.createMore(folders);
 				}
 			}
-
 		}
-
 		this.closeContext();
 	}
 

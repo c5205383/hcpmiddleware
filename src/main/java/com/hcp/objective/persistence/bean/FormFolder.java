@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -17,10 +16,18 @@ public class FormFolder implements Serializable {
 	 */
 	private static final long serialVersionUID = -6664107049667533886L;
 
+	// Key is equals company + folderId
 	@Id
-    @GeneratedValue
-    private Long id;
+    private String id;
 	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	@Column(name = "FOLDER_ID", nullable = false)
 	private Long folderId;
 	

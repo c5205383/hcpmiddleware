@@ -18,7 +18,7 @@
 			<property name="javax.persistence.jdbc.password" value="Test1234!" />
 			<property name="eclipselink.target-database" value="com.sap.persistence.platform.database.HDBPlatform" />
 
-			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
+			<property name="eclipselink.ddl-generation" value="create-tables" />
 			<property name="eclipselink.ddl-generation.output-mode" value="both" />
 		</properties>
 	</persistence-unit>

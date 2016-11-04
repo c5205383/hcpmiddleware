@@ -4,10 +4,16 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.hcp.SpringConfig.SpringAppConfig;
+import com.hcp.objective.bean.ApplicationPropertyBean;
+import com.hcp.objective.service.IODataService;
 
-public abstract class HcpExecutor {
+public abstract class LocalSpringContext {
 
 	AnnotationConfigApplicationContext ctx = null;
+	
+	ApplicationPropertyBean app = (ApplicationPropertyBean) getBean(ApplicationPropertyBean.class);
+	
+	IODataService oDataService = (IODataService) getBean(IODataService.class);
 
 	public Object getBean(Class<?> clz) {
 		if (ctx == null) {
@@ -21,7 +27,6 @@ public abstract class HcpExecutor {
 		} catch (BeansException be) {
 			System.out.println(be.getMessage());
 		}
-		// ctx.close();
 		return r;
 	}
 

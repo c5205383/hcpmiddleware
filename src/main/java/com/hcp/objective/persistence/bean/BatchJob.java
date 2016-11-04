@@ -46,6 +46,17 @@ public class BatchJob implements Serializable {
 
 	@Column(name = "OWNER", nullable = false)
 	private String owner;
+	
+	@Column(name = "RUNING_STATUS", nullable = false)
+	private String runningStatus;
+
+	public String getRunningStatus() {
+		return runningStatus;
+	}
+
+	public void setRunningStatus(String runningStatus) {
+		this.runningStatus = runningStatus;
+	}
 
 	public Long getId() {
 		return id;

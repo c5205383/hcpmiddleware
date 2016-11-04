@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.hcp.objective.component.jobexecutor.IExecutor;
 import com.hcp.objective.component.jobexecutor.SFFormExecutor;
 import com.hcp.objective.component.jobexecutor.SFFormFolderExecutor;
+import com.hcp.objective.component.jobexecutor.SFObjectiveExecutor;
 import com.hcp.objective.component.jobexecutor.SFWorkFlowExecutor;
 import com.hcp.objective.persistence.bean.BatchJob;
 
@@ -20,8 +21,8 @@ public class SingleQuartzJobFactory implements Job {
 	private static final Logger log = LoggerFactory.getLogger(SingleQuartzJobFactory.class);
 
 	public enum ExecutorContainer {
-		SF_WORKFLOW("WorkFlow", SFWorkFlowExecutor.class), SF_FORM("Form",
-				SFFormExecutor.class), SF_FORMFOLDER("FormFolder", SFFormFolderExecutor.class);
+		SF_WORKFLOW("WorkFlow", SFWorkFlowExecutor.class), SF_FORM("Form", SFFormExecutor.class), SF_FORMFOLDER(
+				"FormFolder", SFFormFolderExecutor.class), SF_OBJECTIVE("objective", SFObjectiveExecutor.class);
 
 		private String name;
 		private Class<?> clazz;

@@ -241,7 +241,8 @@ public class SFSFODataServiceImpl implements IODataService {
 			long requestEndTime = System.currentTimeMillis();
 			logger.info("Read Data: " + result);
 			logger.info("Read Data Time: " + (requestEndTime - requestStartTime) / 1000);
-			return result.toString();
+
+			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return "";

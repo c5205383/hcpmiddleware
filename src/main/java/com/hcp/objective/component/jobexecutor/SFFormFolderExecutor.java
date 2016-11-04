@@ -7,12 +7,10 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.persistence.bean.FormFolder;
 import com.hcp.objective.service.FormFolderService;
-import com.hcp.objective.service.IODataService;
 
-public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
+public class SFFormFolderExecutor extends LocalSpringContext implements IExecutor {
 
 	private String key_result = "results";
 	private String key_d = "d";
@@ -23,13 +21,8 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-		ApplicationPropertyBean app = (ApplicationPropertyBean) this.getBean(ApplicationPropertyBean.class);
-		FormFolderService repositoryService = (FormFolderService) this.getBean(FormFolderService.class);
-		IODataService oDataService = (IODataService) this.getBean(IODataService.class);
-
+		FormFolderService repositoryService = (FormFolderService) getBean(FormFolderService.class);
 		// System.out.println(repositoryService.findAll());
-
 		if (oDataService != null) {
 			String sData = oDataService.getFormFolder(null);
 			if (sData != null && !sData.isEmpty()) {
@@ -55,6 +48,7 @@ public class SFFormFolderExecutor extends HcpExecutor implements IExecutor {
 				}
 			}
 		}
+		//TODO: Close Spring context
 		this.closeContext();
 	}
 

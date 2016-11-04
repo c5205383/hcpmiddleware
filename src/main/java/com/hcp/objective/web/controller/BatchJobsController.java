@@ -24,7 +24,7 @@ import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.service.BatchJobService;
 import com.hcp.objective.service.IContextService;
 import com.hcp.objective.service.quartz.SingleQuartzManagerService;
-import com.hcp.objective.web.model.request.BatchJobMergeRequest;
+//import com.hcp.objective.web.model.request.BatchJobMergeRequest;
 import com.hcp.objective.web.model.response.BaseResponse;
 
 /**
@@ -62,16 +62,16 @@ public class BatchJobsController {
 	 * @return a {@link}BatchJobResponse object.
 	 */
 	@RequestMapping(value = "/batchJob", method = RequestMethod.POST)
-	public @ResponseBody String createOne(@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
+	public @ResponseBody String createOne(@NotNull @RequestBody BatchJob batchJobMergeRequest) {
 
 		// Create job storage
 		BatchJob job = batchJobService.createOne(batchJobMergeRequest);
 
 		// If job status is active, start Job, else delete job.
-		singleQuartzManagerService.delete(job);
-		if (job != null && job.getStatus()) {
-			singleQuartzManagerService.create(job);
-		}
+		//singleQuartzManagerService.delete(job);
+		//if (job != null && job.getStatus()) {
+		//	singleQuartzManagerService.create(job);
+		//}
 
 		BaseResponse<BatchJob> response = new BaseResponse<BatchJob>(job);
 		return new JSONObject(response).toString();
@@ -98,7 +98,7 @@ public class BatchJobsController {
 	 */
 	@RequestMapping(value = "/batchJob/{id}", method = RequestMethod.PUT)
 	public BaseResponse<BatchJob> updateOne(@PathVariable("id") Long id,
-			@NotNull @RequestBody BatchJobMergeRequest batchJobMergeRequest) {
+			@NotNull @RequestBody BatchJob batchJobMergeRequest) {
 		boolean success = false;
 
 		// Save batch job change to DB

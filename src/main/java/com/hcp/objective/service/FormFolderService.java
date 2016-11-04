@@ -34,11 +34,6 @@ public class FormFolderService {
 		return formFolderRepository.findOne(id);
 	}
 
-	/**
-	 * 
-	 * @param formFolder
-	 * @return
-	 */
 	public FormFolder createOne(@NotNull FormFolder formFolder) {
 		return formFolderRepository.saveAndFlush(formFolder);
 	}

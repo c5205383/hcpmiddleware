@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hcp.objective.persistence.bean.BatchJob;
 import com.hcp.objective.persistence.repositories.BatchJobRepository;
-import com.hcp.objective.web.model.request.BatchJobMergeRequest;
+//import com.hcp.objective.web.model.request.BatchJobMergeRequest;
 
 /**
  * The {@link}BatchJobService includes operations about the {@link}BatchJob object
@@ -43,10 +43,9 @@ public class BatchJobService {
 	 *            the request include a batch job information
 	 * @return A {@link}BatchJob object
 	 */
-	public BatchJob createOne(@NotNull BatchJobMergeRequest batchJobMergeRequest) {
+	public BatchJob createOne(@NotNull BatchJob batchJobMergeRequest) {
 		BatchJob batchJob = new BatchJob();
 		mergeScalarProperties(batchJobMergeRequest, batchJob);
-		// QuartzManager.addBatchJob(batchJob);
 		return batchJobRepository.saveAndFlush(batchJob);
 	}
 
@@ -79,7 +78,7 @@ public class BatchJobService {
 	 *            the request include a batch job information
 	 * @return A {@link}BatchJob object
 	 */
-	public BatchJob updateOne(@NotNull Long id, @NotNull BatchJobMergeRequest batchJobMergeRequest) {
+	public BatchJob updateOne(@NotNull Long id, @NotNull BatchJob batchJobMergeRequest) {
 		
 		BatchJob batchJob = batchJobRepository.findOne(id);
 		
@@ -110,7 +109,7 @@ public class BatchJobService {
 	 * @param batchJob
 	 *            the {@link}BatchJob object
 	 */
-	private void mergeScalarProperties(BatchJobMergeRequest batchJobMergeRequest, BatchJob batchJob) {
+	private void mergeScalarProperties(BatchJob batchJobMergeRequest, BatchJob batchJob) {
 		// batchJob.setId(batchJobMergeRequest.getId());
 		batchJob.setName(batchJobMergeRequest.getName());
 		batchJob.setType(batchJobMergeRequest.getType());
@@ -118,5 +117,6 @@ public class BatchJobService {
 		batchJob.setInfo(batchJobMergeRequest.getInfo());
 		batchJob.setStatus(batchJobMergeRequest.getStatus());
 		batchJob.setOwner(batchJobMergeRequest.getOwner());
+		batchJob.setRunningStatus(batchJobMergeRequest.getRunningStatus());
 	}
 }

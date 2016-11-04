@@ -11,6 +11,7 @@
 		<class>com.hcp.objective.persistence.bean.Person</class>
 		<class>com.hcp.objective.persistence.bean.Form</class>
 		<class>com.hcp.objective.persistence.bean.FormFolder</class>
+		<class>com.hcp.objective.persistence.bean.GoalPlanTemplate</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.sap.db.jdbc.Driver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:sap://lddbiwg.wdf.sap.corp:30015/" />

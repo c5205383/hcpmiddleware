@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
-import com.hcp.objective.component.quartz.NoRepeatTriggerListener;
+import com.hcp.objective.component.jobexecutor.NoRepeatTriggerListener;
 import com.hcp.objective.component.quartz.SpringJobFactory;
 
 @Configuration

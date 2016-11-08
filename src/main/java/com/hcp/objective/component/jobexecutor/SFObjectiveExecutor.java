@@ -8,13 +8,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.persistence.bean.GoalPlanTemplate;
 import com.hcp.objective.service.GoalPlanTemplateService;
 import com.hcp.objective.service.IODataService;
 
-public class SFObjectiveExecutor extends LocalSpringContext implements IExecutor {
+@Component("OBJECTIVE_EXECUTOR")
+public class SFObjectiveExecutor implements IExecutor {
 
 	private String key_d = "d";
 	private String key_result = "results";
@@ -25,15 +28,17 @@ public class SFObjectiveExecutor extends LocalSpringContext implements IExecutor
 	private String key_dueDate = "dueDate";
 
 	public static final Logger logger = LoggerFactory.getLogger(SFObjectiveExecutor.class);
-	ApplicationPropertyBean app = (ApplicationPropertyBean) getBean(ApplicationPropertyBean.class);
-	IODataService oDataService = (IODataService) getBean(IODataService.class);
+	@Autowired
+	ApplicationPropertyBean app;
+	@Autowired
+	IODataService oDataService;
+	@Autowired
+	GoalPlanTemplateService goalPlanTemplateService;
 
 	@Override
 	public void execute() {
 
 		// TODO: delete all goal plan
-		GoalPlanTemplateService goalPlanTemplateService = (GoalPlanTemplateService) getBean(
-				GoalPlanTemplateService.class);
 		goalPlanTemplateService.deleteAll();
 
 		// TODO: update new goal plan
@@ -64,8 +69,6 @@ public class SFObjectiveExecutor extends LocalSpringContext implements IExecutor
 				}
 			}
 		}
-		// TODO: Close Spring context
-		this.closeContext();
 
 	}
 

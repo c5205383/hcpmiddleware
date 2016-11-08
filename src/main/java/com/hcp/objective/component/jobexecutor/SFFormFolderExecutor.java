@@ -8,13 +8,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.persistence.bean.FormFolder;
 import com.hcp.objective.service.FormFolderService;
 import com.hcp.objective.service.IODataService;
 
-public class SFFormFolderExecutor extends LocalSpringContext implements IExecutor {
+@Component("FORMFOLDER_EXECUTOR")
+public class SFFormFolderExecutor implements IExecutor {
 
 	private String key_result = "results";
 	private String key_d = "d";
@@ -24,13 +27,15 @@ public class SFFormFolderExecutor extends LocalSpringContext implements IExecuto
 	private String concat_sign = "_";
 
 	public static final Logger logger = LoggerFactory.getLogger(SFFormFolderExecutor.class);
-	ApplicationPropertyBean app = (ApplicationPropertyBean) getBean(ApplicationPropertyBean.class);
-	IODataService oDataService = (IODataService) getBean(IODataService.class);
+	@Autowired
+	ApplicationPropertyBean app ;
+	@Autowired
+	IODataService oDataService ;
+	@Autowired
+	FormFolderService repositoryService;
 
 	@Override
 	public void execute() {
-		FormFolderService repositoryService = (FormFolderService) getBean(FormFolderService.class);
-		// System.out.println(repositoryService.findAll());
 		if (oDataService != null) {
 			String sData = oDataService.getFormFolder(null);
 			if (sData != null && !sData.isEmpty()) {
@@ -56,8 +61,6 @@ public class SFFormFolderExecutor extends LocalSpringContext implements IExecuto
 				}
 			}
 		}
-		// TODO: Close Spring context
-		this.closeContext();
 	}
 
 }

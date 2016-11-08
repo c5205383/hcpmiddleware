@@ -21,6 +21,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.util.StringUtils;
 
 import com.hcp.objective.bean.ApplicationPropertyBean;
+import com.hcp.objective.component.jobexecutor.NoRepeatTriggerListener;
 import com.hcp.objective.persistence.bean.BatchJob;
 
 /**

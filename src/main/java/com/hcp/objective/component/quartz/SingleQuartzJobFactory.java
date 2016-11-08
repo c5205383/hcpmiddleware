@@ -1,12 +1,17 @@
 package com.hcp.objective.component.quartz;
 
+import javax.annotation.Resource;
+
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.hcp.objective.component.jobexecutor.IExecutor;
 import com.hcp.objective.component.jobexecutor.SFFormExecutor;
@@ -17,14 +22,19 @@ import com.hcp.objective.component.jobexecutor.SFWorkFlowExecutor;
 import com.hcp.objective.persistence.bean.BatchJob;
 
 @DisallowConcurrentExecution
-@Service
-public class SingleQuartzJobFactory implements Job {
+public class SingleQuartzJobFactory implements Job, ApplicationContextAware {
 	private static final Logger log = LoggerFactory.getLogger(SingleQuartzJobFactory.class);
+
+	private IExecutor executor;
+	
+	@Resource
+	@Autowired
+	private ApplicationContext applicationContext;
 
 	public enum ExecutorContainer {
 		SF_WORKFLOW("WorkFlow", SFWorkFlowExecutor.class), SF_FORM("Form", SFFormExecutor.class), SF_FORMFOLDER(
-				"FormFolder", SFFormFolderExecutor.class), SF_OBJECTIVE("objective",
-						SFObjectiveExecutor.class), SF_USER("user", SFUserExecutor.class);
+				"FormFolder", SFFormFolderExecutor.class), SF_OBJECTIVE("Objective",
+						SFObjectiveExecutor.class), SF_USER("User", SFUserExecutor.class);
 
 		private String name;
 		private Class<?> clazz;
@@ -81,8 +91,6 @@ public class SingleQuartzJobFactory implements Job {
 
 	}
 
-	private IExecutor executor;
-
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		try {
@@ -90,7 +98,10 @@ public class SingleQuartzJobFactory implements Job {
 			if (batchJob != null) {
 				log.info("Job Id:{}, Job Name:{}, Job Type:{}", batchJob.getId(), batchJob.getName(),
 						batchJob.getType());
-				executor = ExecutorContainer.getExecutor(batchJob.getType());
+				String rule = batchJob.getType() + IExecutor.Executor_Suffix;
+				rule = rule.toUpperCase();
+				//executor = this.applicationContext.getBean(IExecutor.class, rule.toUpperCase());
+				executor = (IExecutor)this.applicationContext.getBean(rule.toUpperCase());
 				if (executor != null) {
 					System.out.println("job excuted:" + batchJob.getId() + ", " + batchJob.getName());
 					executor.execute();
@@ -108,6 +119,11 @@ public class SingleQuartzJobFactory implements Job {
 			log.error("====================Scheduler-error-end====================");
 		}
 
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 }

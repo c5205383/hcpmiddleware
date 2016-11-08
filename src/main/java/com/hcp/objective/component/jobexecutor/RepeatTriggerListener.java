@@ -1,4 +1,4 @@
-package com.hcp.objective.component.quartz;
+package com.hcp.objective.component.jobexecutor;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;

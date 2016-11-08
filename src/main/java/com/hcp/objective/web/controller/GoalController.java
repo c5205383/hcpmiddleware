@@ -46,9 +46,10 @@ public class GoalController {
 		return oDataService.getGoalPlanTemplate();
 	}
 
-	@RequestMapping(value = "/goals", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/apigoals", produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getGoalsByTemplate(String goalPlanId) {
-		return oDataService.getGoalsByTemplate(goalPlanId);
+		String userId = contextService.getLoginUserName();
+		return oDataService.getGoalsByTemplate(goalPlanId,userId);
 	}
 
 	@RequestMapping(value = "/mygoalplan", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

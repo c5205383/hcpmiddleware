@@ -6,9 +6,13 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.hcp.objective.bean.ApplicationPropertyBean;
 import com.hcp.objective.persistence.bean.FormFolder;
 import com.hcp.objective.service.FormFolderService;
+import com.hcp.objective.service.IODataService;
 
 public class SFFormFolderExecutor extends LocalSpringContext implements IExecutor {
 
@@ -18,6 +22,10 @@ public class SFFormFolderExecutor extends LocalSpringContext implements IExecuto
 	private String key_userId = "userId";
 	private String key_folderName = "folderName";
 	private String concat_sign = "_";
+
+	public static final Logger logger = LoggerFactory.getLogger(SFFormFolderExecutor.class);
+	ApplicationPropertyBean app = (ApplicationPropertyBean) getBean(ApplicationPropertyBean.class);
+	IODataService oDataService = (IODataService) getBean(IODataService.class);
 
 	@Override
 	public void execute() {
@@ -48,7 +56,7 @@ public class SFFormFolderExecutor extends LocalSpringContext implements IExecuto
 				}
 			}
 		}
-		//TODO: Close Spring context
+		// TODO: Close Spring context
 		this.closeContext();
 	}
 

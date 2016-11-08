@@ -85,8 +85,7 @@ public class ODataExecutor {
 	}
 
 	/**************************************************************************************************/
-	// Add by Bruce 2016-05-26
-	public String readData(String entityName, String key, String query, String requestMethod) {
+	public String readData(String absolutUri, String requestMethod) {
 		String result = null;
 		try {
 			if (applicationPropertyBean == null)
@@ -94,12 +93,9 @@ public class ODataExecutor {
 			String charset = applicationPropertyBean.getCharset();
 			String authorizationType = applicationPropertyBean.getAuthorizationType();
 			String authorization = applicationPropertyBean.getAuthorization();
-			// String contentType = odataBean.getContentType();
-
-			String absolutUri = createAbsolutUri(entityName, key, query);
+			logger.info("URI-->" + absolutUri);
 			HttpURLConnection conn = initializeConnection(absolutUri, requestMethod, authorizationType, authorization,
 					null);
-
 			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				InputStream in = conn.getInputStream();
 				String encoding = conn.getContentEncoding();
@@ -113,14 +109,19 @@ public class ODataExecutor {
 				result = IOUtils.toString(in, encoding);
 				logger.info(result);
 			}
-
 			conn.disconnect();
-
 		} catch (ConnectException coe) {
 			coe.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return result;
+	}
+
+	public String readData(String entityName, String key, String query, String requestMethod) {
+		String result = null;
+		String absolutUri = createAbsolutUri(entityName, key, query);
+		result = readData(absolutUri, requestMethod);
 		return result;
 	}
 

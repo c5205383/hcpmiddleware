@@ -39,14 +39,17 @@ public abstract class AbstractQuartzManager {
 	public static String NO_REPEAT_JOB_TRIGGER_PREFIX = "NO_REPEAT_TRIGGER_";
 	public static String JOB_OBJECT_NAME = "HCP_BATCH_JOB";
 	public static final String SCHEDULER_CHECK_JOB = "SCHEDULER_CHECK_JOB";
-	public static String JOB_RUNNING="RUNNING";
-	public static String JOB_STOP="STOP";
+	public static String JOB_RUNNING = "RUNNING";
+	public static String JOB_STOP = "STOP";
 
 	@Autowired
 	ApplicationPropertyBean appBean;
 
 	@Autowired
 	SchedulerFactoryBean schedulerFactoryBean;
+
+	@Autowired
+	NoRepeatTriggerListener noRepeatTriggerListener;
 
 	public String getState() {
 		if (StringUtils.isEmpty(schedulerState)) {
@@ -103,11 +106,12 @@ public abstract class AbstractQuartzManager {
 			// Build a trigger for a specific moment in time, with no repeats:
 			// 15 seconds later of current time
 			Date startTime = DateBuilder.nextGivenSecondDate(null, 15);
-			trigger = TriggerBuilder.newTrigger().withIdentity(generateNoRepeatTriggerName(batchJob), BatchJob.JOB_GROUP_NAME)
-					.startAt(startTime).build();
+			trigger = TriggerBuilder.newTrigger()
+					.withIdentity(generateNoRepeatTriggerName(batchJob), BatchJob.JOB_GROUP_NAME).startAt(startTime)
+					.build();
 			// Registering A TriggerListener With The Scheduler To Listen To A Specific Trigger
 			try {
-				scheduler.getListenerManager().addTriggerListener(new NoRepeatTriggerListener(),
+				scheduler.getListenerManager().addTriggerListener(noRepeatTriggerListener,
 						KeyMatcher.keyEquals(trigger.getKey()));
 			} catch (SchedulerException e) {
 				// TODO Auto-generated catch block

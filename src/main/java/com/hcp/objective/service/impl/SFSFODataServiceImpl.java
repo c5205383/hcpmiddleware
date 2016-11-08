@@ -255,10 +255,12 @@ public class SFSFODataServiceImpl implements IODataService {
 	 * @param goalPlanId
 	 * @return
 	 */
-	public @ResponseBody String getGoalsByTemplate(String goalPlanId) {
+	public @ResponseBody String getGoalsByTemplate(String goalPlanId, String userId) {
 		try {
 			String entityName = SFSFODataEntity.Goal.getName() + goalPlanId;
 			String query = "$format=json";
+			if (userId != null)
+				query = query + "&$filter=userId%20eq%20%27" + userId + "%27";
 			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
 			logger.info("Read Data: " + result);
 			return result;
@@ -496,6 +498,37 @@ public class SFSFODataServiceImpl implements IODataService {
 			logger.error(e.getMessage(), e);
 			return "";
 		}
+	}
+
+	@Override
+	public String getUsers() {
+		long requestStartTime = System.currentTimeMillis();
+		try {
+			String entityName = SFSFODataEntity.User.getName();
+			String query = "$format=json";
+			logger.info("quest url:{}", query);
+			String result = odataExecutor.readData(entityName, null, query, ODataConstants.HTTP_METHOD_GET);
+
+			long requestEndTime = System.currentTimeMillis();
+			logger.info("Read Data: " + result);
+			logger.info("Read Data Time: " + (requestEndTime - requestStartTime) / 1000);
+			return result.toString();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return "";
+		}
+	}
+
+	@Override
+	public String readData(String absolutUri) {
+		try {
+			String result = odataExecutor.readData(absolutUri, ODataConstants.HTTP_METHOD_GET);
+			return result;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return "";
+		}
+
 	}
 
 }

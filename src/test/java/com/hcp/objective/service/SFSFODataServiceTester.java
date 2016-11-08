@@ -22,7 +22,7 @@ public class SFSFODataServiceTester extends BaseSpringTestCase {
 
 	//@Test
 	public void testGetGoalsByTemplate() {
-		System.out.println(oDataService.getGoalsByTemplate("1"));
+		System.out.println(oDataService.getGoalsByTemplate("1",null));
 	}
 
 	@Test

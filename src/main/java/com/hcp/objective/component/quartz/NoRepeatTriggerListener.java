@@ -6,14 +6,11 @@ import org.quartz.Trigger.CompletedExecutionInstruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hcp.objective.component.jobexecutor.LocalSpringContext;
 import com.hcp.objective.persistence.bean.BatchJob;
-import com.hcp.objective.service.BatchJobService;
-import com.hcp.objective.service.quartz.SingleQuartzManagerService;
 
 import org.quartz.TriggerListener;
 
-public class NoRepeatTriggerListener extends LocalSpringContext implements TriggerListener {
+public class NoRepeatTriggerListener implements TriggerListener {
 
 	private static final Logger log = LoggerFactory.getLogger(NoRepeatTriggerListener.class);
 	private static final String TRIGGER_LISTENER_NAME = "NoRepeatTriggerListener";
@@ -49,16 +46,14 @@ public class NoRepeatTriggerListener extends LocalSpringContext implements Trigg
 			log.info(getName() + " trigger: " + trigger.getKey() + " completed at " + trigger.getStartTime());
 			log.info("Job Id:{}, Job Name:{}, Job Type:{}", batchJob.getId(), batchJob.getName(), batchJob.getType());
 
-			// update stored job status
-			BatchJobService batchJobService = (BatchJobService) getBean(BatchJobService.class);
-			BatchJob newJob = batchJobService.findOne(batchJob.getId());
-			newJob.setStatus(false);
-			newJob.setRunningStatus(AbstractQuartzManager.JOB_STOP);
-			batchJobService.updateOne(batchJob.getId(), newJob);
-			// remove job from scheduler
-			SingleQuartzManagerService singleQuartzManagerService = (SingleQuartzManagerService) getBean(
-					SingleQuartzManagerService.class);
-			singleQuartzManagerService.delete(batchJob);
+			/*
+			 * // update stored job status BatchJobService batchJobService = (BatchJobService)
+			 * getBean(BatchJobService.class); BatchJob newJob = batchJobService.findOne(batchJob.getId());
+			 * newJob.setStatus(false); newJob.setRunningStatus(AbstractQuartzManager.JOB_STOP);
+			 * batchJobService.updateOne(batchJob.getId(), newJob); // remove job from scheduler
+			 * SingleQuartzManagerService singleQuartzManagerService = (SingleQuartzManagerService) getBean(
+			 * SingleQuartzManagerService.class); singleQuartzManagerService.delete(batchJob);
+			 */
 		}
 	}
 

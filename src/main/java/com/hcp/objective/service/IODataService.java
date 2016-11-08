@@ -6,13 +6,15 @@ public interface IODataService {
 
 	/**
 	 * Service for Controller to request User's direct reports by SFSF ODATA API
+	 * 
 	 * @param loginUserId
 	 * @return
 	 */
 	String getEmpDirectReports(String loginUserId);
 
 	/**
-	 *  Change SFSF employee job location
+	 * Change SFSF employee job location
+	 * 
 	 * @param empInfos
 	 * @return
 	 */
@@ -20,6 +22,7 @@ public interface IODataService {
 
 	/**
 	 * Get SFSF Work flow by event reason
+	 * 
 	 * @param eventReason
 	 * @return
 	 */
@@ -27,6 +30,7 @@ public interface IODataService {
 
 	/**
 	 * Create Employee
+	 * 
 	 * @param empInfos
 	 * @return
 	 */
@@ -34,58 +38,71 @@ public interface IODataService {
 
 	/**
 	 * Get SFSF Companies
+	 * 
 	 * @return
 	 */
 	String getFOCompany();
 
 	/**
 	 * Get SFSF Countries
+	 * 
 	 * @return
 	 */
 	String getCountry();
 
 	/**
 	 * Get SFSF FOEventReason Data
+	 * 
 	 * @return
 	 */
 	String getFOEventReason();
 
 	/**
 	 * Get SFSF Locations
+	 * 
 	 * @return
 	 */
 	String getFOLocation();
 
 	/**
 	 * Get SFSF Job Code
+	 * 
 	 * @return
 	 */
 	String getFOJobCode();
 
 	/**
 	 * Get SFSF Business Unit
+	 * 
 	 * @return
 	 */
 	String getFOBusinessUnit();
 
 	/**
 	 * Get SFSF Goal Plan
+	 * 
 	 * @return
 	 */
 	String getGoalPlanTemplate();
 
 	/**
 	 * Get SFSF Goals by Goal Plan template
+	 * 
 	 * @param goalPlanId
 	 * @return
 	 */
-	String getGoalsByTemplate(String goalPlanId);
-	
+	String getGoalsByTemplate(String goalPlanId, String userId);
+
 	/**
-	 * Get SFSF Form Folders. 
+	 * Get SFSF Form Folders.
+	 * 
 	 * @param userid
 	 * @return
 	 */
 	String getFormFolder(String userid);
+
+	String getUsers();
+	
+	String readData(String absolutUri);
 
 }

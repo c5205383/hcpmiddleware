@@ -12,6 +12,7 @@ import com.hcp.objective.component.jobexecutor.IExecutor;
 import com.hcp.objective.component.jobexecutor.SFFormExecutor;
 import com.hcp.objective.component.jobexecutor.SFFormFolderExecutor;
 import com.hcp.objective.component.jobexecutor.SFObjectiveExecutor;
+import com.hcp.objective.component.jobexecutor.SFUserExecutor;
 import com.hcp.objective.component.jobexecutor.SFWorkFlowExecutor;
 import com.hcp.objective.persistence.bean.BatchJob;
 
@@ -22,7 +23,8 @@ public class SingleQuartzJobFactory implements Job {
 
 	public enum ExecutorContainer {
 		SF_WORKFLOW("WorkFlow", SFWorkFlowExecutor.class), SF_FORM("Form", SFFormExecutor.class), SF_FORMFOLDER(
-				"FormFolder", SFFormFolderExecutor.class), SF_OBJECTIVE("objective", SFObjectiveExecutor.class);
+				"FormFolder", SFFormFolderExecutor.class), SF_OBJECTIVE("objective",
+						SFObjectiveExecutor.class), SF_USER("user", SFUserExecutor.class);
 
 		private String name;
 		private Class<?> clazz;

@@ -23,9 +23,6 @@ public class DataSourceConfig {
 
 	public static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
 
-	// The persistence schema name would determined by deployment environment
-	// 1. Dev : [NO SCHEMA]
-	// 2. HANA : MMDB
 	public static final String PERSISTENCE_SCHEMA_NAME = "MMDB";
 	public static final String PERSISTENCE_UNIT_NAME = "HcpDefaultPersistenceUnit";
 
@@ -48,7 +45,7 @@ public class DataSourceConfig {
 
 	}
 
-	//@Bean(autowire = Autowire.BY_TYPE)
+	@Bean(autowire = Autowire.BY_TYPE)
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	@Primary
 	@Lazy(false)

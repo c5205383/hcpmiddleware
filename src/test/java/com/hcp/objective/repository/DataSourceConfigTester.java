@@ -18,7 +18,7 @@ public class DataSourceConfigTester extends BaseSpringTestCase {
 	@Test
 	public void batchJobRepositoryTest() {
 		if (batchJobRepository != null)
-			System.out.println(batchJobRepository.findByOwner("cgrant1"));
+			System.out.println(batchJobRepository.findAll());
 	}
 
 }

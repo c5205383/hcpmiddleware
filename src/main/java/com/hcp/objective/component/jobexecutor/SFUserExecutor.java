@@ -50,7 +50,8 @@ public class SFUserExecutor implements IExecutor {
 
 	@Override
 	public void execute() {
-		userService.deleteAll();
+		long excutionStartTime = System.currentTimeMillis();
+		// userService.deleteAll();
 		if (oDataService != null) {
 			String sData = oDataService.getUsers();
 			boolean end = false;
@@ -102,8 +103,9 @@ public class SFUserExecutor implements IExecutor {
 							bean.setBusinessPhone(one.getString(key_businessPhone));
 
 						users.add(bean);
+						// userService.createOne(bean);
 					}
-					userService.createMore(users);
+					// userService.createMore(users);
 				}
 
 				if (object.getJSONObject(key_d).has(key___next)) {
@@ -120,6 +122,9 @@ public class SFUserExecutor implements IExecutor {
 
 			}
 		}
+
+		long excutionEndTime = System.currentTimeMillis();
+		logger.info("Excution Time(s): " + (excutionEndTime - excutionStartTime) / 1000);
 	}
 
 }

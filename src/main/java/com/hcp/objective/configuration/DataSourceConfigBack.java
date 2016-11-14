@@ -28,7 +28,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.hcp.objective.component.impl.HcpPersistenceContext;
 
-@ExcludeForTest
+//@ExcludeForTest
+//@Configuration
 public class DataSourceConfigBack {
 
 	public static final Logger logger = LoggerFactory.getLogger(DataSourceConfigBack.class);
@@ -78,7 +79,8 @@ public class DataSourceConfigBack {
 				HashMap<String, Object> properties = new HashMap<String, Object>();
 				if (this.preferentialDataSource() != null) {
 					properties.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, this.preferentialDataSource());
-					this.entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
+					this.entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME,
+							properties);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
